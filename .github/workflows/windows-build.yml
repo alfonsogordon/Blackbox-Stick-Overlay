@@ -41,6 +41,8 @@ jobs:
           $usage = & ".\dist\BlackboxStickOverlay\_internal\blackbox_decode.exe" --help 2>&1 | Out-String
           if ($usage -notmatch "Usage:" -or $usage -notmatch "blackbox") { throw "Decoder smoke test failed: help output missing" }
           Write-Host "Decoder responded with expected usage text."
+          # blackbox_decode intentionally returns nonzero for --help; GitHub pwsh checks LASTEXITCODE at script exit.
+          $global:LASTEXITCODE = 0
           if (!(Test-Path ".\dist\BlackboxStickOverlay\BlackboxStickOverlay.exe")) { throw "Missing app executable" }
       - name: Upload portable Windows ZIP
         uses: actions/upload-artifact@v4
