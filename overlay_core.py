@@ -24,8 +24,10 @@ def decode_log(source, tempdir):
     copied=Path(tempdir)/("flight"+source.suffix.lower())
     shutil.copyfile(source,copied)
     decoder=decoder_path()
+    creationflags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
     p=subprocess.run([str(decoder),str(copied)],cwd=tempdir,
-                     capture_output=True,text=True,errors="replace",timeout=300)
+                     capture_output=True,text=True,errors="replace",timeout=300,
+                     creationflags=creationflags)
     csvs=sorted(Path(tempdir).glob("flight.*.csv"))
     if p.returncode!=0 or not csvs:
         raise RuntimeError("Blackbox decoding failed: "+(p.stderr or p.stdout or "No CSV created")[-1200:])
