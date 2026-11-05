@@ -38,8 +38,9 @@ jobs:
       - name: Decoder and app smoke test
         shell: pwsh
         run: |
-          & ".\dist\BlackboxStickOverlay\_internal\blackbox_decode.exe" --help | Out-Null
-          if ($LASTEXITCODE -ne 0) { throw "Decoder smoke test failed" }
+          $usage = & ".\dist\BlackboxStickOverlay\_internal\blackbox_decode.exe" --help 2>&1 | Out-String
+          if ($usage -notmatch "Usage:" -or $usage -notmatch "blackbox") { throw "Decoder smoke test failed: help output missing" }
+          Write-Host "Decoder responded with expected usage text."
           if (!(Test-Path ".\dist\BlackboxStickOverlay\BlackboxStickOverlay.exe")) { throw "Missing app executable" }
       - name: Upload portable Windows ZIP
         uses: actions/upload-artifact@v4
