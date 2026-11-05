@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+*.bbl
+*.bfl
+*.csv
+*.png
+blackbox-tools/
+blackbox_decode.exe
