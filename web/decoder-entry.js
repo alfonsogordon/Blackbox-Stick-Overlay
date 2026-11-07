@@ -22,3 +22,12 @@ export function sampleBinary(seconds) {
   const frame = log.getFrameAtTime(micros);
   return frame ? indexes.map(i => Number(frame[i]) || 0) : [0,0,0,1000];
 }
+
+export function getBinaryFields() {
+  return log ? log.getMainFieldNames().slice() : [];
+}
+export function sampleBinaryFields(seconds) {
+  if (!log) return null;
+  const micros = Math.max(start, Math.min(end, start + seconds * 1000000));
+  return log.getFrameAtTime(micros);
+}
