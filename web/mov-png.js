@@ -12,9 +12,12 @@ export function createMovPng(frames,width,height,fps){
   if(!frames.length)throw Error('No video frames');
   if(width>65535||height>65535)throw Error('Dimensions exceed MOV limits');
   const timescale=600,delta=Math.round(timescale/fps),duration=delta*frames.length;
-  const sizes=frames.map(f=>f.byteLength),offsets=[],mdatPayload=join(...frames);
+  const sizes=frames.map(f=>f.byteLength),offsets=[];
+  const payloadBytes=sizes.reduce((a,b)=>a+b,0);
+  if(payloadBytes+8>=0xffffffff)throw Error('MOV exceeds 4 GB; export a shorter section');
   const ftyp=atom('ftyp',str('qt  '),u32(0),str('qt  '));
-  const mdat=atom('mdat',mdatPayload);
+  // Keep encoded PNG frames as separate Blob parts: never allocate one giant Uint8Array.
+  const mdatHeader=join(u32(payloadBytes+8),str('mdat'));
   let pos=ftyp.length+8;for(const n of sizes){offsets.push(pos);pos+=n}
   if(pos>=0xffffffff)throw Error('MOV exceeds 4 GB; export a shorter section');
   const mvhd=atom('mvhd',u32(0),u32(0),u32(0),u32(timescale),u32(duration),u32(65536),u16(256),zeros(10),matrix,zeros(24),u32(2));
@@ -35,5 +38,5 @@ export function createMovPng(frames,width,height,fps){
   const mdia=atom('mdia',mdhd,hdlr,minf);
   const trak=atom('trak',tkhd,mdia);
   const moov=atom('moov',mvhd,trak);
-  return new Blob([ftyp,mdat,moov],{type:'video/quicktime'});
+  return new Blob([ftyp,mdatHeader,...frames,moov],{type:'video/quicktime'});
 }
