@@ -360,6 +360,29 @@ function drawArmedTimer(t,w,h,curvePass=null){
  ctx.restore();
 }
 for(const id of ['armtimershow','armtimerx','armtimery','armtimersize','armtimerlabel'])$(id).addEventListener('input',update);
+let armedTimerDragging=false,armedTimerOffsetX=0,armedTimerOffsetY=0;
+canvas.addEventListener('pointerdown',e=>{
+ if(recording||!$('armtimershow').checked)return;
+ const [x,y]=elementPointerCoordinates(e);
+ const left=Number($('armtimerx').value)/100,top=Number($('armtimery').value)/100;
+ const size=Math.max(11,Number($('armtimersize').value)*canvas.width/1600);
+ const width=size*6/canvas.width,height=size*1.85/canvas.height;
+ if(x<left-.01||x>left+width+.01||y<top-.015||y>top+height+.015)return;
+ armedTimerDragging=true;armedTimerOffsetX=x-left;armedTimerOffsetY=y-top;
+ canvas.setPointerCapture(e.pointerId);e.preventDefault();e.stopImmediatePropagation();
+},true);
+canvas.addEventListener('pointermove',e=>{
+ if(!armedTimerDragging)return;
+ const [x,y]=elementPointerCoordinates(e);
+ const [nx,ny]=snapPosition(clamp(x-armedTimerOffsetX,0,.95),clamp(y-armedTimerOffsetY,0,.95));
+ $('armtimerx').value=Math.round(nx*100);$('armtimery').value=Math.round(ny*100);
+ canvas.style.cursor='move';draw(time);
+ e.stopImmediatePropagation();
+},true);
+for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eventName,()=>{
+ if(armedTimerDragging){armedTimerDragging=false;canvas.style.cursor='default';draw(time)}
+},true);
+
 function drawTelemetry(t,w,h,curvePass=null){if(!telemetryRows.length&&!binaryMode)return;ctx.save();ctx.textBaseline='top';for(const item of telemetryWidgets){if(!item.check.checked||(curvePass!==null&&item.curveToggle?.checked!==curvePass))continue;
  // Fighter-jet tapes render these readings as part of the HUD itself.
  if(betaActive()&&$('betagraphics').checked&&$('betatheme').value==='green'&&['speed','altitude'].includes(amberIconKind(item)))continue;const logTime=clamp(t-(+$('lead').value||0),0,duration);const electricalKind=item.spec?.kind;const voltageField=electricalKind==='voltage'&&/(vbat|voltage|battery|rxbt|txbat)/i.test(item.name);const currentField=electricalKind==='current';const currentDisplayTime=Math.floor(logTime/.2)*.2;const v=voltageField?smoothElectricalReading(currentDisplayTime,item.i,1.5):currentField?smoothElectricalReading(currentDisplayTime,item.i,1.5):telemetryAt(logTime,item.i);if(v===null)continue;ctx.save();applyShadow(item.shadow,w);if(item.arrowMode?.value==='arrow'){
