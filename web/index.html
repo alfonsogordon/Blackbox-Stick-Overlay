@@ -668,8 +668,10 @@ function applyUserPreset(p,name){
  }
  if(p.sticks?.length===2)stickLayout=p.sticks.map(x=>({...x}));
  if(p.quad)Object.assign(quadLayout,p.quad);
+ const matchingUsed=new Set();
  if(p.widgets&&Array.isArray(p.widgets))for(const saved of p.widgets){
-  const item=telemetryWidgets.find(x=>x.name===saved.name);if(!item)continue;
+  const item=telemetryWidgets.find(x=>x.name===saved.name&&!matchingUsed.has(x));if(!item)continue;
+  matchingUsed.add(item);
   if(Number.isFinite(saved.x))item.x=saved.x;if(Number.isFinite(saved.y))item.y=saved.y;
   item.alignRight=!!saved.alignRight;item.centeredArrow=!!saved.centeredArrow;
   item.check.checked=!!saved.enabled;
@@ -945,6 +947,85 @@ function presetPositions(preset,theme){
  // Only styling changes with the theme, not the preset's geometric symmetry.
  return Object.fromEntries(Object.entries(base).map(([key,xy])=>[key,[...xy]]));
 }
+// Approved Neon Sci-Fi defaults, transcribed from the three exported user presets.
+// Absent fields remain hidden; these positions are independent of log field order.
+const neonPresetData={
+ classic:{
+  battery:[.0625,.15625,0],cell:[.0625,.21875,0],current:[.09375,.5,0],
+  sat:[.875,.1875,0],rssi:[.84375,.53125,0]
+ },
+ stickoverlay:{},
+ full:{
+  battery:[.0625,.125,0],cell:[.0625,.1875,0],current:[.09375,.4375,0],used:[.09375,.5,0],
+  sat:[.935,.12,1],speed:[.84375,.375,0],alt:[.84375,.4375,0],
+  distance:[.84375,.5,0],direction:[.484375,.7578125,0],rssi:[.84375,.8125,0]
+ }
+};
+function neonCategory(item){
+ if(item.cellVoltage)return 'cell';
+ const n=item.name.toLowerCase().replace(/[^a-z0-9]/g,'');
+ if(/(vbatcellvoltage|cellvoltage|averagecellvoltage)/.test(n))return 'cell';
+ if(/(vbat|batteryvoltage|^voltage$)/.test(n))return 'battery';
+ if(/(amperage|currentdraw|^current$)/.test(n))return 'current';
+ if(/(mahdrawn|mahconsumed|batteryused|consumedcapacity)/.test(n))return 'used';
+ if(/(gpsnumsat|gpssatellites|numsat)/.test(n))return 'sat';
+ if(/(^rssi$|rssivalue|rssipercent|linkquality|rqlly|^lq$)/.test(n))return 'rssi';
+ if(/(gpsspeed|gpsgroundspeed)/.test(n))return 'speed';
+ if(/(gpsaltitude|baroalt)/.test(n))return 'alt';
+ if(/(gpsdistancehome|homedistance)/.test(n))return 'distance';
+ if(/(gpsdirectiontohome|homedirection)/.test(n))return 'direction';
+ return null;
+}
+function applyNeonPresetFields(){
+ if($('betatheme').value!=='cyan')return;
+ const layout=$('betapreset').value,positions=neonPresetData[layout];
+ if(!positions)return;
+ const full=layout==='full';
+ $('quadshow').checked=full;
+ quadLayout.x=full?.1171875:.5;quadLayout.y=full?.84375:.5;quadLayout.scale=full?.3:.75;
+ $('quadscale').value=String(Math.round(quadLayout.scale*100));
+ const presetOrder=['battery','cell','current','sat','speed','alt','distance','direction','rssi','used'];
+ for(const item of telemetryWidgets){
+  const category=neonCategory(item);
+  const position=positions[category];
+  item.check.checked=!!position;
+  if(!position)continue;
+  item.x=position[0];item.y=position[1];
+  item.alignRight=!!position[2];item.centeredArrow=false;
+  item.size.value=category==='direction'?'40':'24';
+  if(item.rename){
+   const titles={battery:'Battery',current:'Current Draw',sat:'GPS Satellites',speed:'GPS Speed',alt:'GPS Altitude',distance:'Home Distance',direction:'Home Arrow',rssi:'RSSI',used:'Battery Used'};
+   if(titles[category])item.rename.value=titles[category];
+  }
+  if(item.showLabel&&category!=='cell')item.showLabel.checked=true;
+  if(item.arrowMode&&category==='direction')item.arrowMode.value='arrow';
+  if(item.cellColour)item.cellColour.value='#ffffff';
+  const cyanHighlight=full&&['battery','cell','sat'].includes(category);
+  item.labelColor.value=cyanHighlight?'#52f2ec':'#ffb86c';
+  item.valueColor.value=full?'#f5ffff':'#52f2ec';
+ }
+}
+function applyNeonPresetTheme(){
+ if($('betatheme').value!=='cyan')return;
+ if($('canvasformat').value==='sticks'){
+  $('canvasformat').value='16:9';
+  configureCanvas();
+ }
+ const settings={
+  betacurve:'80',betaperspective:'80',betagraphics:true,hudmotion:true,
+  hudopacity:'100',hudprimary:'#52f2ec',hudaccent:'#ffb86c',
+  hudlinktelemetry:true,stickbgopacity:'27',outlineopacity:'53',
+  crossopacity:'22',trailstyle:'off',leftcolor:'#52f2ec',
+  rightcolor:'#ffb86c',outlinecolor:'#52f2ec',crosscolor:'#f5ffff',
+  stickbg:'#000000',hudtop:true,hudcentre:true,hudsides:true,hudbottom:true
+ };
+ for(const [id,value] of Object.entries(settings)){
+  const control=$(id);if(control){if(control.type==='checkbox')control.checked=value;else control.value=value}
+ }
+ stickLayout.forEach((stick,i)=>{stick.x=i===0?.39:.61;stick.y=.83;stick.scale=.72;stick.visible=true});
+ syncStickControls();
+ applyNeonPresetFields();
+}
 const betaState={previousColours:null};
 // Populate full-OSD presets from actual logged channels where possible.
 function applyBetaOsdFields(){
@@ -990,6 +1071,7 @@ function applyBetaOsdFields(){
   item.valueColor.value=betaPalette()[1];
   if(item.cellColour&&$('betatheme').value==='classic')item.cellColour.value='#ffffff';
  }
+ if($('betatheme').value==='cyan')applyNeonPresetFields();
 
 }
 const demoFieldNames=['vbat','amperage','gpsNumSat','gpsSpeed','gpsAltitude','homeDistance','homeDirection','rssi','mahDrawn','attitudeRoll','attitudePitch'];
@@ -1055,6 +1137,7 @@ function applyBetaTheme(){
    if(xy){item.x=xy[0];item.y=xy[1];item.size.value=String(category==='direction'?40:(preset?.size||29))}
   }
  }
+ if(theme==='cyan')applyNeonPresetTheme();
  update();
 }
 $('betaenabled').addEventListener('change',()=>{
@@ -1066,6 +1149,7 @@ $('betapreset').addEventListener('change',()=>{
  const p=betaPresets[$('betapreset').value];if(!p)return;
  // Preserve both sticks' positions, sizes and visibility across all three layouts.
  // Presets set visibility and placement of their telemetry and optional quad only.
+ if($('betatheme').value==='cyan')applyNeonPresetTheme();
  applyBetaOsdFields();update();
 });
 for(const [i,id] of ['leftstickshow','rightstickshow'].entries())$(id).addEventListener('change',()=>{stickLayout[i].visible=$(id).checked;update()});
