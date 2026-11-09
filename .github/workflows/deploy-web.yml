@@ -1,5 +1,5 @@
 name: Deploy Web Overlay Studio
-# Re-trigger deployment after GitHub Actions internal scheduler error (2026-11-09).
+# Retry transient dependency downloads and re-trigger failed web deployment (2026-11-09).
 on:
   push:
     branches: [main]
@@ -26,9 +26,23 @@ jobs:
         shell: bash
         run: |
           mkdir -p web/vendor
-          git clone --depth 1 https://github.com/betaflight/blackbox-log-viewer.git web/vendor/blackbox
+          # These external downloads occasionally fail transiently on GitHub-hosted runners.
+          for attempt in 1 2 3; do
+            if git clone --depth 1 https://github.com/betaflight/blackbox-log-viewer.git web/vendor/blackbox; then
+              break
+            fi
+            rm -rf web/vendor/blackbox
+            if [ "$attempt" = 3 ]; then exit 1; fi
+            sleep $((attempt * 5))
+          done
           cd web/vendor/blackbox
-          npm install --no-save --package-lock=false semver esbuild
+          for attempt in 1 2 3; do
+            if npm install --no-save --package-lock=false semver esbuild; then
+              break
+            fi
+            if [ "$attempt" = 3 ]; then exit 1; fi
+            sleep $((attempt * 5))
+          done
           ./node_modules/.bin/esbuild ../../decoder-entry.js --bundle --format=esm --platform=browser --outfile=../../decoder-bundle.js
           cp LICENSE ../../BETAFLLIGHT-GPL-LICENSE.txt
           cd ../..
