@@ -44,4 +44,3 @@ export function createMovPng(frames,width,height,fps){
  const {ftyp,mdatHeader,moov}=movPngStructure(frames.map(f=>f.size??f.byteLength),width,height,fps);
  return new Blob([ftyp,mdatHeader,...frames,moov],{type:'video/quicktime'});
 }
-}
