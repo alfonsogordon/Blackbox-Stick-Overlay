@@ -373,7 +373,7 @@ function drawArmedTimer(t,w,h,curvePass=null){
  ctx.restore();
 }
 
-let armedTimerDragging=false,armedTimerOffsetX=0,armedTimerOffsetY=0;
+let armedTimerDragging=false,armedTimerResize=false,armedTimerOffsetX=0,armedTimerOffsetY=0;
 canvas.addEventListener('pointerdown',e=>{
  if(recording||!$('armtimershow').checked)return;
  const [x,y]=elementPointerCoordinates(e);
@@ -381,19 +381,28 @@ canvas.addEventListener('pointerdown',e=>{
  const size=Math.max(11,Number($('armtimersize').value)*canvas.width/1600);
  const width=size*6/canvas.width,height=size*1.85/canvas.height;
  if(x<left-.01||x>left+width+.01||y<top-.015||y>top+height+.015)return;
- armedTimerDragging=true;armedTimerOffsetX=x-left;armedTimerOffsetY=y-top;
+ armedTimerDragging=true;armedTimerResize=x>left+width-.025&&y>top+height-.028;armedTimerOffsetX=x-left;armedTimerOffsetY=y-top;
  canvas.setPointerCapture(e.pointerId);e.preventDefault();e.stopImmediatePropagation();
 },true);
 canvas.addEventListener('pointermove',e=>{
  if(!armedTimerDragging)return;
  const [x,y]=elementPointerCoordinates(e);
- const [nx,ny]=snapPosition(clamp(x-armedTimerOffsetX,0,.95),clamp(y-armedTimerOffsetY,0,.95));
- $('armtimerx').value=Math.round(nx*100);$('armtimery').value=Math.round(ny*100);
- canvas.style.cursor='move';draw(time);
+ if(armedTimerResize){
+  const left=Number($('armtimerx').value)/100,top=Number($('armtimery').value)/100;
+  const original=Math.max(11,Number($('armtimersize').value)*canvas.width/1600);
+  const next=Math.max((x-left)*canvas.width/5.8,(y-top)*canvas.height/1.85);
+  $('armtimersize').value=Math.round(clamp(next/original*Number($('armtimersize').value),12,70));
+ }else{
+  const [nx,ny]=snapPosition(clamp(x-armedTimerOffsetX,0,.95),clamp(y-armedTimerOffsetY,0,.95));
+  $('armtimerx').value=Math.round(nx*100);$('armtimery').value=Math.round(ny*100);
+ }
+ const item=telemetryWidgets.find(v=>v.timer);
+ if(item){item.x=Number($('armtimerx').value)/100;item.y=Number($('armtimery').value)/100}
+ canvas.style.cursor=armedTimerResize?'nwse-resize':'move';draw(time);
  e.stopImmediatePropagation();
 },true);
 for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eventName,()=>{
- if(armedTimerDragging){armedTimerDragging=false;canvas.style.cursor='default';draw(time)}
+ if(armedTimerDragging){armedTimerDragging=false;armedTimerResize=false;canvas.style.cursor='default';draw(time)}
 },true);
 
 function drawTelemetry(t,w,h,curvePass=null){if(!telemetryRows.length&&!binaryMode)return;ctx.save();ctx.textBaseline='top';for(const item of telemetryWidgets){if(item.timer)continue;if(!item.check.checked||(curvePass!==null&&item.curveToggle?.checked!==curvePass))continue;
@@ -485,7 +494,8 @@ function editingBounds(kind,index,item){
 function drawEditingOutline(){
  const border=$('elementselection');
  if(!border)return;
- const active=draggedTelemetry?{kind:'telemetry',item:draggedTelemetry,label:draggedTelemetry.rename?.value||friendlyTelemetryName(draggedTelemetry.name)}:
+ const active=armedTimerDragging?{kind:'telemetry',item:telemetryWidgets.find(v=>v.timer),label:'Armed Flight Timer'}:
+ draggedTelemetry?{kind:'telemetry',item:draggedTelemetry,label:draggedTelemetry.rename?.value||friendlyTelemetryName(draggedTelemetry.name)}:
  draggedStick!==null?{kind:'stick',index:draggedStick,item:stickLayout[draggedStick],label:(draggedStick===0?'Left':'Right')+' stick'}:
  draggedQuad?{kind:'quad',item:quadLayout,label:'Quad visualiser'}:hoveredOverlay;
  if(!active||recording){border.style.display='none';return}
@@ -535,7 +545,7 @@ canvas.addEventListener('pointerdown',e=>{
  if(recording||draggedStick!==null||draggedQuad)return;
  const [x,y]=elementPointerCoordinates(e);
  for(const item of [...telemetryWidgets].reverse()){
-  if(!item.check.checked)continue;
+  if(!item.check.checked||item.timer)continue;
   const v=telemetryAt(clamp(time-(+$('lead').value||0),0,duration),item.i);
   if(v===null)continue;
   const m=telemetryMetrics(item,v,canvas.width);
@@ -1280,6 +1290,7 @@ function applyBetaTheme(){
   const coords=presetPositions($('betapreset').value,theme);
   const preset=betaPresets[$('betapreset').value];
   for(const item of telemetryWidgets){
+   if(item.timer)continue;
    const kind=amberIconKind(item);
    const category=item.cellVoltage?'cell':({altitude:'alt',satellite:'sat',home:'distance',compass:'direction'}[kind]||kind);
    const xy=coords[category];
@@ -1759,7 +1770,7 @@ function drawBetaGraphics(w,h,t=0){
    const tapeLeft=isSpeed?.108:.742,tapeRight=isSpeed?.258:.892;
    const x=(tapeLeft+tapeRight)/2;
    const readTop=.449,readBottom=.529,mid=(readTop+readBottom)/2;
-   const item=telemetryWidgets.find(v=>v.check.checked&&amberIconKind(v)===kind);
+   const item=telemetryWidgets.find(v=>!v.timer&&v.check.checked&&amberIconKind(v)===kind);
    const value=item?telemetryAt(time,item.i):null;
    const parts=value!==null&&Number.isFinite(value)?telemetryText(item,value):null;
    // Flight-instrument tape: calibrated tick marks scroll with the live
