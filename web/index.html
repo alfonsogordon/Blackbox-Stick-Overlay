@@ -378,8 +378,9 @@ function drawEditingOutline(){
  draggedStick!==null?{kind:'stick',index:draggedStick,item:stickLayout[draggedStick],label:(draggedStick===0?'Left':'Right')+' stick'}:
  draggedQuad?{kind:'quad',item:quadLayout,label:'Quad visualiser'}:hoveredOverlay;
  if(!active||recording){border.style.display='none';return}
- const bounds=editingBounds(active.kind,active.index,active.item);
- if(!bounds){border.style.display='none';return}
+ const base=editingBounds(active.kind,active.index,active.item);
+ if(!base){border.style.display='none';return}
+ const bounds=motionOutlineBounds(base);
  const visibleWidth=canvas.clientWidth,visibleHeight=canvas.clientHeight;
  if(!visibleWidth||!visibleHeight){border.style.display='none';return}
  const px=bounds.x/canvas.width*visibleWidth,py=bounds.y/canvas.height*visibleHeight;
@@ -406,8 +407,8 @@ function locateEditable(x,y){
 canvas.addEventListener('pointermove',e=>{
  if(recording)return;
  if(!draggedQuad&&draggedStick===null&&!draggedTelemetry){
-  const r=canvas.getBoundingClientRect();
-  hoveredOverlay=locateEditable((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height);
+  const [x,y]=elementPointerCoordinates(e);
+  hoveredOverlay=locateEditable(x,y);
   canvas.style.cursor=hoveredOverlay?'move':'default';
  }
  drawEditingOutline();
@@ -416,12 +417,12 @@ canvas.addEventListener('pointerdown',()=>{drawEditingOutline()});
 canvas.addEventListener('pointerup',()=>{drawEditingOutline()});
 canvas.addEventListener('pointerleave',()=>{if(!draggedQuad&&draggedStick===null&&!draggedTelemetry){hoveredOverlay=null;canvas.style.cursor='default';drawEditingOutline()}});
 window.addEventListener('resize',drawEditingOutline);
-let draggedQuad=false,quadDX=0,quadDY=0;canvas.addEventListener('pointerdown',e=>{if(recording||!$('quadshow').checked)return;const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;const [w,h]=$('size').value.split('x').map(Number);const rad=Math.min(w,h)*.19*quadLayout.scale;if(Math.hypot((x-quadLayout.x)*w,(y-quadLayout.y)*h)<rad){draggedQuad=true;quadDX=x-quadLayout.x;quadDY=y-quadLayout.y;canvas.setPointerCapture(e.pointerId);e.preventDefault()}});canvas.addEventListener('pointermove',e=>{if(!draggedQuad)return;const r=canvas.getBoundingClientRect();[quadLayout.x,quadLayout.y]=snapPosition(clamp((e.clientX-r.left)/r.width-quadDX,0,1),clamp((e.clientY-r.top)/r.height-quadDY,0,1));draw(time)});for(const type of ['pointerup','pointercancel'])canvas.addEventListener(type,()=>{draggedQuad=false});for(const id of ['quadshow','quadscale','quadmodel','quadarm','quadfront','quadrear','quadbody','quadopacity','quadline','quadmotors','quadnose'])$(id).addEventListener('input',()=>{quadLayout.scale=Number($('quadscale').value)/100;draw(time)});
-let draggedStick=null,resizeStick=false,stickDragX=0,stickDragY=0;canvas.addEventListener('pointerdown',e=>{if(recording||draggedQuad)return;const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;const [w,h]=$('size').value.split('x').map(Number);const side=($('canvasformat').value==='sticks'?Math.min(h*.68,w*.31):Math.min(h*.28,w*.22));for(let i=1;i>=0;i--){const item=stickLayout[i];if(!item.visible)continue;const half=side*item.scale/2;const dx=(x-item.x)*w,dy=(y-item.y)*h;if(Math.abs(dx)<=half&&Math.abs(dy)<=half){draggedStick=i;resizeStick=dx>half*.67&&dy>half*.67;stickDragX=x-item.x;stickDragY=y-item.y;canvas.setPointerCapture(e.pointerId);e.preventDefault();break}}});canvas.addEventListener('pointermove',e=>{if(draggedStick===null)return;const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;const item=stickLayout[draggedStick];if(resizeStick){const [w,h]=$('size').value.split('x').map(Number),base=$('canvasformat').value==='sticks'?Math.min(h*.82,w*.38):Math.min(h*.28,w*.22);item.scale=clamp(Math.max(Math.abs(x-item.x)*w,Math.abs(y-item.y)*h)*2/base,.2,2.5);$(''+(draggedStick===0?'left':'right')+'stickscale').value=item.scale*100}else{[item.x,item.y]=snapPosition(clamp(x-stickDragX,0,1),clamp(y-stickDragY,0,1));if($('mirrorsticks').checked){const other=stickLayout[1-draggedStick];other.x=1-item.x;other.y=item.y}}draw(time)});for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eventName,()=>{draggedStick=null;resizeStick=false});
+let draggedQuad=false,quadDX=0,quadDY=0;canvas.addEventListener('pointerdown',e=>{if(recording||!$('quadshow').checked)return;const [x,y]=elementPointerCoordinates(e);const [w,h]=$('size').value.split('x').map(Number);const rad=Math.min(w,h)*.19*quadLayout.scale;if(Math.hypot((x-quadLayout.x)*w,(y-quadLayout.y)*h)<rad){draggedQuad=true;quadDX=x-quadLayout.x;quadDY=y-quadLayout.y;canvas.setPointerCapture(e.pointerId);e.preventDefault()}});canvas.addEventListener('pointermove',e=>{if(!draggedQuad)return;const [x,y]=elementPointerCoordinates(e);[quadLayout.x,quadLayout.y]=snapPosition(clamp(x-quadDX,0,1),clamp(y-quadDY,0,1));draw(time)});for(const type of ['pointerup','pointercancel'])canvas.addEventListener(type,()=>{draggedQuad=false});for(const id of ['quadshow','quadscale','quadmodel','quadarm','quadfront','quadrear','quadbody','quadopacity','quadline','quadmotors','quadnose'])$(id).addEventListener('input',()=>{quadLayout.scale=Number($('quadscale').value)/100;draw(time)});
+let draggedStick=null,resizeStick=false,stickDragX=0,stickDragY=0;canvas.addEventListener('pointerdown',e=>{if(recording||draggedQuad)return;const [x,y]=elementPointerCoordinates(e);const [w,h]=$('size').value.split('x').map(Number);const side=($('canvasformat').value==='sticks'?Math.min(h*.68,w*.31):Math.min(h*.28,w*.22));for(let i=1;i>=0;i--){const item=stickLayout[i];if(!item.visible)continue;const half=side*item.scale/2;const dx=(x-item.x)*w,dy=(y-item.y)*h;if(Math.abs(dx)<=half&&Math.abs(dy)<=half){draggedStick=i;resizeStick=dx>half*.67&&dy>half*.67;stickDragX=x-item.x;stickDragY=y-item.y;canvas.setPointerCapture(e.pointerId);e.preventDefault();break}}});canvas.addEventListener('pointermove',e=>{if(draggedStick===null)return;const [x,y]=elementPointerCoordinates(e);const item=stickLayout[draggedStick];if(resizeStick){const [w,h]=$('size').value.split('x').map(Number),base=$('canvasformat').value==='sticks'?Math.min(h*.82,w*.38):Math.min(h*.28,w*.22);item.scale=clamp(Math.max(Math.abs(x-item.x)*w,Math.abs(y-item.y)*h)*2/base,.2,2.5);$(''+(draggedStick===0?'left':'right')+'stickscale').value=item.scale*100}else{[item.x,item.y]=snapPosition(clamp(x-stickDragX,0,1),clamp(y-stickDragY,0,1));if($('mirrorsticks').checked){const other=stickLayout[1-draggedStick];other.x=1-item.x;other.y=item.y}}draw(time)});for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eventName,()=>{draggedStick=null;resizeStick=false});
 let draggedTelemetry=null,resizeTelemetry=false,dragOffsetX=0,dragOffsetY=0;
 canvas.addEventListener('pointerdown',e=>{
  if(recording||draggedStick!==null||draggedQuad)return;
- const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+ const [x,y]=elementPointerCoordinates(e);
  for(const item of [...telemetryWidgets].reverse()){
   if(!item.check.checked)continue;
   const v=telemetryAt(clamp(time-(+$('lead').value||0),0,duration),item.i);
@@ -444,7 +445,7 @@ canvas.addEventListener('pointerdown',e=>{
 });
 canvas.addEventListener('pointermove',e=>{
  if(!draggedTelemetry||draggedStick!==null)return;
- const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+ const [x,y]=elementPointerCoordinates(e);
  if(resizeTelemetry){
   const value=Number(draggedTelemetry.size.value);
   const diff=(x-draggedTelemetry.x)*canvas.width;
@@ -1225,6 +1226,30 @@ function applyElementMotion(t,w,h){
  const m=elementMotionParameters(t,w,h);if(!m)return;
  ctx.translate(m.cx,m.cy);ctx.rotate(m.angle);
  ctx.translate(m.dx,m.dy);ctx.translate(-m.cx,-m.cy);
+}
+// Reverse the parallax for pointer hit testing and dragging.
+function elementPointerCoordinates(e){
+ const r=canvas.getBoundingClientRect(),w=canvas.width,h=canvas.height;
+ let x=(e.clientX-r.left)/r.width*w,y=(e.clientY-r.top)/r.height*h;
+ const m=elementMotionParameters(time,w,h);
+ if(m){
+  const rx=x-m.cx,ry=y-m.cy,c=Math.cos(m.angle),sn=Math.sin(m.angle);
+  x=(rx*c+ry*sn)-m.dx+m.cx;
+  y=(-rx*sn+ry*c)-m.dy+m.cy;
+ }
+ return [x/w,y/h];
+}
+function motionOutlineBounds(bounds){
+ const m=elementMotionParameters(time,canvas.width,canvas.height);
+ if(!m)return bounds;
+ const corners=[[bounds.x,bounds.y],[bounds.x+bounds.w,bounds.y],[bounds.x,bounds.y+bounds.h],[bounds.x+bounds.w,bounds.y+bounds.h]];
+ const c=Math.cos(m.angle),sn=Math.sin(m.angle);
+ const p=corners.map(([x,y])=>{
+  const xx=x-m.cx+m.dx,yy=y-m.cy+m.dy;
+  return [m.cx+c*xx-sn*yy,m.cy+sn*xx+c*yy];
+ });
+ const minX=Math.min(...p.map(v=>v[0])),minY=Math.min(...p.map(v=>v[1]));
+ return {x:minX,y:minY,w:Math.max(...p.map(v=>v[0]))-minX,h:Math.max(...p.map(v=>v[1]))-minY};
 }
 function drawMotionLayer(t,w,h,paint){
  ctx.save();applyElementMotion(t,w,h);
