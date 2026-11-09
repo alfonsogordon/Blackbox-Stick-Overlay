@@ -1444,7 +1444,7 @@ function installSettingTips(root=document){
   if(el.dataset.tip)return;
   // Ignore headings inside our own help panel.
   if(el.closest('#touchhelppanel'))return;
-  const key=(el.textContent||'').replace(/\\s+/g,' ').trim();
+  const key=(el.textContent||'').replace(/\s+/g,' ').trim();
   if(!key)return;
   const help=describeSetting(key);
   el.dataset.tip=help;el.title=help;
