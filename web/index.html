@@ -167,8 +167,8 @@ line.append(label,custom);host.append(line);const item={i,name,x:.05,y:.12+(tele
  control('Position Y (%)','flighttimery','range',{min:'0',max:'95',value:'9'});
  control('Size','flighttimersize','range',{min:'12',max:'75',value:'28'});
  control('Label text','flighttimertext','text',{value:'ARM TIME'});
- control('Value colour','flighttimercolor','color',{value:'#ffffff'});
- control('Label colour','flighttimerlabelcolor','color',{value:'#73e1da'});
+ control('Value colour','flighttimercolor','color',{value:betaActive()&&$('betatheme').value==='green'?'#74ff9e':'#ffffff'});
+ control('Label colour','flighttimerlabelcolor','color',{value:betaActive()&&$('betatheme').value==='green'?'#74ff9e':'#73e1da'});
  control('Show label','flighttimerlabel','checkbox',{checked:true});
  control('Apply visor curvature','flighttimercurve','checkbox',{checked:true});
  const note=document.createElement('div');note.id='flighttimerstatus';note.className='small';note.style.gridColumn='1/-1';note.textContent='Armed time when available, otherwise elapsed flight-log time.';grid.append(note);
