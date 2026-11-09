@@ -100,7 +100,7 @@ function radioFieldKind(name){
  if(/(^rssi$|rssivalue|rssipercent)/.test(n))return 'rssi';
  return null;
 }
-const telemetryGroupOrder=['Flight status','GPS & navigation','Battery & power','Radio & link','Altitude & attitude','Flight status','Advanced data'];
+const telemetryGroupOrder=['Flight status','GPS & navigation','Battery & power','Radio & link','Altitude & attitude','Advanced data'];
 function groupTelemetryFields(){
  const host=$('telemetryfields');
  const rows=Array.from(host.children).filter(x=>x.classList?.contains('element-entry'));
