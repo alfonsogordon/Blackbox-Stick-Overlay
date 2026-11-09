@@ -601,7 +601,7 @@ ctx.save();if(shape!=='cross'&&shape!=='plus'){ctx.beginPath();ctx.arc(px,py,rad
  // When enabled, stick widgets and HUD must share the same visor transform.
  const curveSticks=!!(flatSticks&&selectiveCurve&&windowStickCurve?.checked);
  if(curveSticks){
-  cutStickShapes(w,h);
+  cutStickShapes(w,h,t);
   ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;
   ctx.globalCompositeOperation='source-over';ctx.drawImage(flatSticks,0,0);
   ctx.restore();
@@ -614,7 +614,7 @@ ctx.save();if(shape!=='cross'&&shape!=='plus'){ctx.beginPath();ctx.arc(px,py,rad
   ctx.restore();
  }
  if(flatSticks&&!curveSticks){
-  cutStickShapes(w,h);
+  cutStickShapes(w,h,t);
   ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.drawImage(flatSticks,0,0);ctx.restore();
  }
  drawCustomOverlayImage(w,h);
@@ -623,10 +623,10 @@ ctx.save();if(shape!=='cross'&&shape!=='plus'){ctx.beginPath();ctx.arc(px,py,rad
  const finalOpacity=clamp(alpha,0,1)*masterOpacity;
  if(finalOpacity<1){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='destination-in';ctx.fillStyle='rgba(0,0,0,'+finalOpacity+')';ctx.fillRect(0,0,w,h);ctx.restore()}
  $('clock').textContent=(t/60|0)+':'+(t%60).toFixed(1).padStart(4,'0');if(!recording)$('scrub').value=total?Math.round(t/total*1000):0;drawEditingOutline()}
-function cutStickShapes(w,h){
+function cutStickShapes(w,h,t){
   ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;
   ctx.globalCompositeOperation='destination-out';ctx.fillStyle='#000';
-  applyElementMotion(time,w,h);
+  applyElementMotion(t,w,h);
   const sideBase=$('canvasformat').value==='sticks'?Math.min(h*.82,w*.38):Math.min(h*.28,w*.22);
   const outline=$('outlineshape').value;
   for(let i=0;i<2;i++){
