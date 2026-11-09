@@ -816,7 +816,7 @@ function drawBetaGraphics(w,h,t=0){
    ctx.clip('evenodd');
   }
   // Drive the HUD from recorded attitude when available, otherwise use recorded sticks.
-  const time=clamp(t-(+$('lead').value||0),0,duration);
+  const time=localTime; // Always show current telemetry, even when artwork motion is disabled.
   const sample=getSample(time);
   const names=telemetryNames.map(n=>n.toLowerCase().replace(/[^a-z0-9]/g,''));
   const field=(...keys)=>{for(const k of keys){const i=names.indexOf(k);if(i>=0){const v=telemetryAt(time,i);if(Number.isFinite(v))return v}}return null};
