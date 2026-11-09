@@ -12,7 +12,7 @@ export function createMovPng(frames,width,height,fps){
   if(!frames.length)throw Error('No video frames');
   if(width>65535||height>65535)throw Error('Dimensions exceed MOV limits');
   const timescale=600,delta=Math.round(timescale/fps),duration=delta*frames.length;
-  const sizes=frames.map(f=>f.byteLength),offsets=[];
+  const sizes=frames.map(f=>f.size??f.byteLength),offsets=[];
   const payloadBytes=sizes.reduce((a,b)=>a+b,0);
   if(payloadBytes+8>=0xffffffff)throw Error('MOV exceeds 4 GB; export a shorter section');
   const ftyp=atom('ftyp',str('qt  '),u32(0),str('qt  '));
