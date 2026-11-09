@@ -8,11 +8,11 @@ const str = s => enc.encode(s);
 const atom = (tag,...parts) => {const body=join(...parts);return join(u32(body.length+8),str(tag),body)};
 const zeros = n => new Uint8Array(n);
 const matrix = join(u32(65536),u32(0),u32(0),u32(0),u32(65536),u32(0),u32(0),u32(0),u32(1073741824));
-export function createMovPng(frames,width,height,fps){
-  if(!frames.length)throw Error('No video frames');
+export function movPngStructure(sizes,width,height,fps){
+  if(!sizes.length)throw Error('No video frames');
   if(width>65535||height>65535)throw Error('Dimensions exceed MOV limits');
-  const timescale=600,delta=Math.round(timescale/fps),duration=delta*frames.length;
-  const sizes=frames.map(f=>f.size??f.byteLength),offsets=[];
+  const timescale=600,delta=Math.round(timescale/fps),duration=delta*sizes.length;
+  const offsets=[];
   const payloadBytes=sizes.reduce((a,b)=>a+b,0);
   if(payloadBytes+8>=0xffffffff)throw Error('MOV exceeds 4 GB; export a shorter section');
   const ftyp=atom('ftyp',str('qt  '),u32(0),str('qt  '));
@@ -29,14 +29,19 @@ export function createMovPng(frames,width,height,fps){
   const compressor=join(Uint8Array.of(3),str('PNG'),zeros(28));
   const sampleEntry=join(zeros(6),u16(1),u16(0),u16(0),str('appl'),u32(0),u32(0),u16(width),u16(height),u32(0x00480000),u32(0x00480000),u32(0),u16(1),compressor,u16(32),u16(0xffff));
   const stsd=atom('stsd',u32(0),u32(1),atom('png ',sampleEntry));
-  const stts=atom('stts',u32(0),u32(1),u32(frames.length),u32(delta));
+  const stts=atom('stts',u32(0),u32(1),u32(sizes.length),u32(delta));
   const stsc=atom('stsc',u32(0),u32(1),u32(1),u32(1),u32(1));
-  const stsz=atom('stsz',u32(0),u32(0),u32(frames.length),...sizes.map(u32));
-  const stco=atom('stco',u32(0),u32(frames.length),...offsets.map(u32));
+  const stsz=atom('stsz',u32(0),u32(0),u32(sizes.length),...sizes.map(u32));
+  const stco=atom('stco',u32(0),u32(sizes.length),...offsets.map(u32));
   const stbl=atom('stbl',stsd,stts,stsc,stsz,stco);
   const minf=atom('minf',vmhd,dinf,stbl);
   const mdia=atom('mdia',mdhd,hdlr,minf);
   const trak=atom('trak',tkhd,mdia);
   const moov=atom('moov',mvhd,trak);
-  return new Blob([ftyp,mdatHeader,...frames,moov],{type:'video/quicktime'});
+  return {ftyp,mdatHeader,moov,payloadBytes};
+}
+export function createMovPng(frames,width,height,fps){
+ const {ftyp,mdatHeader,moov}=movPngStructure(frames.map(f=>f.size??f.byteLength),width,height,fps);
+ return new Blob([ftyp,mdatHeader,...frames,moov],{type:'video/quicktime'});
+}
 }
