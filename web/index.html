@@ -31,7 +31,7 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 .compact-header{margin-bottom:12px}.header-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;flex-wrap:wrap}.toolbox-back{display:inline-flex;align-items:center;gap:7px;width:auto;color:#79dcd7;text-decoration:none;font-size:13px;font-weight:650}.header-title{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.header-title h1{font-size:27px;margin:0;line-height:1.25}.header-version{font-size:12px;font-weight:700;color:#79dcd7;white-space:nowrap}.header-description{font-size:12px;color:#aab9d2;margin-left:auto}main{padding-top:18px}@media(max-width:1100px){.header-description{flex-basis:100%;margin-left:0}}@media(max-width:600px){.header-title h1{font-size:24px}.header-top .tag{font-size:10px}}
 .preview-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.preview-heading button{width:auto;padding:6px 12px;font-size:12px}.preview-expanded main{max-width:1600px}.preview-expanded .layout{grid-template-columns:minmax(420px,490px) minmax(0,1fr)}@media(max-width:980px){.preview-expanded .layout{grid-template-columns:minmax(0,1fr)}}
 /* Keep scroll functionality without visible scrollbar tracks. */html,body,.layout>section.panel:nth-child(2),#telemetryfields{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollbar,body::-webkit-scrollbar,.layout>section.panel:nth-child(2)::-webkit-scrollbar,#telemetryfields::-webkit-scrollbar{display:none;width:0;height:0}
-</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.48</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="2"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="2"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
+</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.48 · ELEMENTS V2 TEST</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="2"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="2"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
 <details id="customthemepanel" class="element-custom" style="margin-top:8px" hidden><summary>Create / manage custom theme</summary>
 <div class="small" style="margin:8px 0">Upload transparent PNG or WebP artwork as your HUD graphics. Choose custom theme colours below, adjust the image and save it as a reusable theme. Artwork stays in your browser unless you export the theme.</div>
 <label>Custom artwork (PNG / WebP)</label><input id="customthemefile" type="file" accept=".png,.webp,image/png,image/webp">
@@ -197,7 +197,7 @@ line.append(label,custom);host.append(line);const item={i,name,x:.05,y:.12+(tele
   telemetryWidgets.push(cellItem);
  }
  });
- groupTelemetryFields();filterTelemetryFields();if(betaActive()&&$('betapreset').value!=='custom')applyBetaOsdFields()}
+ groupTelemetryFields();filterTelemetryFields();if(betaActive()&&$('betapreset').value!=='custom')applyBetaOsdFields();queueMicrotask(()=>window.refreshElementManagerTest?.())}
 function filterTelemetryFields(){
  const q=$('telemetrysearch').value.trim().toLowerCase();
  for(const section of $('telemetryfields').querySelectorAll('.telemetry-group')){
@@ -3319,6 +3319,121 @@ let windowStickCurve=null,windowQuadCurve=null;
  telemetry.append(host);
  $('betaPanel').after(telemetry);
 })();
+
+/* TEST BRANCH ONLY: flat element manager. Reuse original DOM controls so the
+   element drawing, user presets and export paths remain identical to main. */
+(function initElementManagerV2(){
+ const original=document.querySelector('.element-system');
+ if(!original)return;
+ const root=document.createElement('div');root.id='elementmanagerv2';
+ const css=document.createElement('style');css.textContent=`
+ #elementmanagerv2{display:grid;gap:10px;margin:12px 0}
+ #elementmanagerv2 .em-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+ #elementmanagerv2 .em-flag{font-size:10px;color:#80e5e0;border:1px solid #357985;border-radius:20px;padding:3px 9px}
+ #elementmanagerv2 .em-search{width:100%;box-sizing:border-box;background:#1c2f43;border:1px solid #415a72;color:#f0f6ff;border-radius:10px;padding:12px;font-size:13px}
+ #elementmanagerv2 .em-filters{display:flex;gap:6px;flex-wrap:wrap}
+ #elementmanagerv2 .em-filters button{width:auto!important;min-width:66px!important;padding:7px 12px!important;background:#15293d;border:1px solid #3b546b;border-radius:9px;color:#dbeaf5;font-size:12px}
+ #elementmanagerv2 .em-filters button[aria-pressed="true"]{background:#245367;border-color:#65d4d9;color:#fff}
+ #elementmanagerv2 .em-count{font-size:12px;color:#9ab2c7}
+ #elementmanagerv2 .em-list{display:grid;gap:6px}
+ #elementmanagerv2 .element-entry{margin:0!important;padding:0!important;border:1px solid #3a5267;border-radius:11px;background:#102235;overflow:hidden}
+ #elementmanagerv2 .element-entry.em-active{border-color:#477a8b;background:#152c3d}
+ #elementmanagerv2 .em-row{display:flex;align-items:center;gap:5px;min-height:48px}
+ #elementmanagerv2 .em-row>label{flex:1;min-width:0;margin:0!important;padding:10px 9px 10px 12px!important;display:flex;gap:7px;align-items:center;font-size:13px;cursor:pointer}
+ #elementmanagerv2 .em-row>label input[type="checkbox"]{width:auto!important;flex-shrink:0}
+ #elementmanagerv2 .em-category{font-size:10px;color:#91a8bc;white-space:nowrap}
+ #elementmanagerv2 .em-edit{margin:0 9px 0 3px!important;padding:6px 9px!important;width:auto!important;font-size:11px!important;background:#1b3a4b;border:1px solid #547282;border-radius:8px;color:#d2f7f7;white-space:nowrap}
+ #elementmanagerv2 .em-edit[hidden],#elementmanagerv2 .em-panel[hidden],#elementmanagerv2 .em-empty[hidden]{display:none!important}
+ #elementmanagerv2 .em-panel{padding:9px 12px 14px;border-top:1px solid #3c5669}
+ #elementmanagerv2 .em-panel>.element-custom{margin:0!important;border:0!important;background:transparent!important;padding:0!important}
+ #elementmanagerv2 .em-panel>.element-custom>summary{display:none!important}
+ #elementmanagerv2 .em-panel>.element-custom{display:block!important}
+ #elementmanagerv2 .em-empty{padding:18px;text-align:center;border:1px dashed #3b5368;border-radius:9px;color:#a3bcd0;font-size:12px}
+ `;document.head.append(css);
+ const title=document.createElement('div');title.className='em-head';title.innerHTML='<strong>Elements</strong><span class="em-flag">TEST V2</span>';
+ const search=document.createElement('input');search.type='search';search.className='em-search';search.placeholder='Search all available elements…';
+ const filters=document.createElement('div');filters.className='em-filters';
+ const count=document.createElement('div');count.className='em-count';
+ const list=document.createElement('div');list.className='em-list';
+ const empty=document.createElement('div');empty.className='em-empty';empty.hidden=true;empty.textContent='No matching elements.';
+ let filter='all',expanded=null;
+ for(const [key,label] of [['all','All'],['enabled','Enabled'],['disabled','Disabled']]){
+  const button=document.createElement('button');button.type='button';button.textContent=label;
+  button.dataset.filter=key;button.setAttribute('aria-pressed',String(key==='all'));
+  button.addEventListener('click',()=>{filter=key;for(const b of filters.children)b.setAttribute('aria-pressed',String(b.dataset.filter===key));redraw()});
+  filters.append(button);
+ }
+ const advanced=document.createElement('details');advanced.className='element-custom';
+ advanced.append(Object.assign(document.createElement('summary'),{textContent:'Advanced layout tools & master opacity'}));
+ advanced.append(original);
+ root.append(title,search,filters,count,list,empty,advanced);
+ const menu=advanced.closest('details.advanced');
+ if(menu)menu.prepend(root);else $('betaPanel').after(root);
+ // Original wrappers remain as data hosts for dynamically loaded log fields.
+ for(const id of ['flightdatasubmenu','gaugesmenu']){const node=$(id);if(node)node.hidden=true}
+ const entries=new Map();
+ function mount(key,checkbox,category,title){
+  if(!checkbox)return;
+  const row=checkbox.closest('.element-entry');if(!row)return;
+  const before=entries.get(key);
+  if(before&&before.checkbox===checkbox)return;
+  if(before){before.row.remove();entries.delete(key)}
+  const label=row.querySelector(':scope > label');
+  if(!label)return;
+  const originalDetails=row.querySelector(':scope > details');
+  const header=document.createElement('div');header.className='em-row';
+  const group=document.createElement('span');group.className='em-category';group.textContent=category;
+  const button=document.createElement('button');button.type='button';button.className='em-edit';button.textContent='Customise';
+  const panel=document.createElement('div');panel.className='em-panel';panel.hidden=true;
+  if(originalDetails){originalDetails.open=true;panel.append(originalDetails)}
+  header.append(label,group,button);row.replaceChildren(header,panel);
+  button.addEventListener('click',()=>{expanded=expanded===key?null:key;redraw()});
+  checkbox.addEventListener('change',()=>{if(expanded===key&&!checkbox.checked)expanded=null;redraw()});
+  entries.set(key,{row,checkbox,category,title,panel,button});
+ }
+ function collect(){
+  // Remove old log rows on BBL/CSV reload before adding new ones.
+  const active=new Set(telemetryWidgets.map(x=>x.check));
+  for(const [key,e] of entries)if(key.startsWith('data:')&&!active.has(e.checkbox)){e.row.remove();entries.delete(key)}
+  const stick=entries.get('stick')?.checkbox||Array.from(original.querySelectorAll('label')).find(x=>x.textContent?.trim()==='Stick overlay')?.querySelector('input[type="checkbox"]');
+  mount('stick',stick,'Sticks','Stick overlay');
+  mount('quad',$('quadshow'),'Flight data','Quad visualiser');
+  mount('timer',$('flighttimershow'),'Flight status','Armed flight timer');
+  mount('pack',$('packgaugeshow'),'Battery & power','Aircraft battery pack');
+  for(const kind of aviationGaugeKinds){
+   const input=$('av'+kind+'show');
+   if(input)mount('av:'+kind,input,'Aviation instruments',input.closest('.element-entry')?.querySelector(':scope > label')?.textContent.trim()||kind);
+  }
+  for(const item of telemetryWidgets)mount('data:'+item.i+':'+(item.cellVoltage?'cell':'main'),item.check,item.cellVoltage?'Battery & power':telemetryGroup(item.name),item.cellVoltage?'Average cell voltage':friendlyTelemetryName(item.name));
+ }
+ function redraw(){
+  collect();
+  const sorted=Array.from(entries.values()).sort((a,b)=>Number(b.checkbox.checked)-Number(a.checkbox.checked)||a.title.localeCompare(b.title));
+  let enabled=0,visible=0;
+  for(const entry of sorted){
+   list.append(entry.row);
+   const on=!!entry.checkbox.checked;if(on)enabled++;
+   const query=search.value.trim().toLowerCase();
+   const matches=(entry.title+' '+entry.category).toLowerCase().includes(query);
+   const show=matches&&(filter==='all'||(filter==='enabled'&&on)||(filter==='disabled'&&!on));
+   entry.row.hidden=!show;entry.row.style.display=show?'':'none';if(show)visible++;
+   entry.row.classList.toggle('em-active',on);
+   entry.button.hidden=!on;
+   const open=on&&expanded!==null&&Array.from(entries.keys()).find(k=>entries.get(k)===entry)===expanded;
+   entry.panel.hidden=!open;entry.button.textContent=open?'Close':'Customise';
+  }
+  count.textContent=enabled+' enabled · '+entries.size+' available';
+  empty.hidden=visible!==0;
+ }
+ search.addEventListener('input',redraw);
+ window.refreshElementManagerTest=redraw;
+ document.addEventListener('change',event=>{
+  if(event.target.closest('#elementmanagerv2')||['betapreset','betatheme'].includes(event.target.id))redraw();
+ });
+ requestAnimationFrame(redraw);
+ setTimeout(redraw,60);
+})();
+
 // Element-level customisation keeps the main menus compact.
 const themeHudDefaults={classic:100,cyan:100,amber:100,ice:100,green:100,sunset:100,violet:100};
 function syncThemeElementControls(){
