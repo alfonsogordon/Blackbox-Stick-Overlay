@@ -398,7 +398,16 @@ function aviationField(kind){
  if(kind==='altitude'||kind==='vertical')return telemetryWidgets.find(item=>item.spec?.kind==='distance'&&/(gpsaltitude|baroalt|gpsalt|baroaltitude|altitude)/.test(norm(item.name)));
  if(kind==='heading')return find(/(gpsgroundcourse|groundcourse|gpstrack|gpsheading|heading2|headingyaw|yawangle|^heading$)/);
  // Prefer explicit magnetic heading, never treat raw magnetometer vector axes as degrees.
- if(kind==='gpscompass')return find(/^(compassheading|magheading|magneticheading|headingmag|magneticbearing|magyaw|magcourse)$/)||find(/^(gpsgroundcourse|groundcourse|gpscourse|gpstrack|gpsheading)$/);
+ if(kind==='gpscompass'){
+  const explicit=find(/^(compassheading|magheading|magneticheading|headingmag|magneticbearing|magyaw|magcourse)$/);
+  if(explicit)return explicit;
+  // Betaflight logs often record raw magADC[0..2] plus fused heading[2],
+  // rather than a separate magnetic heading channel. Use the fused heading
+  // only when magnetometer channels are present; raw magADC is not an angle.
+  const magLogged=find(/^magadc0$/)&&find(/^magadc1$/)&&find(/^magadc2$/);
+  if(magLogged){const fused=find(/^heading2$/);if(fused)return fused}
+  return find(/^(gpsgroundcourse|groundcourse|gpscourse|gpstrack|gpsheading)$/);
+ }
  if(kind==='turn')return find(/(gyroadc2|gyroscaled2|gyrosmooth2|gyroyaw|yawrate|gyroz)/);
  return null;
 }
@@ -435,9 +444,10 @@ function aviationCompassAngleAt(item,at){
  if(raw===null||!Number.isFinite(raw))return null;
  const source=item.unit?.value||'raw',field=String(item.name).toLowerCase().replace(/[^a-z0-9]/g,'');
  const magnetic=/^(compassheading|magheading|magneticheading|headingmag|magneticbearing|magyaw|magcourse)$/.test(field);
- // Binary Betaflight GPS ground course is in 0.1° units; CSV may use degrees.
- const factor=source==='degrees'?1:source==='radians'?180/Math.PI:source==='decidegrees'?.1:binaryMode&&!magnetic?.1:1;
- return {value:((raw*factor)%360+360)%360,unit:'°',label:magnetic?'MAG HDG':'GPS COG'};
+ const fused=field==='heading2';
+ // Betaflight heading[2] is radians; binary GPS ground course is decidegrees.
+ const factor=fused?180/Math.PI:source==='degrees'?1:source==='radians'?180/Math.PI:source==='decidegrees'?.1:binaryMode&&!magnetic?.1:1;
+ return {value:((raw*factor)%360+360)%360,unit:'°',label:fused?'MAG/ATT':magnetic?'MAG HDG':'GPS COG'};
 }
 function aviationReading(kind,t){
  const at=clamp(t-(Number($('lead').value)||0),0,duration);
@@ -845,7 +855,7 @@ canvas.addEventListener('pointermove',e=>{
  if(!draggedAviation)return;
  const kind=draggedAviation,[x,y]=elementPointerCoordinates(e),w=canvas.width,h=canvas.height;
  if(aviationResizing){
-  const b=aviationGaugeBounds(kind,w,h),factor=kind==='gpscompass'&&$('avgpscompassdisplay')?.value==='bar'?.145*2.6:.145;
+  const b=aviationGaugeBounds(kind,w,h),factor=(kind==='gpscompass'&&$('avgpscompassdisplay')?.value==='bar')?(0.145*2.6):0.145;
   const newSize=Math.max((x*w-b.x)/factor,(y*h-b.y)/(.145*.68))*100/w;
   $('av'+kind+'size').value=Math.round(clamp(newSize,40,200));
  }else{
@@ -1535,7 +1545,7 @@ const settingHelp={
  'Attitude indicator':'Artificial horizon using logged roll and pitch, with blue sky and brown ground. Requires recorded attitude values; it does not estimate attitude from stick inputs.',
  'Altimeter':'Analogue-style altitude instrument driven by recorded GPS/barometric altitude, if available.',
  'Heading indicator':'Compass-style instrument driven by logged heading or GPS course; GPS course may differ from nose direction.',
-  'GPS compass · course over ground':'Uses explicitly logged magnetic heading when available, otherwise GPS course (travel direction). Choose round or bar display and tune smoothing.',
+  'GPS compass · course over ground':'Uses recorded magnetic heading, or fused attitude heading when magnetometer channels are logged; otherwise GPS course (direction of travel). Offers a round or scrolling bar display and smoothing.',
  'Turn coordinator':'Turn-style indicator using available gyro/attitude data. Slip ball is a decorative neutral reference, not measured sideslip.',
  'Vertical speed (VSI)':'Climb/descent rate estimated from logged altitude changes. Readings can be noisy when GPS altitude is noisy.',
  'Airspeed-style · GPS ground speed':'Airspeed-inspired face displaying GPS ground speed, not airspeed through the surrounding air.',
@@ -2966,7 +2976,7 @@ let windowStickCurve=null,windowQuadCurve=null;
    altitude:'Altimeter driven by GPS or barometric altitude.',
    turn:'Turn coordinator uses recorded yaw rate/gyro and roll attitude where available.',
    heading:'Heading indicator uses recorded heading or GPS course.',
-   gpscompass:'Prefers genuine magnetic heading when logged; otherwise GPS course over ground (direction of travel). Choose round or scrolling bar and adjust smoothing. Displays NO DATA if neither is available.',
+   gpscompass:'Prefers recorded magnetic heading, including fused heading when magnetometer channels are logged, otherwise GPS course over ground (travel direction). Select round or scrolling bar and adjust smoothing.',
    vertical:'Vertical speed from recorded altitude changes.'
   })[kind];
   grid.append(note);detail.append(grid);row.append(detail);gauges.append(row);
