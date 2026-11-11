@@ -12,8 +12,8 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: web-overlay-deployment
-  cancel-in-progress: false
+  group: web-overlay-deployment-v2
+  cancel-in-progress: true
 jobs:
   deploy:
     runs-on: ubuntu-latest
