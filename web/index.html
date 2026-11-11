@@ -3376,7 +3376,7 @@ let windowStickCurve=null,windowQuadCurve=null;
  const backing=document.createElement('div');backing.id='elementmanagerv2backing';backing.hidden=true;
  backing.append(original);
  root.append(title,search,filters,count,list,empty,general,backing);
- if(menu){menu.querySelector(':scope > summary').textContent='Elements · one list (TEST)';menu.prepend(root)}
+ if(menu){const summary=menu.querySelector(':scope > summary');summary.textContent='Elements · one list (TEST)';summary.after(root)}
  else $('betaPanel').after(root);
  // The backing DOM is kept for telemetry rebuilds, but no old category or
  // instrument submenu is ever presented to the user.
@@ -3396,7 +3396,7 @@ let windowStickCurve=null,windowQuadCurve=null;
   const panel=document.createElement('div');panel.className='em-panel';panel.hidden=true;
   if(originalDetails){originalDetails.open=true;panel.append(originalDetails)}
   header.append(label,group,button);row.replaceChildren(header,panel);
-  button.addEventListener('click',()=>{expanded=expanded===key?null:key;redraw()});
+  button.addEventListener('click',()=>{expanded=expanded===key?null:key;if(originalDetails)originalDetails.open=true;redraw()});
   checkbox.addEventListener('change',()=>{if(expanded===key&&!checkbox.checked)expanded=null;redraw()});
   entries.set(key,{row,checkbox,category,title,panel,button});
  }
@@ -3430,6 +3430,7 @@ let windowStickCurve=null,windowQuadCurve=null;
    entry.button.hidden=!on;
    const open=on&&expanded!==null&&Array.from(entries.keys()).find(k=>entries.get(k)===entry)===expanded;
    entry.panel.hidden=!open;entry.button.textContent=open?'Close':'Customise';
+   if(open)for(const detail of entry.panel.querySelectorAll(':scope > details'))detail.open=true;
   }
   count.textContent=enabled+' enabled · '+entries.size+' available';
   empty.hidden=visible!==0;
@@ -3441,6 +3442,9 @@ let windowStickCurve=null,windowQuadCurve=null;
  });
  requestAnimationFrame(redraw);
  setTimeout(redraw,60);
+ // The app closes all details at the end of startup; reopen the test menu
+ // once that completes, so the redesigned single list is unmistakably visible.
+ window.addEventListener('load',()=>{if(menu)menu.open=true;redraw()});
 })();
 
 // Element-level customisation keeps the main menus compact.
