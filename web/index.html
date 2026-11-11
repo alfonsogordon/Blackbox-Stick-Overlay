@@ -594,6 +594,46 @@ function drawAviationGauge(kind,t,w,h,curvePass=null){
  ctx.lineWidth=Math.max(1,b.w*.013);ctx.stroke();
  ctx.restore();
 }
+// Scrolling compass ribbon: a fixed centre index, with magnetic heading or GPS
+// course determining the positions of the cardinal markers and graduations.
+function drawAviationCompassBar(b,data,style){
+ const green=style==='green'||(style==='auto'&&betaActive()&&$('betatheme').value==='green');
+ const ink=green?'#8dffa0':'#f0f2ee',muted=green?'#759a80':'#92999f';
+ const shell=green?'#0a2110':'#171c21',accent=green?'#b8ffba':'#ffb568';
+ ctx.save();ctx.translate(b.x,b.y);
+ ctx.fillStyle=shell;ctx.strokeStyle=green?'#568b62':'#90979c';
+ ctx.lineWidth=Math.max(1.5,b.h*.018);
+ ctx.beginPath();ctx.roundRect(0,0,b.w,b.h,b.h*.12);ctx.fill();ctx.stroke();
+ ctx.save();ctx.beginPath();ctx.rect(b.w*.04,b.h*.25,b.w*.92,b.h*.69);ctx.clip();
+ if(data){
+  const pixels=b.w/125,heading=data.value;
+  for(let step=-18;step<=18;step++){
+   const tick=Math.round(heading/5)*5+step*5;
+   const delta=tick-heading;
+   if(Math.abs(delta)>78)continue;
+   const x=b.w*.5+delta*pixels,deg=((tick%360)+360)%360;
+   const major=deg%30===0,cardinal=deg%90===0;
+   ctx.beginPath();ctx.moveTo(x,b.h*.28);ctx.lineTo(x,b.h*(major?.51:.42));
+   ctx.strokeStyle=major?ink:muted;ctx.lineWidth=Math.max(1,b.h*(major?.024:.012));ctx.stroke();
+   if(major){
+    ctx.font='600 '+Math.max(9,b.h*.15)+'px monospace';
+    ctx.fillStyle=cardinal?accent:ink;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(cardinal?['N','E','S','W'][deg/90]:String(deg).padStart(3,'0'),x,b.h*.66);
+   }
+  }
+ }else{
+  ctx.font='600 '+Math.max(11,b.h*.15)+'px monospace';ctx.fillStyle=muted;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('NO COMPASS / GPS COURSE',b.w*.5,b.h*.65);
+ }
+ ctx.restore();
+ ctx.strokeStyle=accent;ctx.lineWidth=Math.max(2,b.h*.04);
+ ctx.beginPath();ctx.moveTo(b.w*.5,b.h*.21);ctx.lineTo(b.w*.5,b.h*.50);ctx.stroke();
+ ctx.fillStyle=ink;ctx.font='600 '+Math.max(9,b.h*.13)+'px monospace';
+ ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(data?.label||'COMPASS',b.w*.06,b.h*.14);
+ ctx.textAlign='right';ctx.fillText(data?String(Math.round(data.value)%360).padStart(3,'0')+'°':'---',b.w*.94,b.h*.14);
+ ctx.restore();
+}
 function drawAviationGauges(t,w,h,curvePass=null){
  for(const kind of aviationGaugeKinds)drawAviationGauge(kind,t,w,h,curvePass);
 }
