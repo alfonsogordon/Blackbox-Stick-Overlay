@@ -3363,12 +3363,13 @@ let windowStickCurve=null,windowQuadCurve=null;
   button.addEventListener('click',()=>{filter=key;for(const b of filters.children)b.setAttribute('aria-pressed',String(b.dataset.filter===key));redraw()});
   filters.append(button);
  }
+ const menu=original.closest('details.advanced');
  const advanced=document.createElement('details');advanced.className='element-custom';
  advanced.append(Object.assign(document.createElement('summary'),{textContent:'Advanced layout tools & master opacity'}));
  advanced.append(original);
  root.append(title,search,filters,count,list,empty,advanced);
- const menu=advanced.closest('details.advanced');
- if(menu)menu.prepend(root);else $('betaPanel').after(root);
+ if(menu){menu.querySelector(':scope > summary').textContent='Elements · new menu (TEST)';menu.prepend(root)}
+ else $('betaPanel').after(root);
  // Original wrappers remain as data hosts for dynamically loaded log fields.
  for(const id of ['flightdatasubmenu','gaugesmenu']){const node=$(id);if(node)node.hidden=true}
  const entries=new Map();
