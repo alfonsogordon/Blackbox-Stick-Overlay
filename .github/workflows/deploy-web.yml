@@ -36,8 +36,10 @@ jobs:
             sleep $((attempt * 5))
           done
           cd web/vendor/blackbox
+          # Install only the parser's build dependencies, not Explorer's entire app.
+          printf '%s\n' '{"private":true,"type":"module","dependencies":{"semver":"^7.7.4","esbuild":"^0.25.0"}}' > package.json
           for attempt in 1 2 3; do
-            if npm install --no-save --package-lock=false semver esbuild; then
+            if npm install --no-package-lock --no-audit --no-fund; then
               break
             fi
             if [ "$attempt" = 3 ]; then exit 1; fi
