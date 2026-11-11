@@ -31,7 +31,7 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 .compact-header{margin-bottom:12px}.header-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;flex-wrap:wrap}.toolbox-back{display:inline-flex;align-items:center;gap:7px;width:auto;color:#79dcd7;text-decoration:none;font-size:13px;font-weight:650}.header-title{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.header-title h1{font-size:27px;margin:0;line-height:1.25}.header-version{font-size:12px;font-weight:700;color:#79dcd7;white-space:nowrap}.header-description{font-size:12px;color:#aab9d2;margin-left:auto}main{padding-top:18px}@media(max-width:1100px){.header-description{flex-basis:100%;margin-left:0}}@media(max-width:600px){.header-title h1{font-size:24px}.header-top .tag{font-size:10px}}
 .preview-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.preview-heading button{width:auto;padding:6px 12px;font-size:12px}.preview-expanded main{max-width:1600px}.preview-expanded .layout{grid-template-columns:minmax(420px,490px) minmax(0,1fr)}@media(max-width:980px){.preview-expanded .layout{grid-template-columns:minmax(0,1fr)}}
 /* Keep scroll functionality without visible scrollbar tracks. */html,body,.layout>section.panel:nth-child(2),#telemetryfields{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollbar,body::-webkit-scrollbar,.layout>section.panel:nth-child(2)::-webkit-scrollbar,#telemetryfields::-webkit-scrollbar{display:none;width:0;height:0}
-</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.39</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="2"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="2"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
+</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.40</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="2"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="2"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
 <details id="customthemepanel" class="element-custom" style="margin-top:8px" hidden><summary>Create / manage custom theme</summary>
 <div class="small" style="margin:8px 0">Upload transparent PNG or WebP artwork as your HUD graphics. Choose custom theme colours below, adjust the image and save it as a reusable theme. Artwork stays in your browser unless you export the theme.</div>
 <label>Custom artwork (PNG / WebP)</label><input id="customthemefile" type="file" accept=".png,.webp,image/png,image/webp">
@@ -1169,7 +1169,7 @@ function captureUserPreset(){
   if(el.type==='file'||['userpresets','telemetrysearch','scrub'].includes(el.id))continue;
   controls[el.id]=el.type==='checkbox'?el.checked:el.value;
  }
- return {controls,sticks:stickLayout.map(x=>({...x})),quad:{...quadLayout},
+ return {controls,customTheme:controls.betatheme==='custom'?captureCustomTheme():null,sticks:stickLayout.map(x=>({...x})),quad:{...quadLayout},
  widgets:telemetryWidgets.map(x=>({name:x.name,x:x.x,y:x.y,alignRight:!!x.alignRight,centeredArrow:!!x.centeredArrow,enabled:x.check.checked,
  controls:Object.fromEntries(['rename','showLabel','labelColor','valueColor','size','font','unit','output','decimals','iconSelect','curveToggle','cellCount','cellMode','cellColour','relative','arrowMode'].filter(k=>x[k]).map(k=>[k,x[k].type==='checkbox'?x[k].checked:x[k].value]))}))};
 }
@@ -1179,6 +1179,8 @@ function applyUserPreset(p,name){
   const el=$(id);if(!el||el.type==='file'||id==='userpresets')continue;
   if(el.type==='checkbox')el.checked=!!v;else el.value=v;
  }
+ if(p.controls?.betatheme==='custom'&&p.customTheme)applyCustomTheme(p.customTheme);
+ $('customthemepanel').hidden=$('betatheme').value!=='custom';
  if(p.sticks?.length===2)stickLayout=p.sticks.map(x=>({...x}));
  if(p.quad)Object.assign(quadLayout,p.quad);
  const matchingUsed=new Set();
@@ -2170,6 +2172,125 @@ function drawMotionLayer(t,w,h,paint){
  ctx.save();applyElementMotion(t,w,h);
  paint();ctx.restore();
 }
+// Custom artwork is drawn in the normal HUD pass before visor curvature,
+// perspective and glow, ensuring custom themes share the built-in export pipeline.
+const customThemeStoreKey='blackbox-overlay-custom-themes-v1';
+const customThemeControlIds=['hudprimary','hudaccent','hudlinktelemetry','hudmotion','hudmotionsource','hudmotionstrength','hudopacity','betaglow','betacurve','betaperspective','customthemewidth','customthemeopacity','customthemex','customthemey','customthememove','betagraphics'];
+let customThemeArt=null,customThemeData='';
+function customThemeStatus(message){$('customthemestatus').textContent=message}
+function restoreCustomThemeArt(src){
+ const next=typeof src==='string'&&/^data:image\\/(png|webp);base64,[a-z0-9+/=]+$/i.test(src)?src:'';
+ customThemeData=next;customThemeArt=null;
+ if(!next){update();return}
+ const img=new Image();
+ img.onload=()=>{if(customThemeData!==next)return;customThemeArt=img;update()};
+ img.onerror=()=>{if(customThemeData===next){customThemeData='';customThemeStatus('Could not decode artwork.');update()}};
+ img.src=next;
+}
+function drawCustomThemeArtwork(w,h,t){
+ if(!customThemeArt)return;
+ const width=w*clamp(Number($('customthemewidth').value)/100,.1,2);
+ const height=width*customThemeArt.naturalHeight/customThemeArt.naturalWidth;
+ const x=w*(Number($('customthemex').value)/100),y=h*(Number($('customthemey').value)/100);
+ const alpha=clamp(Number($('customthemeopacity').value)/100,0,1)*clamp(Number($('hudopacity').value)/100,0,1);
+ ctx.save();ctx.globalAlpha=alpha;
+ if($('customthememove').checked&&$('hudmotion').checked){
+  const motion=quadHudMotion(t),strength=clamp(Number($('hudmotionstrength').value)/100,0,2);
+  ctx.translate(x+motion.roll*strength*w*.007,y+motion.pitch*strength*h*.012);
+  ctx.rotate(-motion.roll*strength*.029);
+  ctx.drawImage(customThemeArt,-width/2,-height/2,width,height);
+ }else ctx.drawImage(customThemeArt,x-width/2,y-height/2,width,height);
+ ctx.restore();
+}
+function readCustomThemes(){
+ try{const v=JSON.parse(localStorage.getItem(customThemeStoreKey)||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{}}catch{return {}}
+}
+function refreshCustomThemes(){
+ const select=$('customthemelist'),selected=select.value,themes=readCustomThemes();
+ select.replaceChildren(new Option('Choose saved theme…',''));
+ for(const name of Object.keys(themes).sort())select.add(new Option(name,name));
+ if(Object.prototype.hasOwnProperty.call(themes,selected))select.value=selected;
+}
+function captureCustomTheme(){
+ const controls={};
+ for(const id of customThemeControlIds){
+  const el=$(id);if(el)controls[id]=el.type==='checkbox'?el.checked:el.value;
+ }
+ return {controls,artwork:customThemeData};
+}
+function applyCustomTheme(theme){
+ if(!theme||typeof theme!=='object')return;
+ $('betatheme').value='custom';$('customthemepanel').hidden=false;
+ for(const id of customThemeControlIds){
+  const el=$(id),value=theme.controls?.[id];
+  if(!el||value===undefined)continue;
+  if(el.type==='checkbox')el.checked=!!value;else el.value=value;
+ }
+ restoreCustomThemeArt(theme.artwork||'');
+ syncHudTelemetryColours();update();
+}
+$('customthemefile').addEventListener('change',async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ try{
+  if(!['image/png','image/webp'].includes(file.type))throw Error('Please use PNG or WebP.');
+  if(file.size>1.5*1048576)throw Error('Artwork exceeds 1.5 MB. Compress the image before uploading.');
+  const src=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('Could not read image'));reader.readAsDataURL(file)});
+  restoreCustomThemeArt(src);$('betagraphics').checked=true;
+  customThemeStatus('Artwork loaded. Position it, adjust visor/movement, then save.');
+ }catch(err){customThemeStatus(err.message)}
+ finally{e.target.value=''}
+});
+for(const id of ['customthemewidth','customthemeopacity','customthemex','customthemey','customthememove'])$(id).addEventListener('input',update);
+$('customthemeclear').addEventListener('click',()=>{restoreCustomThemeArt('');customThemeStatus('Custom artwork cleared.')});
+$('customthemesave').addEventListener('click',()=>{
+ const name=prompt('Name your custom theme:',$('customthemelist').value||'My Theme')?.trim();
+ if(!name)return;
+ const themes=readCustomThemes();
+ if(themes[name]&&!confirm('Replace custom theme '+name+'?'))return;
+ themes[name]=captureCustomTheme();
+ try{localStorage.setItem(customThemeStoreKey,JSON.stringify(themes));refreshCustomThemes();$('customthemelist').value=name;customThemeStatus('Saved '+name+'. Export a JSON file to share it.')}
+ catch(e){customThemeStatus('Save failed: '+e.message+'. Try a smaller image.')}
+});
+$('customthemeload').addEventListener('click',()=>{
+ const name=$('customthemelist').value,theme=readCustomThemes()[name];
+ if(!theme){customThemeStatus('Select a saved theme first.');return}
+ applyCustomTheme(theme);customThemeStatus('Loaded: '+name);
+});
+$('customthemedelete').addEventListener('click',()=>{
+ const name=$('customthemelist').value;if(!name||!confirm('Delete theme '+name+'?'))return;
+ const themes=readCustomThemes();delete themes[name];
+ localStorage.setItem(customThemeStoreKey,JSON.stringify(themes));
+ refreshCustomThemes();customThemeStatus('Deleted saved theme: '+name);
+});
+function downloadCustomTheme(name,theme){
+ const json=JSON.stringify({format:'fpv-overlay-studio-theme',version:1,name,theme});
+ const blob=new Blob([json],{type:'application/json'}),url=URL.createObjectURL(blob);
+ const anchor=document.createElement('a');anchor.href=url;
+ anchor.download='overlay-theme-'+name.toLowerCase().replace(/[^a-z0-9_-]+/g,'-')+'.json';
+ anchor.click();setTimeout(()=>URL.revokeObjectURL(url),15000);
+}
+$('customthemeexport').addEventListener('click',()=>{
+ const name=$('customthemelist').value||'My Theme',theme=readCustomThemes()[name]||captureCustomTheme();
+ downloadCustomTheme(name,theme);customThemeStatus('Exported '+name+'. JSON includes the embedded artwork.');
+});
+$('customthemeimport').addEventListener('click',()=>$('customthemeimportfile').click());
+$('customthemeimportfile').addEventListener('change',async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ try{
+  if(file.size>3*1048576)throw Error('Theme file exceeds 3 MB.');
+  const payload=JSON.parse(await file.text());
+  if(payload.format!=='fpv-overlay-studio-theme'||payload.version!==1||!payload.theme||typeof payload.theme.controls!=='object')throw Error('Unsupported theme file.');
+  const name=String(payload.name||'Imported Theme').trim().slice(0,80)||'Imported Theme';
+  if(payload.theme.artwork&&!/^data:image\\/(png|webp);base64,[a-z0-9+/=]+$/i.test(payload.theme.artwork))throw Error('Unsupported artwork.');
+  const themes=readCustomThemes();
+  if(themes[name]&&!confirm('Replace saved theme '+name+'?'))return;
+  themes[name]=payload.theme;localStorage.setItem(customThemeStoreKey,JSON.stringify(themes));
+  refreshCustomThemes();$('customthemelist').value=name;
+  applyCustomTheme(payload.theme);customThemeStatus('Imported: '+name);
+ }catch(err){customThemeStatus('Import failed: '+err.message)}
+ finally{e.target.value=''}
+});
+refreshCustomThemes();
 function drawBetaGraphics(w,h,t=0){
  // Custom themes are an independent image layer, including portrait layouts.
  // Built-in theme rendering below remains completely unchanged.
