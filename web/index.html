@@ -40,7 +40,13 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 .timeline-arm-flag.armed{color:#6aff9d}
 .timeline-arm-flag.disarmed{color:#ffb778}
 .timeline-arm-flag:focus-visible{outline:2px solid #fff;outline-offset:1px;border-radius:3px}
-</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.49</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="2"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="2"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
+</style><style id="overlay-resize-ui">
+#elementselection{pointer-events:none!important}
+#elementselection.selection-pinned{border:2px solid #76e4ee!important;box-shadow:0 0 0 1px #051923,0 0 0 4px #76e4ee22!important}
+#elementselection .overlay-corner-handle{position:absolute;right:-12px;bottom:-12px;width:24px;height:24px;border:2px solid #0b2638;border-radius:7px;background:#78e2ea;box-shadow:0 2px 8px #071523aa;cursor:nwse-resize;pointer-events:auto;touch-action:none;z-index:20;box-sizing:border-box}
+#elementselection:not(.selection-pinned) .overlay-corner-handle{display:none}
+#elementselection .overlay-corner-handle:after{content:"";position:absolute;right:4px;bottom:4px;width:8px;height:8px;border-right:2px solid #11384a;border-bottom:2px solid #11384a}
+</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.50</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="2"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="2"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
 <details id="customthemepanel" class="element-custom" style="margin-top:8px" hidden><summary>Create / manage custom theme</summary>
 <div class="small" style="margin:8px 0">Upload transparent PNG or WebP artwork as your HUD graphics. Choose custom theme colours below, adjust the image and save it as a reusable theme. Artwork stays in your browser unless you export the theme.</div>
 <label>Custom artwork (PNG / WebP)</label><input id="customthemefile" type="file" accept=".png,.webp,image/png,image/webp">
@@ -789,6 +795,7 @@ function drawTelemetry(t,w,h,curvePass=null){if(!telemetryRows.length&&!binaryMo
  }
  ctx.restore()}ctx.restore()}
 // Visual-only edit affordance: top layer is outside canvas and never included in exports.
+let selectedOverlay=null,overlayHandleDrag=null;
 let hoveredOverlay=null,draggedFlightTimer=false,flightTimerResizing=false,flightTimerGrabX=0,flightTimerGrabY=0,draggedPackGauge=false,packGaugeResize=false,packGaugeGrabX=0,packGaugeGrabY=0,draggedAviation=null,aviationResizing=false,aviationOffsetX=0,aviationOffsetY=0;
 function editingBounds(kind,index,item){
  const w=canvas.width,h=canvas.height;
@@ -821,8 +828,9 @@ function drawEditingOutline(){
  draggedFlightTimer?{kind:'flighttimer',label:'Armed flight timer'}:
  draggedTelemetry?{kind:'telemetry',item:draggedTelemetry,label:draggedTelemetry.rename?.value||friendlyTelemetryName(draggedTelemetry.name)}:
  draggedStick!==null?{kind:'stick',index:draggedStick,item:stickLayout[draggedStick],label:(draggedStick===0?'Left':'Right')+' stick'}:
- draggedQuad?{kind:'quad',item:quadLayout,label:'Quad visualiser'}:hoveredOverlay;
+ draggedQuad?{kind:'quad',item:quadLayout,label:'Quad visualiser'}:(selectedOverlay||hoveredOverlay);
  if(!active||recording){border.style.display='none';return}
+ border.classList.toggle('selection-pinned',!!selectedOverlay);
  const base=editingBounds(active.kind,active.index,active.item);
  if(!base){border.style.display='none';return}
  const bounds=motionOutlineBounds(base);
@@ -933,7 +941,7 @@ for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eve
 },true);
 canvas.addEventListener('pointermove',e=>{
  if(recording)return;
- if(!draggedQuad&&draggedStick===null&&!draggedTelemetry){
+ if(!draggedQuad&&draggedStick===null&&!draggedTelemetry&&!draggedFlightTimer&&!draggedPackGauge&&!draggedAviation&&!overlayHandleDrag){
   const [x,y]=elementPointerCoordinates(e);
   hoveredOverlay=locateEditable(x,y);
   canvas.style.cursor=hoveredOverlay?'move':'default';
@@ -947,9 +955,55 @@ canvas.addEventListener('pointerdown',e=>{
   try{canvas.setPointerCapture(e.pointerId)}catch(_){}
  }
 });
-canvas.addEventListener('pointerdown',()=>{drawEditingOutline()});
+canvas.addEventListener('pointerdown',e=>{
+ if(recording||overlayHandleDrag)return;
+ const [x,y]=elementPointerCoordinates(e);
+ selectedOverlay=locateEditable(x,y);
+ drawEditingOutline();
+});
 canvas.addEventListener('pointerup',()=>{drawEditingOutline()});
 canvas.addEventListener('pointerleave',()=>{if(!draggedQuad&&draggedStick===null&&!draggedTelemetry&&!draggedFlightTimer&&!draggedPackGauge&&!draggedAviation){hoveredOverlay=null;canvas.style.cursor='default';drawEditingOutline()}});
+// Dedicated persistent resize grip, regardless of layout, theme or hover.
+(function setupPersistentResize(){
+ const border=$('elementselection');
+ const oldGrip=border.querySelector('div');if(oldGrip)oldGrip.remove();
+ const grip=document.createElement('div');grip.className='overlay-corner-handle';
+ grip.title='Drag to resize selected element';grip.setAttribute('role','button');
+ grip.setAttribute('aria-label','Resize selected element');grip.tabIndex=0;border.append(grip);
+ grip.addEventListener('pointerdown',e=>{
+  if(!selectedOverlay||recording)return;
+  e.preventDefault();e.stopPropagation();
+  const b=editingBounds(selectedOverlay.kind,selectedOverlay.index,selectedOverlay.item);
+  if(!b)return;
+  const rect=canvas.getBoundingClientRect(),kind=selectedOverlay.kind;
+  overlayHandleDrag={kind,index:selectedOverlay.index,item:selectedOverlay.item,
+   width:b.w,height:b.h,startX:e.clientX,startY:e.clientY,
+   canvasWidth:canvas.width,canvasHeight:canvas.height,viewW:rect.width,viewH:rect.height,
+   startingSize:kind==='stick'?selectedOverlay.item.scale:kind==='quad'?quadLayout.scale:kind==='telemetry'?Number(selectedOverlay.item.size.value):kind==='flighttimer'?Number($('flighttimersize').value):kind==='packgauge'?Number($('packgaugesize').value):Number($('av'+kind.slice(2)+'size').value)};
+  grip.setPointerCapture(e.pointerId);
+ });
+ grip.addEventListener('pointermove',e=>{
+  if(!overlayHandleDrag)return;
+  e.preventDefault();e.stopPropagation();
+  const d=overlayHandleDrag,dx=(e.clientX-d.startX)*d.canvasWidth/Math.max(1,d.viewW);
+  const dy=(e.clientY-d.startY)*d.canvasHeight/Math.max(1,d.viewH);
+  const factor=Math.max((d.width+dx)/Math.max(1,d.width),(d.height+dy)/Math.max(1,d.height));
+  const value=d.startingSize*factor;
+  if(d.kind==='stick'){
+   d.item.scale=clamp(value,.2,2.5);
+   $(d.index===0?'leftstickscale':'rightstickscale').value=Math.round(d.item.scale*100);
+  }else if(d.kind==='quad'){
+   quadLayout.scale=clamp(value,.3,2.5);$('quadscale').value=Math.round(quadLayout.scale*100);
+  }else if(d.kind==='telemetry')d.item.size.value=Math.round(clamp(value,12,120));
+  else if(d.kind==='flighttimer')$('flighttimersize').value=Math.round(clamp(value,12,75));
+  else if(d.kind==='packgauge')$('packgaugesize').value=Math.round(clamp(value,40,200));
+  else if(d.kind.startsWith('av'))$('av'+d.kind.slice(2)+'size').value=Math.round(clamp(value,40,200));
+  draw(time);drawEditingOutline();
+ });
+ const finish=e=>{if(!overlayHandleDrag)return;overlayHandleDrag=null;try{if(grip.hasPointerCapture(e.pointerId))grip.releasePointerCapture(e.pointerId)}catch(_){}drawEditingOutline()};
+ grip.addEventListener('pointerup',finish);grip.addEventListener('pointercancel',finish);
+ window.addEventListener('keydown',e=>{if(e.key==='Escape'&&selectedOverlay){selectedOverlay=null;hoveredOverlay=null;drawEditingOutline()}});
+})();
 window.addEventListener('resize',drawEditingOutline);
 let draggedQuad=false,quadDX=0,quadDY=0;canvas.addEventListener('pointerdown',e=>{if(recording||!$('quadshow').checked)return;const [x,y]=elementPointerCoordinates(e);const [w,h]=$('size').value.split('x').map(Number);const rad=Math.min(w,h)*.19*quadLayout.scale;if(Math.hypot((x-quadLayout.x)*w,(y-quadLayout.y)*h)<rad){draggedQuad=true;quadDX=x-quadLayout.x;quadDY=y-quadLayout.y;canvas.setPointerCapture(e.pointerId);e.preventDefault()}});canvas.addEventListener('pointermove',e=>{if(!draggedQuad)return;const [x,y]=elementPointerCoordinates(e);[quadLayout.x,quadLayout.y]=snapPosition(clamp(x-quadDX,0,1),clamp(y-quadDY,0,1));draw(time)});for(const type of ['pointerup','pointercancel'])canvas.addEventListener(type,()=>{draggedQuad=false});for(const id of ['quadshow','quadscale','quadmodel','quadarm','quadfront','quadrear','quadbody','quadopacity','quadline','quadmotors','quadnose'])$(id).addEventListener('input',()=>{quadLayout.scale=Number($('quadscale').value)/100;draw(time)});
 let draggedStick=null,resizeStick=false,stickDragX=0,stickDragY=0;canvas.addEventListener('pointerdown',e=>{if(recording||draggedQuad)return;const [x,y]=elementPointerCoordinates(e);const [w,h]=$('size').value.split('x').map(Number);const side=($('canvasformat').value==='sticks'?Math.min(h*.68,w*.31):Math.min(h*.28,w*.22));for(let i=1;i>=0;i--){const item=stickLayout[i];if(!item.visible)continue;const half=side*item.scale/2;const dx=(x-item.x)*w,dy=(y-item.y)*h;if(Math.abs(dx)<=half&&Math.abs(dy)<=half){draggedStick=i;resizeStick=dx>half*.67&&dy>half*.67;stickDragX=x-item.x;stickDragY=y-item.y;canvas.setPointerCapture(e.pointerId);e.preventDefault();break}}});canvas.addEventListener('pointermove',e=>{if(draggedStick===null)return;const [x,y]=elementPointerCoordinates(e);const item=stickLayout[draggedStick];if(resizeStick){const [w,h]=$('size').value.split('x').map(Number),base=$('canvasformat').value==='sticks'?Math.min(h*.82,w*.38):Math.min(h*.28,w*.22);item.scale=clamp(Math.max(Math.abs(x-item.x)*w,Math.abs(y-item.y)*h)*2/base,.2,2.5);$(''+(draggedStick===0?'left':'right')+'stickscale').value=item.scale*100}else{[item.x,item.y]=snapPosition(clamp(x-stickDragX,0,1),clamp(y-stickDragY,0,1));if($('mirrorsticks').checked){const other=stickLayout[1-draggedStick];other.x=1-item.x;other.y=item.y}}draw(time)});for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eventName,()=>{draggedStick=null;resizeStick=false});
