@@ -1,5 +1,5 @@
 name: Deploy Web Overlay Studio
-# Retry transient dependency downloads and re-trigger failed web deployment (2026-11-09).
+# Web deploy retry after GitHub Actions backlog recovery (2026-11-11).
 on:
   push:
     branches: [main]
