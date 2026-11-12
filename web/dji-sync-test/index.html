@@ -3538,6 +3538,19 @@ function drawPortraitHudGraphics(w,h,t){
  if(sides){ctx.rect(0,h*.26,w*.22,h*.47);ctx.rect(w*.78,h*.26,w*.22,h*.47)}
  if(bottom)ctx.rect(0,h*.73,w,h*.27);
  ctx.clip();
+ // Match landscape's attitude-responsive artwork movement. Only the graphics
+ // transform: stick markers, telemetry positions and the canvas stay fixed.
+ // Military Green keeps its dedicated moving pitch ladder below, as on landscape.
+ const motion=$('hudmotion').checked;
+ const movement=motion?quadHudMotion(t):{roll:0,pitch:0};
+ const intensity=clamp(Number($('hudmotionstrength').value)/100,0,2);
+ const motionRoll=movement.roll*intensity,motionPitch=movement.pitch*intensity;
+ if(motion&&theme!=='green'&&(motionRoll||motionPitch)){
+  ctx.translate(w*.5,h*.5);
+  ctx.rotate(-motionRoll*.029);
+  ctx.translate(motionRoll*w*.007,motionPitch*h*.012);
+  ctx.translate(-w*.5,-h*.5);
+ }
  const line=(pts,c=p,alpha=.6,width=1.5)=>{
   ctx.globalAlpha=opacity*alpha;ctx.strokeStyle=c;ctx.lineWidth=u*width;ctx.beginPath();
   pts.forEach(([x,y],i)=>i?ctx.lineTo(x*w,y*h):ctx.moveTo(x*w,y*h));ctx.stroke();
@@ -3626,11 +3639,9 @@ function drawPortraitHudGraphics(w,h,t){
   line([[.47,.095],[.5,.083],[.53,.095]],hudBright,.78,1.4);
   // F-16-like pitch ladder with broken zero line. Artwork tilts with log attitude
   // only when HUD motion is enabled, never changes telemetry itself.
-  const move=$('hudmotion').checked?quadHudMotion(t):{roll:0,pitch:0};
-  const strength=Math.max(0,Math.min(2,Number($('hudmotionstrength').value)/100));
   ctx.save();
-  ctx.translate(w*.5,h*.49);ctx.rotate(-move.roll*strength*.025);
-  ctx.translate(0,move.pitch*strength*h*.008);
+  ctx.translate(w*.5,h*.49);ctx.rotate(-motionRoll*.025);
+  ctx.translate(0,motionPitch*h*.008);
   ctx.translate(-w*.5,-h*.49);
   for(const n of [-3,-2,-1,0,1,2,3]){
    const y=.49+n*.049,width=n===0?.18:.115-Math.abs(n)*.007;
