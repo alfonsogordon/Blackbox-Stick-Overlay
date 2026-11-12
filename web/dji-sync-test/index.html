@@ -3807,15 +3807,18 @@ function drawPortraitHudGraphics(w,h,t){
    draw();
    ctx.restore();
   };
-  // Fixed outrun sun: large staggered neon bands, no opaque background.
-  for(let j=0;j<8;j++){
-   const radius=.077+j*.012;
-   arc(.5,.445,radius,Math.PI*1.08,Math.PI*1.92,j%2?a:p,.24+j*.078,1.5+j*.14);
-  }
-  for(let j=0;j<6;j++){
-   const y=.39+j*.018,half=.084-j*.007;
-   line([[.5-half,y],[.5+half,y]],j%2?p:a,.20+j*.085,1.4);
-  }
+  // Central outrun sun reacts visibly to bank and pitch, independently
+  // from the lagging grid and faster foreground scanner.
+  withLayer(.031,.056,.22,()=>{
+   for(let j=0;j<8;j++){
+    const radius=.077+j*.012;
+    arc(.5,.445,radius,Math.PI*1.08,Math.PI*1.92,j%2?a:p,.24+j*.078,1.5+j*.14);
+   }
+   for(let j=0;j<6;j++){
+    const y=.39+j*.018,half=.084-j*.007;
+    line([[.5-half,y],[.5+half,y]],j%2?p:a,.20+j*.085,1.4);
+   }
+  });
   // Medium-response horizon and perspective grid.
   withLayer(.007,.022,.075,()=>{
    line([[.245,.555],[.446,.555]],a,.66,2.1);
@@ -3859,11 +3862,14 @@ function drawPortraitHudGraphics(w,h,t){
     }
    }
   });
-  // Fixed reticle gives the viewer a stable reference during hard flips.
-  line([[.394,.493],[.469,.493]],a,.7,1.7);
-  line([[.531,.493],[.606,.493]],a,.7,1.7);
-  line([[.5,.461],[.5,.478]],p,.8,1.6);
-  line([[.5,.508],[.5,.525]],p,.8,1.6);
+  // Centre sight follows the flight path more directly, separate from the
+  // slower sun and side rails. It returns to rest when motion is disabled.
+  withLayer(.045,.064,.30,()=>{
+   line([[.394,.493],[.469,.493]],a,.7,1.7);
+   line([[.531,.493],[.606,.493]],a,.7,1.7);
+   line([[.5,.461],[.5,.478]],p,.8,1.6);
+   line([[.5,.508],[.5,.525]],p,.8,1.6);
+  });
  }else if(theme==='sunsetcinema'){
   // Cinematic Sunset: widescreen-inspired soft corner brackets, understated
   // horizon arcs and warm editorial guide marks, with open central space.
