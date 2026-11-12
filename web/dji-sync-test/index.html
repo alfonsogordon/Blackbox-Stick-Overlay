@@ -405,7 +405,7 @@ if(radio==='rssi'&&source==='raw'&&target==='raw'){
  number=Math.round(number);suffix='';
 }
 if(item.cellVoltage){const cells=stableCellCount(item,number);return {label:label?label+': ':'',value:(number/Math.max(1,cells)).toFixed(2)+' V'}}const decimals=Number(item.decimals.value);let value=number.toFixed(decimals)+suffix;if(item.cellMode&&item.spec.kind==='voltage'&&target==='v'&&source!=='raw'){const cells=stableCellCount(item,number);const cell=(number/cells).toFixed(2)+' V';if(item.cellMode.value==='cell')value=cell;else if(item.cellMode.value==='both')value+=' ('+cell+')'}return {label:label?label+': ':'',value}}
-function telemetryMetrics(item,v,w){const font=Math.max(9,Number(item.size.value)*w/1600);ctx.font='600 '+font+'px '+item.font.value;const parts=telemetryText(item,v);return {font,parts,labelWidth:ctx.measureText(parts.label).width,valueWidth:ctx.measureText(parts.value).width}}
+function telemetryMetrics(item,v,w){const font=Math.max(9,Number(item.size.value)*w/(['9:16','3:4'].includes($('canvasformat').value)?940:1600));ctx.font='600 '+font+'px '+item.font.value;const parts=telemetryText(item,v);return {font,parts,labelWidth:ctx.measureText(parts.label).width,valueWidth:ctx.measureText(parts.value).width}}
 // Width of the actual icon + readout block; allows right-hand telemetry to align
 // by its outer edge rather than by a left-anchored starting coordinate.
 function telemetryBlockWidth(item,m){
@@ -538,7 +538,7 @@ function flightTimerElapsed(at){
  return cache.total[i]+(cache.total[i+1]>cache.total[i]?Math.min(cache.step,Math.max(0,at-i*cache.step)):0);
 }
 function flightTimerBounds(w,h){
- const font=Math.max(11,Number($('flighttimersize').value)*w/1600);
+ const font=Math.max(11,Number($('flighttimersize').value)*w/(['9:16','3:4'].includes($('canvasformat').value)?940:1600));
  return {x:Number($('flighttimerx').value)/100*w,y:Number($('flighttimery').value)/100*h,w:font*5.7,h:font*1.8};
 }
 
@@ -556,7 +556,7 @@ function packGaugeVoltage(t){
 }
 function packGaugeBounds(w,h){
  const scale=Number($('packgaugesize').value)/100;
- const width=Math.min(w*.46,w*.17*scale);
+ const width=Math.min(w*.72,w*(['9:16','3:4'].includes($('canvasformat').value)?.3:.17)*scale);
  return {x:Number($('packgaugex').value)/100*w,y:Number($('packgaugey').value)/100*h,w:width,h:width*.44};
 }
 function drawPackGauge(t,w,h,curvePass=null){
@@ -600,7 +600,7 @@ function drawPackGauge(t,w,h,curvePass=null){
 const aviationGaugeKinds=['speed','attitude','altitude','turn','heading','gpscompass','vertical'];
 function aviationGaugeBounds(kind,w,h){
  const scale=Number($('av'+kind+'size').value)/100;
- const width=Math.min(w*.35,w*.145*scale);
+ const width=Math.min(w*.52,w*(['9:16','3:4'].includes($('canvasformat').value)?.3:.145)*scale);
  const bar=kind==='gpscompass'&&$('avgpscompassdisplay')?.value==='bar';
  return {x:Number($('av'+kind+'x').value)/100*w,y:Number($('av'+kind+'y').value)/100*h,w:bar?Math.min(w*.9,width*4.6):width,h:bar?width*.46:width};
 }
@@ -894,7 +894,7 @@ function drawFlightTimer(t,w,h,curvePass=null){
  if(curvePass!==null&&$('flighttimercurve').checked!==curvePass)return;
  const elapsed=clamp(t-(Number($('lead').value)||0),0,duration),seconds=Math.floor(Math.max(0,flightTimerElapsed(elapsed)));
  const value=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
- const size=Math.max(11,Number($('flighttimersize').value)*w/1600),b=flightTimerBounds(w,h);
+ const size=Math.max(11,Number($('flighttimersize').value)*w/(['9:16','3:4'].includes($('canvasformat').value)?940:1600)),b=flightTimerBounds(w,h);
  ctx.save();ctx.textBaseline='top';ctx.textAlign='left';
  const themed=$('flighttimercolormode')?.value!=='custom'&&betaActive();
  const timerInk=themed?betaPalette()[0]:$('flighttimercolor').value;
@@ -1263,7 +1263,7 @@ function configureCanvas(){const format=$('canvasformat').value,size=$('size'),o
  // Portrait formats use their own HUD frame rather than suppressing themed artwork.
  const portrait=format==='9:16'||format==='3:4';
  $('betagraphics').disabled=false;
- $('betagraphics').title=portrait?'Portrait-friendly HUD graphics are drawn inside the vertical canvas.':'';const formats={sticks:[['800x300','800 × 300'],['1200x450','1200 × 450'],['1600x600','1600 × 600'],['2400x900','2400 × 900'],['3200x1200','3200 × 1200'],['640x240','640 × 240']], '16:9':[['1280x720','1280 × 720'],['1920x1080','1920 × 1080'],['2560x1440','2560 × 1440'],['3840x2160','3840 × 2160']], '4:3':[['960x720','960 × 720'],['1440x1080','1440 × 1080'],['1920x1440','1920 × 1440'],['2880x2160','2880 × 2160']], '9:16':[['720x1280','720 × 1280'],['1080x1920','1080 × 1920'],['1440x2560','1440 × 2560']], '3:4':[['720x960','720 × 960'],['1080x1440','1080 × 1440'],['1440x1920','1440 × 1920']]};size.replaceChildren();for(const [v,title] of formats[format]){const option=document.createElement('option');option.value=v;option.textContent=title;size.append(option)}size.value=formats[format].some(x=>x[0]===old)?old:format==='sticks'?'1600x600':format==='16:9'?'1920x1080':format==='4:3'?'1440x1080':format==='9:16'?'1080x1920':'1080x1440';stickLayout=format==='sticks'?[{x:.25,y:.5,scale:1,pointerScale:1,visible:true},{x:.75,y:.5,scale:1,pointerScale:1,visible:true}] :[{x:.2,y:.82,scale:.8,pointerScale:1,visible:true},{x:.8,y:.82,scale:.8,pointerScale:1,visible:true}];syncStickControls();syncExportSticksVisibility();update()}
+ $('betagraphics').title=portrait?'Portrait-friendly HUD graphics are drawn inside the vertical canvas.':'';const formats={sticks:[['800x300','800 × 300'],['1200x450','1200 × 450'],['1600x600','1600 × 600'],['2400x900','2400 × 900'],['3200x1200','3200 × 1200'],['640x240','640 × 240']], '16:9':[['1280x720','1280 × 720'],['1920x1080','1920 × 1080'],['2560x1440','2560 × 1440'],['3840x2160','3840 × 2160']], '4:3':[['960x720','960 × 720'],['1440x1080','1440 × 1080'],['1920x1440','1920 × 1440'],['2880x2160','2880 × 2160']], '9:16':[['720x1280','720 × 1280'],['1080x1920','1080 × 1920'],['1440x2560','1440 × 2560']], '3:4':[['720x960','720 × 960'],['1080x1440','1080 × 1440'],['1440x1920','1440 × 1920']]};size.replaceChildren();for(const [v,title] of formats[format]){const option=document.createElement('option');option.value=v;option.textContent=title;size.append(option)}size.value=formats[format].some(x=>x[0]===old)?old:format==='sticks'?'1600x600':format==='16:9'?'1920x1080':format==='4:3'?'1440x1080':format==='9:16'?'1080x1920':'1080x1440';stickLayout=format==='sticks'?[{x:.25,y:.5,scale:1,pointerScale:1,visible:true},{x:.75,y:.5,scale:1,pointerScale:1,visible:true}] :[{x:.2,y:.82,scale:.8,pointerScale:1,visible:true},{x:.8,y:.82,scale:.8,pointerScale:1,visible:true}];if(portrait)applyPortraitPresetLayout();syncStickControls();syncExportSticksVisibility();update()}
 function syncExportSticksVisibility(){const sticks=$('canvasformat').value==='sticks';$('exportstickswrap').style.display=sticks?'':'none';if(!sticks)$('exportsticks').value='both'}
 for(const id of ['snapgrid','gridspacing'])$(id).addEventListener('change',()=>draw(time));function setStickSize(index,value){const size=clamp(Number(value),.2,2.5);if($('linksticksizes').checked){for(let i=0;i<2;i++){stickLayout[i].pointerScale=size;$(i===0?'leftstickscale':'rightstickscale').value=Math.round(size*100)}}else{stickLayout[index].pointerScale=size;$(index===0?'leftstickscale':'rightstickscale').value=Math.round(size*100)}}
 function syncStickControls(){for(let i=0;i<2;i++){const id=i===0?'left':'right';$(id+'stickshow').checked=stickLayout[i].visible;$(id+'stickscale').value=(stickLayout[i].pointerScale??1)*100}}
@@ -3058,6 +3058,7 @@ function applyBetaOsdFields(){
  if(presetName!=='stickoverlay'&&!telemetryWidgets.some(item=>item.check.checked)){
   const safe=telemetryWidgets.filter(item=>!/(gyro|debug|motor|pid|rccommand|setpoint|accsmooth|attitude)/i.test(item.name));
   safe.slice(0,Math.min(5,safe.length)).forEach(item=>item.check.checked=true);
+  applyPortraitPresetLayout();
  }
 
 }
@@ -3158,7 +3159,7 @@ $('canvasformat').addEventListener('change',()=>{
  stickLayout.forEach((stick,i)=>{stick.x=compact?(i===0?.25:.75):(i===0?.39:.61);stick.y=compact?.5:.83;stick.scale=compact?1:.72});
  // Canvas dimensions change the full stick overlays; do not overwrite pointer-only size controls.
  syncStickControls();
- if(['9:16','3:4'].includes($('canvasformat').value)&&$('betapreset').value!=='stickoverlay')applyPortraitPresetLayout();
+ if(['9:16','3:4'].includes($('canvasformat').value))applyPortraitPresetLayout();
  update();
 });
 $('betacurve').addEventListener('input',update);
@@ -3451,18 +3452,44 @@ function drawPortraitHudGraphics(w,h,t){
 // Only standard OSD/Full Details presets are auto-arranged; never move a
 // manually customised layout or a saved preset behind the user's back.
 function applyPortraitPresetLayout(){
- if(!['9:16','3:4'].includes($('canvasformat').value)||$('betapreset').value==='stickoverlay')return;
- const enabled=telemetryWidgets.filter(item=>item.check.checked);
- const count=enabled.length;
- const perColumn=Math.max(1,Math.ceil(count/2));
- const step=Math.min(.093,.43/perColumn);
- for(let i=0;i<count;i++){
-  const item=enabled[i],right=i>=perColumn,row=right?i-perColumn:i;
-  item.x=right?.54:.08;item.y=.10+row*step;
-  item.alignRight=false;item.centeredArrow=false;
-  item.size.value=String(Math.min(25,Number(item.size.value)||24));
+ const format=$('canvasformat').value;
+ if(!['9:16','3:4'].includes(format)||$('betapreset').value==='custom')return;
+ const preset=$('betapreset').value;
+ // A separate composition for the built-in portrait presets: real canvas
+ // coordinates are used, so preview and exported video match exactly.
+ for(let i=0;i<2;i++){
+  const stick=stickLayout[i];
+  stick.x=i===0?.27:.73;
+  stick.y=preset==='stickoverlay'?.56:.79;
+  stick.scale=format==='9:16'?1.48:1.34;
  }
- if($('quadshow').checked){quadLayout.x=.5;quadLayout.y=.64;quadLayout.scale=Math.min(quadLayout.scale,.65)}
+ if(preset==='stickoverlay')return;
+ const enabled=telemetryWidgets.filter(item=>item.check.checked);
+ const rows=Math.max(1,Math.ceil(enabled.length/2));
+ const top=.105,bottom=.55,step=rows<=1?0:Math.min(.098,(bottom-top)/(rows-1));
+ enabled.forEach((item,i)=>{
+  const right=i>=rows,row=right?i-rows:i;
+  item.x=right?.54:.085;
+  item.y=top+row*step;
+  item.alignRight=false;
+  item.centeredArrow=false;
+  // Portrait uses a bigger readable type; keep each two-column value clear.
+  item.size.value=String(format==='9:16'?34:31);
+ });
+ if($('quadshow').checked){
+  quadLayout.x=.5;quadLayout.y=.615;
+  quadLayout.scale=format==='9:16'?1.1:.98;
+  $('quadscale').value=Math.round(quadLayout.scale*100);
+ }
+ // Only layout built-ins are rearranged: saved/custom user layouts are not.
+ if($('flighttimershow')?.checked){
+  $('flighttimerx').value='12';$('flighttimery').value='60';
+  $('flighttimersize').value='46';
+ }
+ if($('packgaugeshow')?.checked){
+  $('packgaugex').value='57';$('packgaugey').value='61';
+  $('packgaugesize').value='175';
+ }
 }
 function drawBetaGraphics(w,h,t=0){
  // Custom themes are an independent image layer, including portrait layouts.
