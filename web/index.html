@@ -48,7 +48,7 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 #elementselection .overlay-corner-handle{position:absolute;right:-12px;bottom:-12px;width:24px;height:24px;border:2px solid #0b2638;border-radius:7px;background:#78e2ea;box-shadow:0 2px 8px #071523aa;cursor:nwse-resize;pointer-events:auto;touch-action:none;z-index:20;box-sizing:border-box}
 #elementselection:not(.selection-pinned) .overlay-corner-handle{display:none}
 #elementselection .overlay-corner-handle:after{content:"";position:absolute;right:4px;bottom:4px;width:8px;height:8px;border-right:2px solid #11384a;border-bottom:2px solid #11384a}
-</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.60</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="0"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="0"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
+</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.61</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="0"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="0"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
 <details id="customthemepanel" class="element-custom" style="margin-top:8px" hidden><summary>Create / manage custom theme</summary>
 <div class="small" style="margin:8px 0">Upload transparent PNG or WebP artwork as your HUD graphics. Choose custom theme colours below, adjust the image and save it as a reusable theme. Artwork stays in your browser unless you export the theme.</div>
 <label>Custom artwork (PNG / WebP)</label><input id="customthemefile" type="file" accept=".png,.webp,image/png,image/webp">
@@ -438,24 +438,32 @@ function drawPackGauge(t,w,h,curvePass=null){
  const military=style==='green'||(style==='auto'&&betaActive()&&$('betatheme').value==='green');
  const ink=$('packgaugevaluecolor')?.value||(military?'#8dffa0':'#ecf3fb');
  const labelInk=$('packgaugelabelcolor')?.value||ink;
- const dim=military?'#365d42':'#697a8a',fill=military?'rgba(7,27,15,.82)':'rgba(14,28,44,.82)';
+ const defaultDim=military?'#365d42':'#697a8a',defaultFill=military?'rgba(7,27,15,.82)':'rgba(14,28,44,.82)';
+ const custom=$('packgaugecustomcolors')?.checked;
+ const bg=custom?$('packgaugebackground').value:defaultFill;
+ const border=custom?$('packgaugeborder').value:ink;
+ const bar=custom?$('packgaugebar').value:ink;
+ const dim=custom?$('packgaugeemptybar').value:defaultDim;
+ const valueInk=custom?$('packgaugevaluecolor').value:ink;
+ const footerInk=custom?$('packgaugefootercolor').value:ink;
+ const bgOpacity=custom?clamp(Number($('packgaugebgopacity').value)/100,0,1):1;
  let cells=Number($('packgaugecells').value);if(!(cells>=1))cells=volts?estimateCells(volts):1;
  const each=volts===null?null:volts/cells,level=each===null?0:clamp((each-3.3)/.9,0,1);
  ctx.save();ctx.translate(b.x,b.y);ctx.lineWidth=Math.max(1.2,b.w*.009);ctx.lineJoin='round';
- ctx.beginPath();ctx.roundRect(0,0,b.w,b.h,b.w*.04);ctx.fillStyle=fill;ctx.fill();ctx.strokeStyle=ink;ctx.stroke();
+ ctx.beginPath();ctx.roundRect(0,0,b.w,b.h,b.w*.04);ctx.fillStyle=bg;ctx.save();ctx.globalAlpha*=bgOpacity;ctx.fill();ctx.restore();ctx.strokeStyle=border;ctx.stroke();
  ctx.textBaseline='top';ctx.textAlign='left';ctx.fillStyle=labelInk;
  ctx.font='600 '+Math.max(9,b.w*.074)+'px monospace';ctx.fillText(military?'PWR // PACK':'BATTERY PACK',b.w*.055,b.h*.1);
  if($('packgaugevoltage').checked){
-  ctx.font='600 '+Math.max(12,b.w*.115)+'px monospace';ctx.textAlign='right';ctx.fillStyle=ink;
+  ctx.font='600 '+Math.max(12,b.w*.115)+'px monospace';ctx.textAlign='right';ctx.fillStyle=valueInk;
   ctx.fillText(volts===null?'--.-V':volts.toFixed(1)+'V',b.w*.945,b.h*.08);
  }
  const count=10,gap=b.w*.012,left=b.w*.065,usable=b.w*.87,sw=(usable-gap*(count-1))/count;
  for(let i=0;i<count;i++){
   ctx.globalAlpha=i<Math.round(level*count)?1:.34;
-  ctx.fillStyle=i<Math.round(level*count)?ink:dim;
+  ctx.fillStyle=i<Math.round(level*count)?bar:dim;
   ctx.fillRect(left+i*(sw+gap),b.h*.52,sw,b.h*.24);
  }
- ctx.globalAlpha=1;ctx.textAlign='left';ctx.fillStyle=ink;ctx.font='500 '+Math.max(8,b.w*.064)+'px monospace';
+ ctx.globalAlpha=1;ctx.textAlign='left';ctx.fillStyle=footerInk;ctx.font='500 '+Math.max(8,b.w*.064)+'px monospace';
  ctx.fillText(each===null?'NO PACK VOLTAGE':cells+'S  '+each.toFixed(2)+'V/CELL',left,b.h*.81);
  ctx.textAlign='right';ctx.fillStyle=labelInk;ctx.fillText('EST',b.w*.945,b.h*.81);
  ctx.restore();
@@ -583,11 +591,16 @@ function drawAviationGauge(kind,t,w,h,curvePass=null){
  if(kind==='gpscompass'&&$('avgpscompassdisplay')?.value==='bar'){drawAviationCompassBar(b,data,style);return;}
  const green=style==='green'||(style==='auto'&&betaActive()&&$('betatheme').value==='green');
  const compassColours=kind==='gpscompass'?aviationCompassColours(style):null;
- const ink=compassColours?.primary||(green?'#8dffa0':'#f0f2ee'),muted=compassColours?.secondary||(green?'#42674e':'#92999f');
- const shell=green?'#0a2110':'#171c21',dial=green?'#09170c':'#17191c';
+ if(compassColours&&$('avgpscompasscustomcolors')?.checked){compassColours.primary=$('avgpscompassprimarycolor').value;compassColours.secondary=$('avgpscompasssecondarycolor').value;compassColours.accent=$('avgpscompassaccentcolor').value;}
+ const custom=$('av'+kind+'customcolors')?.checked;
+ const ink=custom?$('av'+kind+'primarycolor').value:compassColours?.primary||(green?'#8dffa0':'#f0f2ee');
+ const muted=custom?$('av'+kind+'secondarycolor').value:compassColours?.secondary||(green?'#42674e':'#92999f');
+ const shell=custom?$('av'+kind+'housingcolor').value:green?'#0a2110':'#171c21';
+ const dial=custom?$('av'+kind+'dialcolor').value:green?'#09170c':'#17191c';
+ const border=custom?$('av'+kind+'bordercolor').value:green?'#568b62':'#90979c';
  const r=b.w*.46,cx=b.w/2,cy=b.h/2;
  ctx.save();ctx.translate(b.x,b.y);
- ctx.fillStyle=shell;ctx.strokeStyle=green?'#568b62':'#90979c';ctx.lineWidth=Math.max(2,b.w*.025);
+ ctx.fillStyle=shell;ctx.strokeStyle=border;ctx.lineWidth=Math.max(2,b.w*.025);
  ctx.beginPath();
  if(shape==='square')ctx.roundRect(0,0,b.w,b.h,b.w*.07);
  else ctx.arc(cx,cy,b.w*.49,0,Math.PI*2);
@@ -609,8 +622,8 @@ function drawAviationGauge(kind,t,w,h,curvePass=null){
    ctx.save();ctx.rotate(-data.roll);
    const offset=clamp(data.pitch*1.12,-1.9,1.9)*r;
    ctx.translate(0,offset);
-   ctx.fillStyle=green?'#163e24':'#378fcd';ctx.fillRect(-r*2,-r*3,r*4,r*3);
-   ctx.fillStyle=green?'#443e21':'#856443';ctx.fillRect(-r*2,0,r*4,r*3);
+   ctx.fillStyle=custom?$('av'+kind+'skycolor').value:green?'#163e24':'#378fcd';ctx.fillRect(-r*2,-r*3,r*4,r*3);
+   ctx.fillStyle=custom?$('av'+kind+'groundcolor').value:green?'#443e21':'#856443';ctx.fillRect(-r*2,0,r*4,r*3);
    line(-2,0,2,0,ink,.035);
    for(const n of [-40,-30,-20,-10,10,20,30,40]){
     const yy=-n/42*r;
@@ -699,12 +712,15 @@ function drawAviationCompassBar(b,data,style){
  // no instrument bezel. The 0% opacity setting leaves true alpha transparency.
  const green=style==='green'||(style==='auto'&&betaActive()&&$('betatheme').value==='green');
  const colours=aviationCompassColours(style);
- const ink=colours.primary,muted=colours.secondary,accent=colours.accent;
+ const custom=$('avgpscompasscustomcolors')?.checked;
+ const ink=custom?$('avgpscompassprimarycolor').value:colours.primary;
+ const muted=custom?$('avgpscompasssecondarycolor').value:colours.secondary;
+ const accent=custom?$('avgpscompassaccentcolor').value:colours.accent;
  const backgroundOpacity=clamp(Number($('avgpscompassbaropacity')?.value??0)/100,0,1);
  ctx.save();ctx.translate(b.x,b.y);
  if(backgroundOpacity>0){
   ctx.save();ctx.globalAlpha=backgroundOpacity;
-  ctx.fillStyle=green?'#071a0b':'#06070a';
+  ctx.fillStyle=custom?$('avgpscompasshousingcolor').value:green?'#071a0b':'#06070a';
   ctx.beginPath();ctx.roundRect(0,0,b.w,b.h,Math.max(3,b.h*.065));ctx.fill();
   ctx.restore();
  }
@@ -3351,6 +3367,13 @@ let windowStickCurve=null,windowQuadCurve=null;
  input('Size','packgaugesize','range',{min:'40',max:'200',value:'100'});
  input('Label colour','packgaugelabelcolor','color',{value:'#ecf3fb'});
  input('Value / bar colour','packgaugevaluecolor','color',{value:'#ecf3fb'});
+ input('Customise individual colours','packgaugecustomcolors','checkbox',{checked:false});
+ input('Background colour','packgaugebackground','color',{value:'#0e1c2c'});
+ input('Background opacity (%)','packgaugebgopacity','range',{min:'0',max:'100',step:'5',value:'82'});
+ input('Border colour','packgaugeborder','color',{value:'#ecf3fb'});
+ input('Filled bar colour','packgaugebar','color',{value:'#ecf3fb'});
+ input('Empty bar colour','packgaugeemptybar','color',{value:'#697a8a'});
+ input('Cell / footer text colour','packgaugefootercolor','color',{value:'#ecf3fb'});
  const gaugeSmooth=input('Voltage smoothing','packgaugesmoothing','select');
  for(const [value,title] of [['0','Off (raw)'],['0.5','Light · 0.5 s'],['1','Medium · 1 s'],['1.5','Standard · 1.5 s'],['2.5','Strong · 2.5 s']])gaugeSmooth.add(new Option(title,value));
  gaugeSmooth.value='1.5';
@@ -3358,7 +3381,7 @@ let windowStickCurve=null,windowQuadCurve=null;
  for(let i=1;i<=12;i++)count.add(new Option(i+'S',String(i)));
  input('Show voltage','packgaugevoltage','checkbox',{checked:true});
  input('Apply visor curvature','packgaugecurve','checkbox',{checked:true});
- const note=document.createElement('div');note.className='small';note.style.gridColumn='1/-1';note.textContent='Uses recorded pack voltage; the level bar estimates charge from voltage, not measured capacity.';settings.append(note);
+ const note=document.createElement('div');note.className='small';note.style.gridColumn='1/-1';note.textContent='Uses recorded pack voltage; the level bar estimates charge from voltage, not measured capacity. Enable individual colours to override the theme. All parts update in preview and export.';settings.append(note);
  gaugeCustom.append(settings);gaugeRow.append(gaugeCustom);gauges.append(gaugeRow);host.append(gauges);
  gaugeToggle.addEventListener('input',update);
 
@@ -3388,6 +3411,17 @@ let windowStickCurve=null,windowQuadCurve=null;
   };
   const style=option('Style','style','select');
   for(const [v,name] of [['auto','Match theme'],['standard','Standard aircraft'],['green','Military green']])style.add(new Option(name,v));
+  option('Customise individual colours','customcolors','checkbox',{checked:false});
+  option('Housing background','housingcolor','color',{value:'#171c21'});
+  option('Dial background','dialcolor','color',{value:'#17191c'});
+  option('Border / bezel','bordercolor','color',{value:'#90979c'});
+  option('Primary text / marks','primarycolor','color',{value:'#f0f2ee'});
+  option('Secondary marks','secondarycolor','color',{value:'#92999f'});
+  if(kind==='attitude'){
+   option('Sky colour','skycolor','color',{value:'#378fcd'});
+   option('Ground colour','groundcolor','color',{value:'#856443'});
+  }
+  if(kind==='gpscompass')option('Compass accent / pointer','accentcolor','color',{value:'#ffb568'});
   const shape=option('Instrument housing','shape','select');
   for(const [v,name] of [['round','Round instrument'],['square','Square instrument']])shape.add(new Option(name,v));
   if(kind==='gpscompass'){
