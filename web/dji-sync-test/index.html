@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Overlay Studio · DJI Sync Test v0.14.98-test</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Overlay Studio · DJI Sync Test v0.14.99-test</title>
 <style>
 :root{font-family:Inter,system-ui,Segoe UI,sans-serif;color:#e8efff;background:#0a101b}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172640 0%,#0a101b 55%);min-height:100vh}main{max-width:1360px;margin:auto;padding:38px 20px}h1{font-size:32px;margin:8px 0}p{color:#aab9d2}header{margin-bottom:25px}.tag{color:#73e1da;font-size:12px;letter-spacing:2px;font-weight:700}.layout{display:grid;grid-template-columns:minmax(420px,490px) minmax(0,1fr);gap:20px}.panel{background:#111c2cdd;border:1px solid #31435e;border-radius:20px;padding:22px;box-shadow:0 20px 70px #0004}label{display:block;color:#b4c7df;font-size:13px;margin:16px 0 7px}input,select,button{width:100%;border-radius:10px;border:1px solid #3c526c;background:#19293d;color:#f3f8ff;padding:11px;font:inherit}input[type=file]{font-size:12px}input[type=color]{height:43px;padding:4px 6px;cursor:pointer;appearance:none;-webkit-appearance:none}input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-webkit-color-swatch{border:1px solid #72869e;border-radius:6px}input[type=color]::-moz-color-swatch{border:1px solid #72869e;border-radius:6px}button{background:#287d83;border-color:#51c3c4;cursor:pointer;font-weight:650}button:hover{background:#34989a}button:disabled{opacity:.45;cursor:not-allowed}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(min-width:851px){.layout>section.panel:nth-child(2){position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow-y:auto;scrollbar-width:thin}}.preview{background:linear-gradient(135deg,#1b2739,#0d1521);border:1px solid #32425b;border-radius:14px;overflow:hidden;min-height:0;display:block;aspect-ratio:8 / 3}.preview{isolation:isolate;position:relative}
 /* Preview-only arrival reveal: never applied to rendered video/export frames. */
@@ -95,9 +95,17 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 #workflow-left .workflow-custom-image>summary{display:block!important;padding:0 0 8px!important;font-weight:700;color:#88dfd6;list-style:none;pointer-events:none}
 #workflow-left .workflow-custom-image>summary::marker{content:''}
 #workflow-right{background:#111c2c!important;backdrop-filter:none!important}
+/* Portrait: the preview must not enter two nested sticky/scroll containers. */
+@media(min-width:981px){
+ body.studio-portrait #workflow-right{position:relative!important;max-height:none!important;overflow:visible!important;top:auto!important;align-self:start}
+ body.studio-portrait #workflow-right #previewframe{position:relative!important;top:auto!important;box-shadow:none!important}
+}
+body.studio-portrait #previewframe{width:min(100%,280px,calc((100dvh - 190px)*.5625));min-width:0;margin-inline:auto}
+body.studio-portrait .preview-expanded #previewframe{width:min(100%,400px,calc((100dvh - 160px)*.5625))}
+@media(max-width:980px){body.studio-portrait #workflow-right #previewframe{position:relative!important;top:auto!important}}
 @media(min-width:981px){.layout>section.panel:nth-child(2){background:#111c2c!important}}
 
-</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">TEST COPY · v0.14.98-test</span><nav id="workflow-nav" aria-label="Overlay workflow">
+</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">TEST COPY · v0.14.99-test</span><nav id="workflow-nav" aria-label="Overlay workflow">
 <button type="button" data-workflow-step="log"><span class="wf-dot">1</span><span>Log</span><span class="wf-stage" id="wf-log-state"></span></button>
 <button type="button" data-workflow-step="design"><span class="wf-dot">2</span><span>Design</span><span class="wf-stage" id="wf-design-state"></span></button>
 <button type="button" data-workflow-step="sync"><span class="wf-dot">3</span><span>Sync</span><span class="wf-stage" id="wf-sync-state"></span></button>
@@ -148,7 +156,7 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 <label style="display:flex;align-items:center;gap:9px;margin-top:11px"><input id="cameraautoapply" type="checkbox" disabled style="width:auto"> Apply Auto Sync to exported overlay</label>
 <div id="cameraautoapplystatus" class="small">After a successful match, tick the box, export your MOV and place it at 00:00, 100% speed in Resolve.</div>
 <details class="element-custom" id="cameraautoadvanced" style="margin-top:12px"><summary>Advanced diagnostics and manual controls</summary>
-<details class="element-custom" id="goprosynctest" style="margin-top:12px"><summary>GoPro Auto Sync · TEST v0.14.98-test</summary>
+<details class="element-custom" id="goprosynctest" style="margin-top:12px"><summary>GoPro Auto Sync · TEST v0.14.99-test</summary>
 <div class="small" style="margin-top:8px">Experimental. Reads GPMF gyroscope metadata locally (no video decoding or uploads). Supports recordings starting well before the BBL. The DJI O4 workflow is unchanged.</div>
 <label for="goprovideo">Original GoPro MP4</label><input type="file" id="goprovideo" accept=".mp4,.mov,video/mp4">
 <div class="row" style="margin-top:10px"><button id="gopromatchrun" type="button" disabled>Auto-match GoPro motion to BBL</button></div>
@@ -156,7 +164,7 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 <div id="gopromatchresult" class="small" style="white-space:pre-wrap;margin-top:8px"></div>
 <label style="display:flex;align-items:center;gap:9px;margin-top:12px"><input type="checkbox" id="goproautoexport" disabled style="width:auto"> Apply GoPro Auto Sync to exported overlay</label>
 <div class="small" id="goproexportstatus">Available after a confident motion match. Exports at GoPro recording duration, for placement at 00:00 and 100% speed in Resolve.</div>
-</details><details class="element-custom" id="djisynctest" style="margin-top:12px"><summary>DJI Sync Drift Calculator · TEST v0.14.98-test</summary>
+</details><details class="element-custom" id="djisynctest" style="margin-top:12px"><summary>DJI Sync Drift Calculator · TEST v0.14.99-test</summary>
 <div class="small" style="margin-top:9px">Diagnostic only. The metadata inspector checks video plus DJI motion/diagnostic tracks without reading video frames. BBL and MP4 alone may not reveal camera clock drift. Exports are unchanged.</div>
 <label for="djivideo">Original DJI MP4 (local metadata only)</label><input id="djivideo" type="file" accept=".mp4,.mov,.m4v,video/mp4,video/quicktime">
 <div class="small" id="djisyncstatus" style="margin-top:8px">Load a BBL and matching MP4 to inspect video and DJI metadata timing.</div>
@@ -1226,10 +1234,10 @@ canvas.addEventListener('pointercancel',()=>{draggedTelemetry=null;resizeTelemet
 function parseCSV(text){const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/).filter(Boolean);if(lines.length<3)throw Error('CSV has no samples');const cols=lines[0].split(',').map(s=>s.trim().replace(/^"|"$/g,''));const find=(names)=>{const i=cols.findIndex(c=>names.includes(c.toLowerCase().replace(/\s/g,'')));if(i<0)throw Error('Missing column: '+names[0]);return i};const ti=find(['time','time(us)','time_us','timestamp']);const ix=[0,1,2,3].map(i=>find(['rccommand['+i+']','rccommand'+i]));const rows=[];for(let n=1;n<lines.length;n++){const a=lines[n].split(',');const v=[Number(a[ti]),...ix.map(i=>Number(a[i]))];if(v.every(Number.isFinite))rows.push(v)}if(rows.length<2)throw Error('Not enough valid RC samples');rows.sort((a,b)=>a[0]-b[0]);const factor=rows.at(-1)[0]-rows[0][0]>10000?1e-6:1;const start=rows[0][0];return rows.map(v=>[(v[0]-start)*factor,...v.slice(1)])}
 function getSample(t){if(demoMode){const a=t*2*Math.PI;return [Math.round(370*Math.sin(a*.37)*Math.cos(a*.11)),Math.round(390*Math.cos(a*.29)),Math.round(400*Math.sin(a*.23+.7)),Math.round(1500+420*Math.sin(a*.17-.6))]}if(binaryMode)return sampleBinary(t);if(!samples.length)return [0,0,0,1000];if(t<=0)return samples[0].slice(1);if(t>=duration)return samples.at(-1).slice(1);let lo=0,hi=samples.length-1;while(lo+1<hi){const mid=(lo+hi)>>1;if(samples[mid][0]<t)lo=mid;else hi=mid}const a=samples[lo],b=samples[hi],r=(t-a[0])/(b[0]-a[0]||1);return [1,2,3,4].map(i=>a[i]+r*(b[i]-a[i]))}
 function configureCanvas(){const format=$('canvasformat').value,size=$('size'),old=size.value;
- // Temporarily disable themed HUD graphics in portrait formats, preserving the setting for landscape.
+ // Portrait formats use their own HUD frame rather than suppressing themed artwork.
  const portrait=format==='9:16'||format==='3:4';
- $('betagraphics').disabled=portrait;
- $('betagraphics').title=portrait?'HUD graphics are temporarily unavailable in vertical formats. Sticks and telemetry still work.':'';const formats={sticks:[['800x300','800 × 300'],['1200x450','1200 × 450'],['1600x600','1600 × 600'],['2400x900','2400 × 900'],['3200x1200','3200 × 1200'],['640x240','640 × 240']], '16:9':[['1280x720','1280 × 720'],['1920x1080','1920 × 1080'],['2560x1440','2560 × 1440'],['3840x2160','3840 × 2160']], '4:3':[['960x720','960 × 720'],['1440x1080','1440 × 1080'],['1920x1440','1920 × 1440'],['2880x2160','2880 × 2160']], '9:16':[['720x1280','720 × 1280'],['1080x1920','1080 × 1920'],['1440x2560','1440 × 2560']], '3:4':[['720x960','720 × 960'],['1080x1440','1080 × 1440'],['1440x1920','1440 × 1920']]};size.replaceChildren();for(const [v,title] of formats[format]){const option=document.createElement('option');option.value=v;option.textContent=title;size.append(option)}size.value=formats[format].some(x=>x[0]===old)?old:format==='sticks'?'1600x600':format==='16:9'?'1920x1080':format==='4:3'?'1440x1080':format==='9:16'?'1080x1920':'1080x1440';stickLayout=format==='sticks'?[{x:.25,y:.5,scale:1,visible:true},{x:.75,y:.5,scale:1,visible:true}] :[{x:.2,y:.82,scale:.8,visible:true},{x:.8,y:.82,scale:.8,visible:true}];syncStickControls();syncExportSticksVisibility();update()}
+ $('betagraphics').disabled=false;
+ $('betagraphics').title=portrait?'Portrait-friendly HUD graphics are drawn inside the vertical canvas.':'';const formats={sticks:[['800x300','800 × 300'],['1200x450','1200 × 450'],['1600x600','1600 × 600'],['2400x900','2400 × 900'],['3200x1200','3200 × 1200'],['640x240','640 × 240']], '16:9':[['1280x720','1280 × 720'],['1920x1080','1920 × 1080'],['2560x1440','2560 × 1440'],['3840x2160','3840 × 2160']], '4:3':[['960x720','960 × 720'],['1440x1080','1440 × 1080'],['1920x1440','1920 × 1440'],['2880x2160','2880 × 2160']], '9:16':[['720x1280','720 × 1280'],['1080x1920','1080 × 1920'],['1440x2560','1440 × 2560']], '3:4':[['720x960','720 × 960'],['1080x1440','1080 × 1440'],['1440x1920','1440 × 1920']]};size.replaceChildren();for(const [v,title] of formats[format]){const option=document.createElement('option');option.value=v;option.textContent=title;size.append(option)}size.value=formats[format].some(x=>x[0]===old)?old:format==='sticks'?'1600x600':format==='16:9'?'1920x1080':format==='4:3'?'1440x1080':format==='9:16'?'1080x1920':'1080x1440';stickLayout=format==='sticks'?[{x:.25,y:.5,scale:1,visible:true},{x:.75,y:.5,scale:1,visible:true}] :[{x:.2,y:.82,scale:.8,visible:true},{x:.8,y:.82,scale:.8,visible:true}];syncStickControls();syncExportSticksVisibility();update()}
 function syncExportSticksVisibility(){const sticks=$('canvasformat').value==='sticks';$('exportstickswrap').style.display=sticks?'':'none';if(!sticks)$('exportsticks').value='both'}
 for(const id of ['snapgrid','gridspacing'])$(id).addEventListener('change',()=>draw(time));function syncStickControls(){for(let i=0;i<2;i++){const id=i===0?'left':'right';$(id+'stickshow').checked=stickLayout[i].visible;$(id+'stickscale').value=stickLayout[i].scale*100}}
 function snapPosition(x,y){if(!$('snapgrid').checked)return [x,y];const n=Number($('gridspacing').value)||32;const snap=v=>Math.abs(v-.5)<.5/n? .5:Math.round(v*n)/n;return [snap(x),snap(y)]}
@@ -1345,7 +1353,7 @@ for(const id of ['customimagevisible','customimagex','customimagey','customimage
 $('expandpreview').addEventListener('click',()=>{const expanded=document.body.classList.toggle('preview-expanded');$('expandpreview').textContent=expanded?'⛶ Normal size':'⛶ Expand preview';$('expandpreview').setAttribute('aria-pressed',String(expanded));});
 $('videoformat').addEventListener('change',()=>{$('mp4backgroundwrap').style.display=$('videoformat').value==='mp4'?'':'none'});
 $('mp4backgroundwrap').style.display=$('videoformat').value==='mp4'?'':'none';
-function draw(t){const [w,h]=$('size').value.split('x').map(Number);const frame=$('previewframe');if(frame){frame.style.aspectRatio=w+'/'+h;frame.classList.toggle('portrait-preview',['9:16','3:4'].includes($('canvasformat').value))}if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}ctx.clearRect(0,0,w,h);if(recording&&$('videoformat').value==='mp4'){ctx.fillStyle=$('bgcolor').value;ctx.fillRect(0,0,w,h)}ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';const lead=+$('lead').value||0,tail=+$('tail').value||0;const total=lead+duration+tail;const fadeIn=Math.max(0,+$('fadein').value||0),fadeOut=Math.max(0,+$('fadeout').value||0);let alpha=1;if(fadeIn)alpha=Math.min(alpha,t/fadeIn);if(fadeOut)alpha=Math.min(alpha,(total-t)/fadeOut);ctx.globalAlpha=1;const active=t>=lead&&t<=lead+duration;const [roll,pitch,yaw,throttle]=getSample(clamp(t-lead,0,duration));const positions=[[clamp(( $('reverseyaw').checked?1:-1)*yaw/500),clamp(($('reversethrottle').checked?-1:1)*(throttle>=1000?(throttle-1500)/500:(throttle-500)/500))],[clamp(($('reverseroll').checked?-1:1)*roll/500),clamp(($('reversepitch').checked?-1:1)*pitch/500)]];const baseSide=$('canvasformat').value==='sticks'?Math.min(h*.82,w*.38):Math.min(h*.28,w*.22);const blendOpacity=value=>value;
+function draw(t){const [w,h]=$('size').value.split('x').map(Number);const frame=$('previewframe');if(frame){frame.style.aspectRatio=w+'/'+h;frame.classList.toggle('portrait-preview',['9:16','3:4'].includes($('canvasformat').value));document.body.classList.toggle('studio-portrait',['9:16','3:4'].includes($('canvasformat').value))}if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}ctx.clearRect(0,0,w,h);if(recording&&$('videoformat').value==='mp4'){ctx.fillStyle=$('bgcolor').value;ctx.fillRect(0,0,w,h)}ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';const lead=+$('lead').value||0,tail=+$('tail').value||0;const total=lead+duration+tail;const fadeIn=Math.max(0,+$('fadein').value||0),fadeOut=Math.max(0,+$('fadeout').value||0);let alpha=1;if(fadeIn)alpha=Math.min(alpha,t/fadeIn);if(fadeOut)alpha=Math.min(alpha,(total-t)/fadeOut);ctx.globalAlpha=1;const active=t>=lead&&t<=lead+duration;const [roll,pitch,yaw,throttle]=getSample(clamp(t-lead,0,duration));const positions=[[clamp(( $('reverseyaw').checked?1:-1)*yaw/500),clamp(($('reversethrottle').checked?-1:1)*(throttle>=1000?(throttle-1500)/500:(throttle-500)/500))],[clamp(($('reverseroll').checked?-1:1)*roll/500),clamp(($('reversepitch').checked?-1:1)*pitch/500)]];const baseSide=$('canvasformat').value==='sticks'?Math.min(h*.82,w*.38):Math.min(h*.28,w*.22);const blendOpacity=value=>value;
  const opacity=blendOpacity(Number($('opacity').value)/100),background=rgb($('stickbg').value),bgAlpha=blendOpacity(Number($('stickbgopacity').value)/100),shape=$('pointershape').value,trail=$('trailstyle').value,trailSeconds=(+$('traillength').value)/100,pointSize=(+$('pointersize').value)/100,trailColor=$('trailcolor').value,trailOpacity=blendOpacity(Number($('trailopacity').value)/100),outlineColor=$('outlinecolor').value,outlineOpacity=blendOpacity(Number($('outlineopacity').value)/100),outlineWidth=(+$('outlinewidth').value)/100,crossColor=$('crosscolor').value,crossOpacity=blendOpacity(Number($('crossopacity').value)/100),crossWidth=(+$('crosswidth').value)/100,outlineShape=$('outlineshape').value,crossStyle=$('crossstyle').value,trailWidth=(+$('trailwidth').value)/100;
 let customMaskImage=null,customMaskPixels=null;
 function customPointerMask(){
@@ -2162,7 +2170,7 @@ $('gopromatchrun').addEventListener('click',async()=>{
     'Suggested overlay speed: '+fmt(result.speed)+'%\nGoPro recording: '+fmt(result.videoDuration)+'s\nCamera/BBL offset: '+fmt(result.offset)+'s (positive means video begins before BBL)\nMatched sections: '+result.matchedWindows+' / '+result.totalWindows+'\nConfidence: '+result.confidence+'\nResidual: '+fmt(result.residual*1000)+' ms\nGPMF gyro samples: '+result.gyroSamples+'\nScores: '+result.scores.map(fmt).join(' / ')+'\nExperimental. Verify against the video before using full-length exported overlays.':
     'No safe automatic GoPro sync: '+result.reason+'\nMatched sections: '+result.matchedWindows+' / '+result.totalWindows+'\nScores: '+result.scores.map(fmt).join(' / ');
   status.textContent=result.status==='estimate'?'GoPro motion match ready.':'GoPro motion matching inconclusive.';
- }catch(e){status.textContent='GoPro matcher v0.14.98-test: '+e.message;$('gopromatchresult').textContent='';}
+ }catch(e){status.textContent='GoPro matcher v0.14.99-test: '+e.message;$('gopromatchresult').textContent='';}
  finally{goproRunning=false;refreshGoProSync()}
 });
 
@@ -2201,7 +2209,7 @@ function renderDjiSync(){
  ];
  output.textContent=lines.join('\n');
  status.textContent='Ready · BBL and MP4 loaded locally.';
- djiTimingReport='DJI SYNC DRIFT CALCULATOR · TEST v0.14.98-test\n'+lines.join('\n')+'\n\n'+djiVideoInfo.report;
+ djiTimingReport='DJI SYNC DRIFT CALCULATOR · TEST v0.14.99-test\n'+lines.join('\n')+'\n\n'+djiVideoInfo.report;
 }
 $('djivideo').addEventListener('change',async e=>{
  const f=e.target.files?.[0];djiVideoFile=f||null;djiVideoInfo=null;djiAutoMatch=null;djiMatchSource=null;$('djiautoexport').checked=false;$('djimotionresult').textContent='';
@@ -2981,6 +2989,7 @@ function applyBetaOsdFields(){
   if(item.cellColour&&!item.userCellColour)item.cellColour.value=betaPalette()[0];
  }
  if($('betatheme').value==='cyan')applyNeonPresetFields();
+ applyPortraitPresetLayout();
  // No matching preset fields should never produce an entirely empty HUD.
  // Leave manual checkbox choices alone in the custom layout.
  if(presetName!=='stickoverlay'&&!telemetryWidgets.some(item=>item.check.checked)){
@@ -3032,7 +3041,7 @@ function applyBetaTheme(){
  $('customthemepanel').hidden=theme!=='custom';
  // Selecting a designed HUD theme should activate its artwork; the user can
  // still turn graphics off manually afterwards.
- if(theme!=='classic'&&!['9:16','3:4'].includes($('canvasformat').value))$('betagraphics').checked=true;
+ if(theme!=='classic')$('betagraphics').checked=true;
  // Clean and instrument-style themes are flat. Visor effects only default on where they suit the design.
  const visorDefaults={classic:[0,0],cyan:[36,32],amber:[0,0],ice:[22,20],green:[0,0],sunset:[14,12],sunsetcinema:[0,0],violet:[40,38]};
  const [curve,perspective]=visorDefaults[theme]||[0,0];
@@ -3059,7 +3068,8 @@ function applyBetaTheme(){
   }
  }
  if(theme==='cyan')applyNeonPresetTheme();
- if(theme==='green')applyMilitaryBuiltInPreset();
+ if(theme==='green'&&!['9:16','3:4'].includes($('canvasformat').value))applyMilitaryBuiltInPreset();
+ applyPortraitPresetLayout();
  // The theme-specific presets may change HUD palette controls after the first
  // colour pass; resolve the linked widget colours against the final palette.
  syncHudTelemetryColours();
@@ -3075,7 +3085,7 @@ $('betapreset').addEventListener('change',()=>{
  const p=betaPresets[$('betapreset').value];if(!p)return;
  // Preserve both sticks' positions, sizes and visibility across all three layouts.
  // Presets set visibility and placement of their telemetry and optional quad only.
- if($('betatheme').value==='cyan')applyNeonPresetTheme();
+ if($('betatheme').value==='cyan'&&!['9:16','3:4'].includes($('canvasformat').value))applyNeonPresetTheme();
  applyBetaOsdFields();enforceStickOnlyLayout();update();
 });
 for(const [i,id] of ['leftstickshow','rightstickshow'].entries())$(id).addEventListener('change',()=>{stickLayout[i].visible=$(id).checked;update()});
@@ -3083,6 +3093,7 @@ $('betagraphics').addEventListener('change',update);
 $('canvasformat').addEventListener('change',()=>{
  const compact=$('canvasformat').value==='sticks';
  stickLayout.forEach((stick,i)=>{stick.x=compact?(i===0?.25:.75):(i===0?.39:.61);stick.y=compact?.5:.83;stick.scale=compact?1:.72;$(i===0?'leftstickscale':'rightstickscale').value=String(Math.round(stick.scale*100))});
+ if(['9:16','3:4'].includes($('canvasformat').value)&&$('betapreset').value!=='stickoverlay')applyPortraitPresetLayout();
  update();
 });
 $('betacurve').addEventListener('input',update);
@@ -3340,6 +3351,54 @@ $('customthemeimportfile').addEventListener('change',async e=>{
  finally{e.target.value=''}
 });
 refreshCustomThemes();
+// Native 9:16 / 3:4 HUD graphics. Only affects built-in decorative artwork;
+// telemetry, stick coordinates and exports remain in real canvas coordinates.
+function drawPortraitHudGraphics(w,h,t){
+ if(!betaActive()||!$('betagraphics').checked||$('betatheme').value==='classic')return;
+ const [primary,,accent]=betaPalette(),opacity=Math.max(0,Math.min(1,Number($('hudopacity').value)/100));
+ const unit=Math.max(1,w/500),pulse=.7+.3*Math.sin(t*1.6);
+ ctx.save();ctx.globalAlpha=opacity;ctx.lineWidth=unit*1.7;ctx.lineCap='round';
+ const stroke=(colour,alpha,points)=>{
+  ctx.globalAlpha=opacity*alpha;ctx.strokeStyle=colour;ctx.beginPath();
+  points.forEach(([x,y],i)=>i?ctx.lineTo(x*w,y*h):ctx.moveTo(x*w,y*h));ctx.stroke();
+ };
+ // Keep the middle free for real logged data. Corner brackets and thin rails
+ // frame the portrait without spanning the entire image like the 16:9 visor.
+ for(const side of [0,1]){
+  const edge=side?.96:.04,inner=side?.84:.16;
+  stroke(primary,.68,[[inner,.035],[edge,.035],[edge,.115]]);
+  stroke(primary,.68,[[edge,.885],[edge,.965],[inner,.965]]);
+  stroke(accent,.4,[[edge,.17],[edge,.31]]);
+  stroke(accent,.4,[[edge,.69],[edge,.83]]);
+  for(let i=0;i<6;i++){
+   const y=.35+i*.055;
+   stroke(primary,.17+(i%2)*.1,[[edge,y],[side?.92:.08,y]]);
+  }
+ }
+ stroke(accent,.45*pulse,[[.36,.04],[.64,.04]]);
+ stroke(primary,.36,[[.4,.50],[.46,.50]]);
+ stroke(primary,.36,[[.54,.50],[.6,.50]]);
+ stroke(accent,.48,[[.5,.475],[.5,.489]]);
+ stroke(accent,.48,[[.5,.511],[.5,.525]]);
+ stroke(accent,.4*pulse,[[.34,.96],[.66,.96]]);
+ ctx.restore();
+}
+// Only standard OSD/Full Details presets are auto-arranged; never move a
+// manually customised layout or a saved preset behind the user's back.
+function applyPortraitPresetLayout(){
+ if(!['9:16','3:4'].includes($('canvasformat').value)||$('betapreset').value==='stickoverlay')return;
+ const enabled=telemetryWidgets.filter(item=>item.check.checked);
+ const count=enabled.length;
+ const perColumn=Math.max(1,Math.ceil(count/2));
+ const step=Math.min(.093,.43/perColumn);
+ for(let i=0;i<count;i++){
+  const item=enabled[i],right=i>=perColumn,row=right?i-perColumn:i;
+  item.x=right?.54:.08;item.y=.10+row*step;
+  item.alignRight=false;item.centeredArrow=false;
+  item.size.value=String(Math.min(25,Number(item.size.value)||24));
+ }
+ if($('quadshow').checked){quadLayout.x=.5;quadLayout.y=.64;quadLayout.scale=Math.min(quadLayout.scale,.65)}
+}
 function drawBetaGraphics(w,h,t=0){
  // Custom themes are an independent image layer, including portrait layouts.
  // Built-in theme rendering below remains completely unchanged.
@@ -3347,8 +3406,11 @@ function drawBetaGraphics(w,h,t=0){
   if(betaActive()&&$('betagraphics').checked)drawCustomThemeArtwork(w,h,t);
   return;
  }
- // Themed artwork is designed for landscape; keep vertical stick/telemetry layouts usable.
- if(['9:16','3:4'].includes($('canvasformat').value))return;
+ // Draw a native vertical composition: never squeeze the wide visor into a phone-shaped canvas.
+ if(['9:16','3:4'].includes($('canvasformat').value)){
+  drawPortraitHudGraphics(w,h,t);
+  return;
+ }
  if(!betaActive()||!$('betagraphics').checked||$('betatheme').value==='classic')return;
  const theme=$('betatheme').value,p=$('hudprimary').value,a=$('hudaccent').value;
  const motion=$('hudmotion').checked;
