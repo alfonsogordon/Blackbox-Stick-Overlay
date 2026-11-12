@@ -48,7 +48,61 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 #elementselection .overlay-corner-handle{position:absolute;right:-12px;bottom:-12px;width:24px;height:24px;border:2px solid #0b2638;border-radius:7px;background:#78e2ea;box-shadow:0 2px 8px #071523aa;cursor:nwse-resize;pointer-events:auto;touch-action:none;z-index:20;box-sizing:border-box}
 #elementselection:not(.selection-pinned) .overlay-corner-handle{display:none}
 #elementselection .overlay-corner-handle:after{content:"";position:absolute;right:4px;bottom:4px;width:8px;height:8px;border-right:2px solid #11384a;border-bottom:2px solid #11384a}
-</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.76</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="0"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="0"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
+</style><style id="workflow-layout-style">
+/* Workflow layout: existing controls, IDs, events and draw/export code retained */
+@media(min-width:1160px){
+ .header-title{display:grid;grid-template-columns:auto auto minmax(285px,1fr) auto;align-items:center;gap:9px}
+ .header-title h1{white-space:nowrap}
+ .header-description{margin-left:0;text-align:right;font-size:11px;max-width:255px}
+}
+#workflow-nav{display:flex;gap:5px;justify-content:center;align-items:center;min-width:0}
+.header-title .studio-about-link{justify-self:end;margin-left:auto;color:#f3f8ff;font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap}
+.header-title .studio-about-link:hover,.header-title .studio-about-link:focus-visible{color:#fff;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:1159px){.header-title .studio-about-link{margin-left:auto}}
+@media(max-width:720px){.header-title .studio-about-link{order:3;margin-left:auto;font-size:12px}}
+#workflow-nav button{width:auto;flex:0 1 auto;display:flex;align-items:center;gap:5px;padding:6px 8px;border-radius:999px;background:#152638;color:#cbd9e7;border:1px solid #3c5568;font-size:11px;line-height:1.2;white-space:nowrap;cursor:pointer}
+#workflow-nav button:hover,#workflow-nav button:focus-visible{border-color:#79dcd7;color:#fff}
+#workflow-nav button.wf-complete{border-color:#436e63;background:#19342d}
+#workflow-nav .wf-dot{display:inline-grid;place-items:center;width:17px;height:17px;border:1px solid #61788c;border-radius:50%;font-size:10px}
+#workflow-nav button.wf-complete .wf-dot{background:#74d9ae;color:#12221b;font-weight:700;border-color:#74d9ae}
+#workflow-nav .wf-stage{font-size:10px;color:#a8bece}
+@media(max-width:1159px){.header-title{display:flex;flex-wrap:wrap;align-items:center}.header-description{flex-basis:100%}#workflow-nav{margin-left:auto}}
+@media(max-width:720px){#workflow-nav{order:4;width:100%;margin:4px 0 0;justify-content:space-between}#workflow-nav button{flex:1;justify-content:center;padding:7px 5px}.header-description{display:none}}
+.workflow-section{margin:0 0 11px;border:1px solid #344a63;background:#101e30;border-radius:14px;overflow:visible}
+.workflow-section>summary{cursor:pointer;padding:13px 15px;color:#ecf7fd;font-size:15px;font-weight:700;list-style-position:inside}
+.workflow-section>summary:hover{color:#85e5d4}
+.workflow-section[open]>summary{border-bottom:1px solid #344a63}
+.workflow-content{padding:4px 14px 15px;min-width:0}
+.workflow-content>.advanced,.workflow-content>.element-custom{margin-top:10px}
+.workflow-content>.small:first-child{margin-top:7px}
+#workflow-left>strong,#workflow-left>.note{display:none}
+#workflow-right #png{display:none!important}
+#workflow-right>.preview-heading{margin-bottom:0}
+#workflow-right .workflow-section{margin-top:11px}
+#workflow-right .workflow-section .workflow-section{margin-top:7px}
+#workflow-right .workflow-export-action{margin-top:14px}
+#workflow-right .workflow-export-action #video{width:100%;padding:14px;font-weight:700;background:#227b76;border-color:#46b7aa;color:#fff}
+#workflow-right .workflow-export-action #video:disabled{opacity:.48}
+#workflow-right #exportprogress{margin-top:12px!important}
+#workflow-right #status{margin-top:10px}
+#workflow-left #cameraautoadvanced{margin-top:10px}
+/* Remove redundant submenu layers without removing the real DOM controls. */
+#workflow-left .workflow-flat-inner{display:block!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+#workflow-left .workflow-flat-inner>summary{display:none!important}
+#workflow-left .workflow-flat-inner>div:not([hidden]){margin-top:0}
+#workflow-left #elementmanagerv2>.em-head{display:none!important}
+#workflow-left .workflow-custom-image{margin-top:15px!important;padding:12px!important;border:1px solid #3c5971!important;border-radius:12px;background:#13283a!important}
+#workflow-left .workflow-custom-image>summary{display:block!important;padding:0 0 8px!important;font-weight:700;color:#88dfd6;list-style:none;pointer-events:none}
+#workflow-left .workflow-custom-image>summary::marker{content:''}
+#workflow-right{background:#111c2c!important;backdrop-filter:none!important}
+@media(min-width:981px){.layout>section.panel:nth-child(2){background:#111c2c!important}}
+
+</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">v0.15.0</span><nav id="workflow-nav" aria-label="Overlay workflow">
+<button type="button" data-workflow-step="log"><span class="wf-dot">1</span><span>Log</span><span class="wf-stage" id="wf-log-state"></span></button>
+<button type="button" data-workflow-step="design"><span class="wf-dot">2</span><span>Design</span><span class="wf-stage" id="wf-design-state"></span></button>
+<button type="button" data-workflow-step="sync"><span class="wf-dot">3</span><span>Sync</span><span class="wf-stage" id="wf-sync-state"></span></button>
+<button type="button" data-workflow-step="export"><span class="wf-dot">4</span><span>Export</span><span class="wf-stage" id="wf-export-state"></span></button>
+</nav><a href="./about.html" class="studio-about-link" aria-label="About Overlay Studio">About</a></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="0"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="0"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
 <details id="customthemepanel" class="element-custom" style="margin-top:8px" hidden><summary>Create / manage custom theme</summary>
 <div class="small" style="margin:8px 0">Upload transparent PNG or WebP artwork as your HUD graphics. Choose custom theme colours below, adjust the image and save it as a reusable theme. Artwork stays in your browser unless you export the theme.</div>
 <label>Custom artwork (PNG / WebP)</label><input id="customthemefile" type="file" accept=".png,.webp,image/png,image/webp">
@@ -82,10 +136,42 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 </details><details class="advanced" id="timingdetails"><summary>Export duration &amp; sync details</summary><div id="timinginfo" class="helppanel" style="margin-top:12px" aria-live="polite">Load a log to see the export timing breakdown.</div></details><div class="note">Privacy: imported CSV data stays in your browser. No uploads. Video export depends on browser codec support; transparency is not guaranteed in every browser.</div></section><section class="panel"><div class="preview-heading"><strong>Live preview</strong><button id="expandpreview" type="button" aria-pressed="false">⛶ Expand preview</button></div><div class="preview" id="previewframe" style="margin-top:16px;position:relative"><img id="previewphoto" alt="Optional footage preview background" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;display:none"><canvas id="view" width="800" height="300" style="position:relative;z-index:1"></canvas><div id="previewguides" aria-hidden="true" style="display:none;position:absolute;inset:0;z-index:2;pointer-events:none"></div><div id="elementselection" aria-hidden="true" style="display:none;position:absolute;pointer-events:none;z-index:5;border:1px solid rgba(151,219,225,.55);box-shadow:0 0 0 1px rgba(8,21,34,.32);border-radius:5px"><div style="position:absolute;right:-4px;bottom:-4px;width:8px;height:8px;background:#86c7ce;border:1px solid #203b49;border-radius:2px"></div><span id="elementselectionlabel" style="position:absolute;left:0;top:-22px;background:#0c2037cc;color:#bad8df;font:500 10px system-ui;padding:2px 5px;border-radius:4px;white-space:nowrap"></span></div></div><div class="row" style="margin-top:10px"><button id="demo" type="button">▶ Preview demo (no log)</button></div><details class="advanced"><summary>Preview footage background</summary><label>Upload a screenshot from your GoPro footage</label><input id="previewupload" type="file" accept="image/png,image/jpeg,image/webp,image/avif"><label><input type="checkbox" id="previewvisible" checked style="width:auto;margin-right:8px"> Show background in preview</label><label>Background fit</label><select id="previewfit"><option value="cover">Fill preview (crop if needed)</option><option value="contain">Fit entire image</option></select><div class="row"><button id="previewclear" type="button">Remove preview image</button></div><div class="small">Preview-only background. Lower footage brightness to improve overlay contrast; exports stay transparent.</div></details><div class="controls"><button id="play">▶ Play</button><div id="timelinearmwrap" class="timeline-arm-wrap"><input id="scrub" type="range" min="0" max="1000" value="0"><div id="timelinearmmarkers" class="timeline-arm-markers" aria-label="Recorded arming events" hidden></div></div><span id="clock" class="small">0:00.0</span></div><div id="timelinearmstatus" class="small" style="margin-top:7px;text-align:center;color:#b4dfd5" hidden></div><div class="row"><button id="png">Save PNG frame</button><button id="video" disabled>Export video</button></div><div class="small" style="margin-top:7px;color:#dfbd87"><strong>Export note:</strong> Saving over an existing file may fail. Choose a new filename rather than replacing the old one.</div><div id="exportstickswrap"><label>Export sticks</label><select id="exportsticks"><option value="both">Both sticks (one video)</option><option value="left">Left stick only</option><option value="right">Right stick only</option><option value="separate">Separate left + right videos</option></select></div><div class="two"><div><label>Video format</label><select id="videoformat"><option value="mov">MOV (transparent PNG codec, experimental)</option><option value="mp4">MP4 (solid black background)</option><option value="webm">WebM (alpha experimental)</option></select><div class="small">Transparent MOV downloads normally through your browser. Large exports are split into numbered clips (up to 1 GiB each); your browser may ask to allow multiple downloads.</div></div><div id="mp4backgroundwrap"><label>MP4 background</label><select id="bgcolor"><option value="#000000">Black</option><option value="#00ff00">Green screen</option></select></div></div><details class="element-custom" id="exportrangesettings" style="margin-top:10px"><summary>Export time range</summary>
 <div style="margin-top:9px"><label style="margin:0 0 7px">Export section</label><select id="exportrangemode"><option value="full">Full Blackbox log</option><option value="armed" selected>Armed → Disarmed (automatic)</option><option value="custom">Custom In / Out time</option></select></div>
 <div class="two" id="exportrangeinputs" hidden><div><label for="exportin">In (start)</label><input id="exportin" type="text" inputmode="decimal" value="00:00.000" placeholder="MM:SS.mmm"></div><div><label for="exportout">Out (end)</label><input id="exportout" type="text" inputmode="decimal" value="00:00.000" placeholder="MM:SS.mmm"></div></div>
-<div class="small" id="exportrangestatus" style="margin-top:8px">Full log may include pre-arm and post-disarm time. Armed → Disarmed uses recorded flags when available.</div></details><details class="element-custom" id="movcompresssettings" style="margin-top:10px"><summary>MOV compression (experimental)</summary>
+<div class="small" id="exportrangestatus" style="margin-top:8px">Full log may include pre-arm and post-disarm time. Armed → Disarmed uses recorded flags when available.</div></details><details class="workflow-section" id="cameraautosync">
+<summary>Camera Auto Sync</summary>
+<div class="small" style="margin-top:9px">Automatically match DJI O4 Pro or GoPro motion to your Blackbox log, then apply the corrected timing to the exported overlay.</div>
+<label for="cameraautosyncfile">Original camera MP4</label><input id="cameraautosyncfile" type="file" accept=".mp4,.mov,video/mp4,video/quicktime">
+<div class="small" style="margin-top:7px"><strong>Your footage stays on your device.</strong> Footage and Blackbox logs are processed locally in your browser. Nothing is uploaded, shared or stored online. Only camera motion metadata is read — video frames are not decoded or played. Your original files remain unchanged.</div>
+<div id="cameraautodetect" class="small" style="margin-top:9px">Load your BBL and select your camera MP4 to begin.</div>
+<div class="row" style="margin-top:10px"><button id="cameraautorun" type="button" disabled>Auto Sync</button></div>
+<div id="cameraautostatus" class="small" style="margin-top:8px"></div>
+<div id="cameraautores" class="small" style="white-space:pre-wrap;margin-top:8px"></div>
+<label style="display:flex;align-items:center;gap:9px;margin-top:11px"><input id="cameraautoapply" type="checkbox" disabled style="width:auto"> Apply Auto Sync to exported overlay</label>
+<div id="cameraautoapplystatus" class="small">After a successful match, tick the box, export your MOV and place it at 00:00, 100% speed in Resolve.</div>
+<details class="element-custom" id="cameraautoadvanced" style="margin-top:12px"><summary>Advanced diagnostics and manual controls</summary>
+<details class="element-custom" id="goprosynctest" style="margin-top:12px"><summary>GoPro Auto Sync</summary>
+<div class="small" style="margin-top:8px">Experimental. Reads GPMF gyroscope metadata locally (no video decoding or uploads). Supports recordings starting well before the BBL. The DJI O4 workflow is unchanged.</div>
+<label for="goprovideo">Original GoPro MP4</label><input type="file" id="goprovideo" accept=".mp4,.mov,video/mp4">
+<div class="row" style="margin-top:10px"><button id="gopromatchrun" type="button" disabled>Auto-match GoPro motion to BBL</button></div>
+<div id="gopromatchstatus" class="small" style="margin-top:8px">Load a BBL and an original GoPro MP4 with GPMF gyro data.</div>
+<div id="gopromatchresult" class="small" style="white-space:pre-wrap;margin-top:8px"></div>
+<label style="display:flex;align-items:center;gap:9px;margin-top:12px"><input type="checkbox" id="goproautoexport" disabled style="width:auto"> Apply GoPro Auto Sync to exported overlay</label>
+<div class="small" id="goproexportstatus">Available after a confident motion match. Exports at GoPro recording duration, for placement at 00:00 and 100% speed in Resolve.</div>
+</details><details class="element-custom" id="djisynctest" style="margin-top:12px"><summary>DJI Sync Drift Calculator</summary>
+<div class="small" style="margin-top:9px">Diagnostic only. The metadata inspector checks video plus DJI motion/diagnostic tracks without reading video frames. BBL and MP4 alone may not reveal camera clock drift. Exports are unchanged.</div>
+<label for="djivideo">Original DJI MP4 (local metadata only)</label><input id="djivideo" type="file" accept=".mp4,.mov,.m4v,video/mp4,video/quicktime">
+<div class="small" id="djisyncstatus" style="margin-top:8px">Load a BBL and matching MP4 to inspect video and DJI metadata timing.</div>
+<div class="two" style="margin-top:8px"><div><label for="djiframeoffset">Measured end drift (frames)</label><input id="djiframeoffset" type="number" step="1" placeholder="e.g. 20"><div class="small">Align a movement at the start first. Positive = overlay ahead; negative = overlay behind.</div></div><div><label for="djitimelinefps">Resolve timeline FPS</label><select id="djitimelinefps"><option value="50" selected>50 fps</option><option value="60">60 fps</option><option value="30">30 fps</option><option value="25">25 fps</option><option value="24">24 fps</option></select></div></div><label for="djicurrentspeed">Overlay speed when measuring drift (%)</label><input id="djicurrentspeed" type="number" min="50" max="150" step="0.01" value="100"><div class="small">Enter 99.7 if your overlay was already set to 99.7% when measuring drift.</div>
+<div class="row" style="margin-top:12px"><button id="djimotionrun" type="button" disabled>Auto-match DJI motion to BBL</button></div>
+<div class="small" id="djimotionstatus" style="margin-top:8px">Load a BBL and MP4 to enable motion matching. The tool reads DJI metadata only, not video frames.</div>
+<div id="djimotionresult" class="small" style="white-space:pre-wrap;margin-top:9px"></div>
+<div style="margin-top:12px"><label style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="djiautoexport" disabled style="width:auto"> Apply DJI Auto Sync to exported overlay</label>
+<div class="small" id="djiautoexportstatus" style="margin-top:5px">Run a successful motion match to enable. Produces an overlay covering the DJI video duration, for placement at 00:00 and 100% speed in Resolve. Applies only when DJI Auto Sync is enabled.</div></div>
+<div class="small" id="djisyncresult" style="white-space:pre-wrap;margin-top:10px"></div>
+<div class="row" style="margin-top:10px"><button id="djisynccopy" type="button">Copy timing report</button></div>
+</details></details></details><details class="element-custom" id="movcompresssettings" style="margin-top:10px"><summary>MOV compression (experimental)</summary>
 <label for="movcompression">Compression quality</label>
-<select id="movcompression"><option value="lossless">Lossless (original)</option><option value="high" selected>High quality — smaller PNG frames (recommended)</option><option value="balanced">Balanced — reduced colours</option><option value="compact">Compact — strongest reduction</option><option value="losslessopt">TEST · Lossless recompression (identical pixels)</option><option value="highopt">TEST · High + lossless recompression</option><option value="highalpha">TEST · High + alpha optimisation (may soften glows)</option><option value="highalphaopt">TEST · High + alpha + lossless recompression</option></select>
-<div class="small" style="margin-top:7px">All choices remain transparent PNG-in-MOV for Resolve and other compatible editors. TEST lossless recompression preserves pixels and only replaces PNG frames when smaller. TEST alpha changes semi-transparent pixels and may affect soft edges/glows. Test a short range first; High quality remains the default.</div>
+<select id="movcompression"><option value="lossless">Lossless (original)</option><option value="high" selected>High quality — smaller PNG frames (recommended)</option><option value="balanced">Balanced — reduced colours</option><option value="compact">Compact — strongest reduction</option><option value="losslessopt">Lossless recompression (identical pixels)</option><option value="highopt">High + lossless recompression</option><option value="highalpha">High + alpha optimisation (may soften glows)</option><option value="highalphaopt">High + alpha + lossless recompression</option></select>
+<div class="small" style="margin-top:7px">All choices remain transparent PNG-in-MOV for Resolve and other compatible editors. Lossless recompression preserves pixels and only replaces PNG frames when smaller. Alpha optimisation changes semi-transparent pixels and may affect soft edges/glows. Try a short range first; High quality remains the default.</div>
 </details><details class="element-custom" id="exportdebugdetails" style="margin-top:10px"><summary>Export debug log</summary><div class="small" style="margin:8px 0">Timestamped local export diagnostics. No flight data is logged. Copy and share this log if an export fails.</div><div class="row" style="margin-bottom:8px"><button type="button" id="copyexportdebug">Copy log</button><button type="button" id="clearexportdebug">Clear log</button></div><pre id="exportdebuglog" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:280px;overflow:auto;background:#0a1422;border:1px solid #34465f;border-radius:10px;padding:12px;font:11px/1.5 monospace;color:#d4e5f5">No export attempts logged yet.</pre></details><div id="exportprogress" role="progressbar" aria-label="Video export progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="display:none;margin:16px 0"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><strong>Exporting video</strong><strong id="exportpercent">0%</strong></div><div style="height:14px;background:#18283b;border:1px solid #3a536e;border-radius:20px;overflow:hidden"><div id="exportfill" style="height:100%;width:0%;background:linear-gradient(90deg,#36bcb8,#83eee2);transition:width .15s"></div></div><div id="exportdetail" class="small" style="margin-top:7px">Preparing export…</div></div><div id="status" class="status">Load a decoded Blackbox CSV to animate the sticks.</div><div class="small">The exported image has a transparent background. Use it above your FPV video in Resolve.</div></section></div>
 <footer style="max-width:790px;margin:34px auto 6px;padding:20px 18px 0;border-top:1px solid #304059;text-align:center;color:#94a6bd;font-size:12px;line-height:1.85">
   This was made as a bit of fun, for anyone to enjoy. There may be bugs along the way, so if you spot one, please let us know over on the
@@ -95,6 +181,8 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 <script type="module">
 import {loadBinary, sampleBinary, getBinaryFields, sampleBinaryFields, getBinaryEvents} from './decoder-bundle.js';
 import {createMovPng,movPngStructure} from './mov-png.js';
+import {matchDjiMotion} from './dji-motion-match.js';
+import {matchGoProMotion} from './gopro-motion-match.js?v=0.15.0';
 'use strict';
 const $=id=>document.getElementById(id),canvas=$('view'),ctx=canvas.getContext('2d');
 let telemetryRows=[],telemetryNames=[],telemetryWidgets=[],stickLayout=[{x:.25,y:.5,scale:1,visible:true},{x:.75,y:.5,scale:1,visible:true}],samples=[],duration=0,time=0,playing=false,last=0,recording=false,binaryMode=false,binaryBuffer=null,flightCount=0,demoMode=false,exportTarget="both";const artwork={pointer:null,trail:null,background:null,cross:null};const quadLayout={x:.5,y:.5,scale:.75};
@@ -855,6 +943,12 @@ let selectedOverlay=null,overlayHandleDrag=null;
 let hoveredOverlay=null,draggedFlightTimer=false,flightTimerResizing=false,flightTimerGrabX=0,flightTimerGrabY=0,draggedPackGauge=false,packGaugeResize=false,packGaugeGrabX=0,packGaugeGrabY=0,draggedAviation=null,aviationResizing=false,aviationOffsetX=0,aviationOffsetY=0;
 function editingBounds(kind,index,item){
  const w=canvas.width,h=canvas.height;
+ if(kind==='customimage'){
+  if(!customOverlayImage||!$('customimagevisible').checked)return null;
+  const width=w*Math.max(.01,Math.min(1,(Number($('customimagewidth').value)||20)/100));
+  const height=width*customOverlayImage.naturalHeight/Math.max(1,customOverlayImage.naturalWidth);
+  return {x:w*Number($('customimagex').value)/100-width/2,y:h*Number($('customimagey').value)/100-height/2,w:width,h:height};
+ }
  if(kind==='flighttimer')return flightTimerBounds(w,h);
  if(kind==='packgauge')return packGaugeBounds(w,h);
  if(kind?.startsWith('av'))return aviationGaugeBounds(kind.slice(2),w,h);
@@ -908,6 +1002,7 @@ function locateEditable(x,y){
  if($('flighttimershow')?.checked)choices.push({kind:'flighttimer',label:'Armed flight timer'});
  if($('packgaugeshow')?.checked)choices.push({kind:'packgauge',label:'Aircraft battery pack'});
  for(const kind of aviationGaugeKinds)if($('av'+kind+'show')?.checked)choices.push({kind:'av'+kind,label:({speed:'Ground speed',altitude:'Altitude',vertical:'Vertical speed',heading:'Heading',gpscompass:'GPS compass'})[kind]});
+ if(customOverlayImage&&$('customimagevisible').checked)choices.push({kind:'customimage',label:'Custom image'});
  for(const candidate of choices.reverse()){
   const b=editingBounds(candidate.kind,candidate.index,candidate.item);
   if(!b)continue;
@@ -995,6 +1090,25 @@ canvas.addEventListener('pointermove',e=>{
 for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eventName,()=>{
  if(!draggedAviation)return;draggedAviation=null;aviationResizing=false;canvas.style.cursor='default';drawEditingOutline();
 },true);
+let customImageDrag=null;
+canvas.addEventListener('pointerdown',e=>{
+ if(recording||!customOverlayImage||!$('customimagevisible').checked)return;
+ const [x,y]=elementPointerCoordinates(e),b=editingBounds('customimage');
+ if(!b||x*canvas.width<b.x||x*canvas.width>b.x+b.w||y*canvas.height<b.y||y*canvas.height>b.y+b.h)return;
+ selectedOverlay={kind:'customimage',label:'Custom image'};
+ customImageDrag={x:x-Number($('customimagex').value)/100,y:y-Number($('customimagey').value)/100};
+ canvas.setPointerCapture(e.pointerId);e.preventDefault();e.stopImmediatePropagation();drawEditingOutline();
+},true);
+canvas.addEventListener('pointermove',e=>{
+ if(!customImageDrag)return;
+ const [x,y]=elementPointerCoordinates(e);
+ const [nx,ny]=snapPosition(clamp(x-customImageDrag.x,0,1),clamp(y-customImageDrag.y,0,1));
+ $('customimagex').value=Math.round(nx*100);$('customimagey').value=Math.round(ny*100);
+ canvas.style.cursor='move';draw(time);drawEditingOutline();e.stopImmediatePropagation();
+},true);
+for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eventName,e=>{
+ if(!customImageDrag)return;customImageDrag=null;canvas.style.cursor='default';drawEditingOutline();e.stopImmediatePropagation();
+},true);
 canvas.addEventListener('pointermove',e=>{
  if(recording)return;
  if(!draggedQuad&&draggedStick===null&&!draggedTelemetry&&!draggedFlightTimer&&!draggedPackGauge&&!draggedAviation&&!overlayHandleDrag){
@@ -1037,7 +1151,7 @@ canvas.addEventListener('pointerleave',()=>{if(!draggedQuad&&draggedStick===null
   overlayHandleDrag={kind,index:selectedOverlay.index,item:selectedOverlay.item,
    width:b.w,height:b.h,startX:e.clientX,startY:e.clientY,
    canvasWidth:canvas.width,canvasHeight:canvas.height,viewW:rect.width,viewH:rect.height,
-   startingSize:kind==='stick'?selectedOverlay.item.scale:kind==='quad'?quadLayout.scale:kind==='telemetry'?Number(selectedOverlay.item.size.value):kind==='flighttimer'?Number($('flighttimersize').value):kind==='packgauge'?Number($('packgaugesize').value):Number($('av'+kind.slice(2)+'size').value)};
+   startingSize:kind==='customimage'?Number($('customimagewidth').value):kind==='stick'?selectedOverlay.item.scale:kind==='quad'?quadLayout.scale:kind==='telemetry'?Number(selectedOverlay.item.size.value):kind==='flighttimer'?Number($('flighttimersize').value):kind==='packgauge'?Number($('packgaugesize').value):Number($('av'+kind.slice(2)+'size').value)};
   grip.setPointerCapture(e.pointerId);
  });
  grip.addEventListener('pointermove',e=>{
@@ -1047,7 +1161,8 @@ canvas.addEventListener('pointerleave',()=>{if(!draggedQuad&&draggedStick===null
   const dy=(e.clientY-d.startY)*d.canvasHeight/Math.max(1,d.viewH);
   const factor=Math.max((d.width+dx)/Math.max(1,d.width),(d.height+dy)/Math.max(1,d.height));
   const value=d.startingSize*factor;
-  if(d.kind==='stick'){
+  if(d.kind==='customimage')$('customimagewidth').value=Math.round(clamp(value,1,100));
+  else if(d.kind==='stick'){
    d.item.scale=clamp(value,.2,2.5);
    $(d.index===0?'leftstickscale':'rightstickscale').value=Math.round(d.item.scale*100);
   }else if(d.kind==='quad'){
@@ -1198,7 +1313,7 @@ if(freestyle){
 if($('quadnose').checked)line(project(0,-.26,.29),project(0,-.70,.29),front,Math.max(2,size*.055));
 ctx.restore();ctx.restore();
 }
-let customOverlayImage=null;
+let customOverlayImage=null,customImageDataURL=null;
 function drawCustomOverlayImage(w,h){
  if(!customOverlayImage||!$('customimagevisible').checked)return;
  const image=customOverlayImage;
@@ -1211,11 +1326,21 @@ function drawCustomOverlayImage(w,h){
 $('customimagefile').addEventListener('change',e=>{
  const file=e.target.files?.[0];if(!file)return;
  const url=URL.createObjectURL(file),img=new Image();
- img.onload=()=>{customOverlayImage=img;URL.revokeObjectURL(url);update()};
+ img.onload=()=>{
+  customOverlayImage=img;URL.revokeObjectURL(url);update();
+  if(file.size<=1250000){
+   const reader=new FileReader();
+   reader.onload=()=>{if(customOverlayImage===img)customImageDataURL=String(reader.result||'')};
+   reader.readAsDataURL(file);
+  }else{
+   customImageDataURL=null;
+   $('status').textContent='Custom image loaded. Images over 1.25 MB stay in this session but cannot be embedded into a saved layout preset.';
+  }
+ };
  img.onerror=()=>{URL.revokeObjectURL(url);alert('Could not load image')};
  img.src=url;
 });
-$('customimageclear').addEventListener('click',()=>{customOverlayImage=null;$('customimagefile').value='';update()});
+$('customimageclear').addEventListener('click',()=>{customOverlayImage=null;customImageDataURL=null;$('customimagefile').value='';selectedOverlay=selectedOverlay?.kind==='customimage'?null:selectedOverlay;update()});
 for(const id of ['customimagevisible','customimagex','customimagey','customimagewidth','customimageopacity'])$(id).addEventListener('input',()=>update());
 $('expandpreview').addEventListener('click',()=>{const expanded=document.body.classList.toggle('preview-expanded');$('expandpreview').textContent=expanded?'⛶ Normal size':'⛶ Expand preview';$('expandpreview').setAttribute('aria-pressed',String(expanded));});
 $('videoformat').addEventListener('change',()=>{$('mp4backgroundwrap').style.display=$('videoformat').value==='mp4'?'':'none'});
@@ -1407,7 +1532,7 @@ function captureUserPreset(){
   if(el.type==='file'||['userpresets','telemetrysearch','scrub'].includes(el.id))continue;
   controls[el.id]=el.type==='checkbox'?el.checked:el.value;
  }
- return {controls,customTheme:controls.betatheme==='custom'?captureCustomTheme():null,sticks:stickLayout.map(x=>({...x})),quad:{...quadLayout},
+ return {controls,customTheme:controls.betatheme==='custom'?captureCustomTheme():null,customImage:customImageDataURL||null,sticks:stickLayout.map(x=>({...x})),quad:{...quadLayout},
  widgets:telemetryWidgets.map(x=>({name:x.name,x:x.x,y:x.y,alignRight:!!x.alignRight,centeredArrow:!!x.centeredArrow,enabled:x.check.checked,
  controls:Object.fromEntries(['rename','showLabel','labelColor','valueColor','size','font','unit','output','decimals','iconSelect','curveToggle','cellCount','cellMode','cellColour','relative','arrowMode','smoothing'].filter(k=>x[k]).map(k=>[k,x[k].type==='checkbox'?x[k].checked:x[k].value])),userLabelColour:!!x.userLabelColour,userValueColour:!!x.userValueColour,userCellColour:!!x.userCellColour}))};
 }
@@ -1432,6 +1557,13 @@ function applyUserPreset(p,name){
  $('customthemepanel').hidden=$('betatheme').value!=='custom';
  if(p.sticks?.length===2)stickLayout=p.sticks.map(x=>({...x}));
  if(p.quad)Object.assign(quadLayout,p.quad);
+ // Images stored inside small preset JSON files can be restored without
+ // requiring another upload. Legacy presets without an image stay compatible.
+ if(typeof p.customImage==='string'&&/^data:image\/(png|jpeg|webp|avif);base64,/i.test(p.customImage)){
+  const restore=new Image();
+  restore.onload=()=>{customOverlayImage=restore;customImageDataURL=p.customImage;update()};
+  restore.src=p.customImage;
+ }
  const matchingUsed=new Set();
  if(p.widgets&&Array.isArray(p.widgets))for(const saved of p.widgets){
   const item=telemetryWidgets.find(x=>x.name===saved.name&&!matchingUsed.has(x));if(!item)continue;
@@ -1575,7 +1707,7 @@ function refreshTimelineArmMarkers(){
   status.textContent=exact?'⚑ ARMED  ·  ⚐ DISARMED  — recorded events (click flag to seek)':'⚑ LOG START — exact arming moment not recorded (click flag to seek)';
  }
 }
-function update(){time=clamp(time,0,totalTime());updateTimingInfo();refreshTimelineArmMarkers();draw(time);updatePreviewGuides();refreshHudMotionStatus()}
+function update(){if($('djisynctest')?.open)renderDjiSync();time=clamp(time,0,totalTime());updateTimingInfo();refreshTimelineArmMarkers();draw(time);updatePreviewGuides();refreshHudMotionStatus()}
 // Preview imported flights after the lead-in and fade-in, so a paused log
 // never looks empty at timestamp zero. Exports still begin at zero with fades.
 function initialLogPreviewTime(){
@@ -1584,7 +1716,7 @@ function initialLogPreviewTime(){
  const start=lead+Math.max(.3,fade+.1);
  return Math.min(Math.max(0,totalTime()-.01),start);
 }
-function openFlight(number){demoMode=false;binaryFlightEvents=[];$('demo').disabled=true;$('demo').textContent='▶ Preview demo (no log)';const info=loadBinary(binaryBuffer,number);flightCount=info.count;duration=info.duration;binaryFlightEvents=getBinaryEvents();setTelemetry(getBinaryFields(),[]);exportDebug('Recorded Blackbox events: '+JSON.stringify(binaryFlightEvents.filter(e=>e.kind==='disarm'||e.kind==='flight_mode').slice(0,40)));time=initialLogPreviewTime();playing=false;$('play').textContent='▶ Play';$('video').disabled=false;$('flightinfo').textContent='Flight '+number+' of '+flightCount+' · '+duration.toFixed(1)+' seconds';$('status').textContent='Loaded flight '+number+' of '+flightCount+' · '+duration.toFixed(1)+'s';update()}
+function openFlight(number){clearCameraAutoSync();clearGoProSync();djiVideoInfo=null;djiVideoFile=null;djiAutoMatch=null;djiMatchSource=null;$('djiautoexport').checked=false;$('djivideo').value='';djiTimingReport='';$('djimotionresult').textContent='';demoMode=false;binaryFlightEvents=[];$('demo').disabled=true;$('demo').textContent='▶ Preview demo (no log)';const info=loadBinary(binaryBuffer,number);flightCount=info.count;duration=info.duration;binaryFlightEvents=getBinaryEvents();setTelemetry(getBinaryFields(),[]);exportDebug('Recorded Blackbox events: '+JSON.stringify(binaryFlightEvents.filter(e=>e.kind==='disarm'||e.kind==='flight_mode').slice(0,40)));time=initialLogPreviewTime();playing=false;$('play').textContent='▶ Play';$('video').disabled=false;$('flightinfo').textContent='Flight '+number+' of '+flightCount+' · '+duration.toFixed(1)+' seconds';$('status').textContent='Loaded flight '+number+' of '+flightCount+' · '+duration.toFixed(1)+'s';update()}
 $('file').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;demoMode=false;$('demo').disabled=true;$('demo').textContent='▶ Preview demo (no log)';telemetryRows=[];telemetryNames=[];telemetryWidgets=[];$('telemetryfields').textContent='Reading fields from '+file.name+'...';try{const raw=await file.arrayBuffer();const header=new TextDecoder('latin1').decode(raw.slice(0,256));const blackboxSignature=header.includes('H Product:Blackbox flight data recorder')||header.startsWith('H Product:');binaryMode=/\.(bbl|bfl)$/i.test(file.name)||blackboxSignature;binaryBuffer=null;flightCount=0;$('flightwrap').style.display='none';if(binaryMode){telemetryRows=[];telemetryWidgets=[];binaryBuffer=raw;const info=loadBinary(binaryBuffer,1);flightCount=info.count;const select=$('flight');select.replaceChildren();for(let n=1;n<=flightCount;n++){const option=document.createElement('option');option.value=String(n);option.textContent='Flight '+n;select.append(option)}select.value='1';$('flightwrap').style.display='block';openFlight(1)}else{if(!/\.csv$/i.test(file.name))throw Error('Unrecognized log format: '+file.name+' (header: '+JSON.stringify(header.slice(0,48))+')');{const csv=await file.text();const head=csv.replace(/^\uFEFF/,'').split(/\r?\n/)[0].toLowerCase();if(head.includes('date,')&&head.includes('time,')&&/\b(rud|ail|ele|thr)\b/.test(head))samples=parseEdgeCSV(csv);else{samples=parseCSV(csv);const lines=csv.replace(/^\uFEFF/,'').trim().split(/\r?\n/);const cols=lines[0].split(',').map(x=>x.trim().replace(/^"|"$/g,''));{const timeCol=cols.findIndex(c=>/^(time|time\(us\)|time_us|timestamp)$/i.test(c));const valid=lines.slice(1).map(line=>line.split(',')).filter(row=>{if(timeCol<0)return false;const n=Number(row[timeCol]);return Number.isFinite(n)&&row.length>=cols.length});const first=Number(valid[0]?.[timeCol]||0);const span=Number(valid.at(-1)?.[timeCol]||0)-first;const factor=span>10000?1e-6:1;setTelemetry(cols,valid.map(row=>[(Number(row[timeCol])-first)*factor,...row]));}}}duration=samples.at(-1)[0];time=initialLogPreviewTime();playing=false;$('play').textContent='▶ Play';$('video').disabled=false;$('status').textContent='Loaded '+samples.length.toLocaleString()+' samples · '+duration.toFixed(1)+'s';update()}if(duration>3600)throw Error('Flight exceeds one hour')}catch(err){$('demo').disabled=false;samples=[];binaryMode=false;binaryBuffer=null;flightCount=0;duration=0;telemetryRows=[];telemetryNames=[];telemetryWidgets=[];$('telemetryfields').textContent='No telemetry loaded — import failed. Check the error above.';$('flightwrap').style.display='none';$('video').disabled=true;$('status').textContent='Error opening '+file.name+': '+err.message;update()}});
 $('flight').addEventListener('change',()=>{if(!binaryBuffer)return;try{openFlight(Number($('flight').value))}catch(err){$('video').disabled=true;$('status').textContent='Unable to open selected flight: '+err.message}});
 $('demo').onclick=()=>{if($('demo').disabled)return;if(demoMode){playing=false;$('play').textContent='▶ Play';$('status').textContent='Demo paused';update()}else{startDefaultDemo()}};
@@ -1690,7 +1822,442 @@ function recordedArmedRange(){
  const end=eventDisarm?eventDisarm.at:modeDisarm?modeDisarm.at:sampledDisarm?refine(sampledDisarm):null;
  return end!==null&&end>start?{start,end,duration:end-start,startIsExact:!!armEvent}:null;
 }
+
+// DJI MP4 metadata reader, adapted from the original timing inspector.
+// File.slice reads MP4 atom headers and moov sample tables, never video payloads.
+async function inspectDjiVideoLocally(file){
+ const decoder=new TextDecoder('latin1');
+const u32=(v,p)=>v.getUint32(p),i32=(v,p)=>v.getInt32(p);
+function big(v,p){return Number(v.getBigUint64(p))}
+function text(v,p,len){return decoder.decode(new Uint8Array(v.buffer,v.byteOffset+p,len))}
+function fmt(n,d=5){return Number.isFinite(n)?n.toFixed(d):'N/A'}
+function clock(s){return Math.floor(s/60)+':'+(s%60).toFixed(3).padStart(6,'0')}
+async function header(file,p){const b=await file.slice(p,Math.min(file.size,p+16)).arrayBuffer();return new DataView(b)}
+async function locateMoov(file){
+ let p=0,iterations=0,fragmented=false;
+ while(p<file.size&&iterations++<10000){
+  const h=await header(file,p);if(h.byteLength<8)break;
+  let size=u32(h,0),start=8;const type=text(h,4,4);
+  if(size===1){if(h.byteLength<16)throw Error('Incomplete extended atom header');size=big(h,8);start=16}
+  else if(size===0)size=file.size-p;
+  if(size<start||!Number.isSafeInteger(size)||p+size>file.size)throw Error('Invalid MP4 atom at '+p+' ('+type+')');
+  if(type==='moof')fragmented=true;
+  if(type==='moov'){
+   if(size>128*1024*1024)throw Error('MP4 metadata exceeds 128 MiB; the browser does not read extremely large MP4 indexes.');
+   return {data:new DataView(await file.slice(p,p+size).arrayBuffer()),header:start,fragmented};
+  }
+  p+=size;
+ }
+ throw Error(fragmented?'Fragmented MP4: no complete moov index found; this version cannot inspect fragment timestamps.':'No MP4 moov metadata atom found.');
+}
+function boxes(view,start,end){
+ const arr=[];let p=start;
+ while(p+8<=end){
+  let size=u32(view,p),head=8;const type=text(view,p+4,4);
+  if(size===1){if(p+16>end)break;size=big(view,p+8);head=16}
+  else if(size===0)size=end-p;
+  if(!Number.isSafeInteger(size)||size<head||p+size>end)throw Error('Invalid nested atom '+type+' at offset '+p);
+  arr.push({type,from:p+head,end:p+size,start:p,size});p+=size;
+ }
+ return arr;
+}
+function child(view,parent,type){return boxes(view,parent.from,parent.end).find(b=>b.type===type)}
+function requireChild(view,parent,type){const b=child(view,parent,type);if(!b)throw Error('Missing '+type+' atom');return b}
+function parseTrack(view,trak){
+ const mdia=requireChild(view,trak,'mdia'),hdlr=requireChild(view,mdia,'hdlr');
+ if(text(view,hdlr.from+8,4)!=='vide')return null;
+ const mdhd=requireChild(view,mdia,'mdhd'),version=view.getUint8(mdhd.from);
+ const timescale=u32(view,mdhd.from+(version===1?20:12));
+ if(!timescale)throw Error('Invalid video timescale');
+ const minf=requireChild(view,mdia,'minf'),stbl=requireChild(view,minf,'stbl');
+ const stts=requireChild(view,stbl,'stts'),entryCount=u32(view,stts.from+4);
+ if(entryCount>2000000)throw Error('Unusually large stts table');
+ const runs=[];let count=0,ticks=0,minDelta=Infinity,maxDelta=0;
+ for(let i=0;i<entryCount;i++){
+  const p=stts.from+8+i*8;if(p+8>stts.end)throw Error('Truncated stts table');
+  const n=u32(view,p),delta=u32(view,p+4);if(!delta||!n)throw Error('Invalid sample timing entry');
+  runs.push([n,delta]);count+=n;ticks+=n*delta;
+  minDelta=Math.min(minDelta,delta);maxDelta=Math.max(maxDelta,delta);
+ }
+ if(count>20000000)throw Error('Unreasonably large sample count');
+ const ctts=child(view,stbl,'ctts'),offsets=[];
+ if(ctts){const ver=view.getUint8(ctts.from),n=u32(view,ctts.from+4);for(let j=0;j<n;j++){const p=ctts.from+8+j*8;if(p+8>ctts.end)throw Error('Truncated ctts');offsets.push([u32(view,p),ver===1?i32(view,p+4):u32(view,p+4)])}}
+ const stsz=child(view,stbl,'stsz');let tableSamples=null;
+ if(stsz)tableSamples=u32(view,stsz.from+8);
+ const stsd=child(view,stbl,'stsd');let codec=stsd&&stsd.from+16<=stsd.end?text(view,stsd.from+12,4):'unknown';
+ return {timescale,runs,count,ticks,minDelta,maxDelta,offsets,tableSamples,codec};
+}
+function buildReport(file,t,expected){
+ const fps=Number(expected),interval=1/fps;
+ if(t.count<2)throw Error('Not enough video frames');
+ const frameTimes=new Float64Array(t.count);let idx=0,dts=0,offsetAt=0,offsetRemain=0,offsetIdx=0;
+ function nextOffset(){
+  if(!t.offsets.length)return 0;
+  while(offsetRemain===0&&offsetIdx<t.offsets.length){offsetRemain=t.offsets[offsetIdx][0];offsetAt=t.offsets[offsetIdx][1];offsetIdx++}
+  if(offsetRemain===0)throw Error('Composition offset count is shorter than sample count');
+  offsetRemain--;return offsetAt;
+ }
+ for(const [n,delta] of t.runs)for(let j=0;j<n;j++){frameTimes[idx++]=(dts+nextOffset())/t.timescale;dts+=delta}
+ // Composition timestamps can be out of order in decode order due to B frames.
+ const times=Array.from(frameTimes).sort((a,b)=>a-b);
+ const first=times[0],last=times[times.length-1];
+ let intervals=[],anomalies=0,min=Infinity,max=-Infinity;
+ for(let i=1;i<times.length;i++){const d=times[i]-times[i-1];min=Math.min(min,d);max=Math.max(max,d);if(Math.abs(d-interval)>Math.max(.0005,interval*.05))anomalies++;if(i<=9)intervals.push(d)}
+ const effective=(t.count-1)/(last-first);
+ const expectedLast=(t.count-1)*interval,observedLast=last-first;
+ const drift=observedLast-expectedLast;
+ const deviation=[];const step=Math.max(1,Math.floor((t.count-1)/300));
+ for(let i=0;i<t.count;i+=step)deviation.push([i/(t.count-1),(times[i]-first-i*interval)*1000]);
+ deviation.push([1,drift*1000]);
+ const lines=[
+ 'FPV MP4 TIMING REPORT · v0.15.0',
+ 'File: '+file.name,
+ 'Size bytes: '+file.size,
+ 'Expected FPS: '+fps,
+ 'Codec fourcc: '+t.codec,
+ 'Timebase: '+t.timescale+' ticks/sec',
+ 'Frame/sample count (stts): '+t.count,
+ 'Frame count (stsz): '+(t.tableSamples??'not present'),
+ 'Timing runs (stts): '+t.runs.length,
+ 'Composition offset runs (ctts): '+t.offsets.length,
+ 'DTS duration: '+fmt(t.ticks/t.timescale,6)+' s',
+ 'First presentation timestamp: '+fmt(first,6)+' s',
+ 'Last presentation timestamp: '+fmt(last,6)+' s',
+ 'Presentation first-to-last span: '+fmt(observedLast,6)+' s',
+ 'Ideal first-to-last span at '+fps+'fps: '+fmt(expectedLast,6)+' s',
+ 'Effective presentation FPS: '+fmt(effective,7),
+ 'Presentation end drift vs ideal: '+fmt(drift*1000,3)+' ms',
+ 'Observed presentation interval min / max: '+fmt(min*1000,4)+' / '+fmt(max*1000,4)+' ms',
+ 'Non-ideal presentation intervals (>5% or 0.5ms): '+anomalies+' / '+(t.count-1),
+ 'Sample rate interval min / max (DTS): '+fmt(t.minDelta/t.timescale*1000,4)+' / '+fmt(t.maxDelta/t.timescale*1000,4)+' ms',
+ 'First nine PTS intervals (ms): '+intervals.map(x=>fmt(x*1000,4)).join(', '),
+ 'STTS runs (first 15): '+t.runs.slice(0,15).map(x=>x[0]+'x'+x[1]).join(', '),
+ 'NOTE: MP4 timestamps establish playback timing, not actual camera exposure timing.',
+ 'NOTE: Matching frame rates can still drift against independent BBL clocks.'
+ ];
+ return {lines:lines.join('\n'),deviation,count:t.count,effective,drift,observedLast,expectedLast,anomalies,min,max,codec:t.codec,timescale:t.timescale};
+}
+
+ const moov=await locateMoov(file);
+ const tracks=boxes(moov.data,moov.header,moov.data.byteLength).filter(b=>b.type==='trak');
+ function inventoryTrack(tr,number){
+  const v=moov.data;
+  const mdia=child(v,tr,'mdia');
+  if(!mdia)return {number,problem:'No mdia'};
+  const handler=child(v,mdia,'hdlr'),mdhd=child(v,mdia,'mdhd');
+  const kind=handler&&handler.from+12<=handler.end?text(v,handler.from+8,4):'????';
+  const version=mdhd?v.getUint8(mdhd.from):-1;
+  const scale=mdhd&&mdhd.from+(version===1?24:16)<=mdhd.end?u32(v,mdhd.from+(version===1?20:12)):0;
+  const mediaDuration=mdhd&&mdhd.from+(version===1?32:20)<=mdhd.end?(version===1?big(v,mdhd.from+24):u32(v,mdhd.from+16)):0;
+  const minf=child(v,mdia,'minf'),stbl=minf&&child(v,minf,'stbl');
+  const stsd=stbl&&child(v,stbl,'stsd'),stts=stbl&&child(v,stbl,'stts');
+  const codec=stsd&&stsd.from+16<=stsd.end?text(v,stsd.from+12,4):'????';
+  let samples=0,sttsDuration=0,runs=0,minStep=Infinity,maxStep=0;
+  if(stts&&stts.from+8<=stts.end){
+   runs=u32(v,stts.from+4);
+   if(runs>1000000)throw Error('Excessive metadata timing run count');
+   for(let i=0;i<runs;i++){
+    const p=stts.from+8+i*8;if(p+8>stts.end)throw Error('Truncated stts on track '+number);
+    const n=u32(v,p),step=u32(v,p+4);
+    samples+=n;sttsDuration+=n*step;
+    minStep=Math.min(step,minStep);maxStep=Math.max(step,maxStep);
+   }
+  }
+  const edts=child(v,tr,'edts'),elst=edts&&child(v,edts,'elst');
+  const editCount=elst&&elst.from+8<=elst.end?u32(v,elst.from+4):0;
+  return {number,kind,codec,scale,samples,runs,editCount,
+   duration:scale?sttsDuration/scale:null,
+   mdhdDuration:scale?mediaDuration/scale:null,
+   stepMsMin:scale&&Number.isFinite(minStep)?minStep/scale*1000:null,
+   stepMsMax:scale?maxStep/scale*1000:null};
+ }
+ const trackInventory=tracks.map((track,i)=>inventoryTrack(track,i+1));
+
+ // Read three tiny DJI metadata samples via their MP4 sample tables.
+ // No image/audio payload is accessed. Report only lengths and format markers.
+ async function probeAuxiliaryTrack(track,number){
+  const v=moov.data,mdia=child(v,track,'mdia'),minf=mdia&&child(v,mdia,'minf'),stbl=minf&&child(v,minf,'stbl');
+  if(!stbl)return 'Track '+number+': missing sample table';
+  const stsz=child(v,stbl,'stsz'),stsc=child(v,stbl,'stsc'),stco=child(v,stbl,'stco')||child(v,stbl,'co64');
+  if(!stsz||!stsc||!stco)return 'Track '+number+': no accessible sample addressing index';
+  const fixed=u32(v,stsz.from+4),count=u32(v,stsz.from+8);
+  const sizes=[];
+  if(count>20000000)throw Error('Too many metadata samples');
+  for(let i=0;i<count;i++){
+   const p=stsz.from+12+4*i;
+   if(!fixed&&p+4>stsz.end)throw Error('Truncated metadata sizes');
+   sizes.push(fixed||u32(v,p));
+  }
+  const nSc=u32(v,stsc.from+4),nCo=u32(v,stco.from+4);
+  if(nSc>100000||nCo>1000000)throw Error('Unreasonable sample table');
+  const sc=[];for(let i=0;i<nSc;i++){
+   const p=stsc.from+8+12*i;if(p+12>stsc.end)throw Error('Truncated stsc');
+   sc.push([u32(v,p),u32(v,p+4)]);
+  }
+  const offsets=[];for(let i=0;i<nCo;i++){
+   const p=stco.from+8+(stco.type==='co64'?8:4)*i;
+   if(p+(stco.type==='co64'?8:4)>stco.end)throw Error('Truncated chunk offsets');
+   offsets.push(stco.type==='co64'?big(v,p):u32(v,p));
+  }
+  if(!sc.length||!offsets.length)throw Error('Empty metadata chunk table');
+  const targets=new Set([0,Math.floor((count-1)/2),count-1]);
+  let sampleIndex=0,entry=0;const findings=[];
+  for(let ci=0;ci<offsets.length&&sampleIndex<count;ci++){
+   const chunkNumber=ci+1;
+   while(entry+1<sc.length&&sc[entry+1][0]<=chunkNumber)entry++;
+   const perChunk=sc[entry][1];let pos=offsets[ci];
+   for(let j=0;j<perChunk&&sampleIndex<count;j++,sampleIndex++){
+    const length=sizes[sampleIndex];
+    if(targets.has(sampleIndex)){
+     if(length>256*1024)findings.push('sample '+sampleIndex+' size '+length+' (too large to probe)');
+     else if(pos+length<=file.size){
+      const bytes=new Uint8Array(await file.slice(pos,pos+Math.min(length,256)).arrayBuffer());
+      const prefix=Array.from(bytes.slice(0,24)).map(x=>x.toString(16).padStart(2,'0')).join(' ');
+      const ascii=Array.from(bytes.slice(0,48)).map(n=>n>=32&&n<=126?String.fromCharCode(n):'.').join('');
+      findings.push('sample '+sampleIndex+' / '+count+' size='+length+' bytes; first24hex='+prefix+'; asciiPreview='+ascii);
+     }else findings.push('sample '+sampleIndex+' outside file');
+    }
+    pos+=length;
+   }
+   if(findings.length>=3)break;
+  }
+  return 'Track '+number+' probe: '+findings.join('\n');
+ }
+ const probes=[];
+ for(let i=0;i<tracks.length;i++){
+  const t=trackInventory[i];
+  if(t&&(t.codec==='djmd'||t.codec==='dbgi')){
+   try{probes.push(await probeAuxiliaryTrack(tracks[i],i+1))}
+   catch(e){probes.push('Track '+(i+1)+' probe unavailable: '+e.message)}
+  }
+ }
+
+
+ let candidate=null,errors=[];
+ for(const tr of tracks){
+  try{const track=parseTrack(moov.data,tr);if(track&&(!candidate||track.count>candidate.count))candidate=track}
+  catch(e){errors.push(e.message)}
+ }
+ if(!candidate)throw Error('No supported video timing track: '+errors.join('; '));
+ const info=buildReport(file,candidate,100);
+ const inventoryLines=trackInventory.map(t=>t.problem?'Track '+t.number+': '+t.problem:'Track '+t.number+': handler='+t.kind+' codec='+t.codec+' samples='+t.samples+' scale='+t.scale+' sttsDuration='+(t.duration===null?'N/A':t.duration.toFixed(6))+'s mdhdDuration='+(t.mdhdDuration===null?'N/A':t.mdhdDuration.toFixed(6))+'s runs='+t.runs+' edits='+t.editCount+' delta(ms)='+(t.stepMsMin===null?'N/A':t.stepMsMin.toFixed(4)+' to '+t.stepMsMax.toFixed(4)));
+ const djiTracks=trackInventory.filter(t=>t.codec==='djmd'||t.codec==='dbgi'||t.kind==='meta');
+ const metadataReport='MP4 TRACK INVENTORY (metadata-only scan)\n'+inventoryLines.join('\n')+'\nDJI-specific metadata tracks: '+(djiTracks.length?djiTracks.map(t=>'#'+t.number+' '+t.codec).join(', '):'none identified')+'\n\nDJI PAYLOAD PROBE (3 small local samples per metadata track)\n'+(probes.join('\n')||'No DJI samples')+'\nNOTE: The probe is structural; hex previews are not decoded sensor timestamps. No automatic speed recommendation from MP4 timing alone.';
+ return {duration:candidate.ticks/candidate.timescale,frames:candidate.count,codec:candidate.codec,averageFPS:info.effective,irregular:info.anomalies,report:info.lines+'\n\n'+metadataReport,trackInventory,metadataReport,djiTracks:djiTracks.length,driftMs:info.drift*1000};
+}
+
+let cameraSyncFile=null,cameraSyncType=null,cameraSyncSerial=0,cameraSyncBusy=false;
+async function cameraMetaType(file){
+ let pos=0;
+ for(let i=0;i<100000&&pos<file.size;i++){
+  const h=new DataView(await file.slice(pos,Math.min(pos+16,file.size)).arrayBuffer());
+  if(h.byteLength<8)break;
+  const tag=String.fromCharCode(...new Uint8Array(h.buffer,4,4));
+  const size32=h.getUint32(0);
+  let size=size32===1?Number(h.getBigUint64(8)):size32===0?file.size-pos:size32;
+  if(!Number.isSafeInteger(size)||size<8||pos+size>file.size)break;
+  if(tag==='moov'){
+   if(size>128*1048576)throw Error('MP4 metadata is too large');
+   const view=new Uint8Array(await file.slice(pos,pos+size).arrayBuffer());
+   let gopro=false,dji=false;
+   for(let j=0;j+4<view.length;j++){
+    if(view[j]===103&&view[j+1]===112&&view[j+2]===109&&view[j+3]===100)gopro=true;
+    if(view[j]===100&&view[j+1]===106&&view[j+2]===109&&view[j+3]===100)dji=true;
+   }
+   if(gopro&&!dji)return 'gopro';
+   if(dji&&!gopro)return 'dji';
+   throw Error('No supported DJI/GoPro motion data track found');
+  }
+  pos+=size;
+ }
+ throw Error('MP4 metadata index not found; use a complete original camera file.');
+}
+function refreshCameraSync(){
+ const active=cameraSyncType==='dji'?djiAutoMatch:goproMatch;
+ const source=cameraSyncType==='dji'?djiMatchSource:goproMatchSource;
+ const valid=!!(active?.status==='estimate'&&source===cameraSyncFile&&binaryMode&&!cameraSyncBusy);
+ $('cameraautorun').disabled=!(cameraSyncFile&&cameraSyncType&&binaryMode&&!cameraSyncBusy);
+ $('cameraautoapply').disabled=!valid;
+ if(!valid)$('cameraautoapply').checked=false;
+ $('djiautoexport').checked=valid&&$('cameraautoapply').checked&&cameraSyncType==='dji';
+ $('goproautoexport').checked=valid&&$('cameraautoapply').checked&&cameraSyncType==='gopro';
+ $('cameraautoapplystatus').textContent=valid?
+   (active.matchedWindows+'/'+active.totalWindows+' motion sections matched · '+active.speed.toFixed(3)+'% equivalent. '+($('cameraautoapply').checked?'Ready to export a synced MOV.':'Tick to apply offset and drift automatically to export.')):
+   'Once motion matches reliably, enable Auto Sync, export a MOV and place it at 00:00 and 100% speed in Resolve.';
+}
+$('cameraautosyncfile').addEventListener('change',async e=>{
+ const f=e.target.files?.[0]||null,seq=++cameraSyncSerial;
+ cameraSyncFile=f;cameraSyncType=null;
+ djiVideoFile=null;djiVideoInfo=null;djiAutoMatch=null;djiMatchSource=null;goproFile=null;goproMatch=null;goproMatchSource=null;
+ $('cameraautoapply').checked=false;$('cameraautores').textContent='';
+ $('cameraautodetect').textContent=f?'Checking camera motion metadata locally…':'Select an original MP4 to begin.';
+ if(!f){refreshCameraSync();return}
+ try{
+  const type=await cameraMetaType(f);
+  if(seq!==cameraSyncSerial)return;
+  cameraSyncType=type;
+  if(type==='dji'){djiVideoFile=f;djiVideoInfo=await inspectDjiVideoLocally(f)}
+  else goproFile=f;
+  if(seq!==cameraSyncSerial)return;
+  $('cameraautodetect').textContent=(type==='dji'?'DJI O4 Pro':'GoPro')+' detected · '+f.name;
+  $('cameraautostatus').textContent='Ready to match movement.';
+ }catch(err){if(seq!==cameraSyncSerial)return;cameraSyncType=null;$('cameraautodetect').textContent='File not ready: '+err.message}
+ refreshCameraSync();
+});
+$('cameraautoapply').addEventListener('change',refreshCameraSync);
+$('cameraautorun').addEventListener('click',async()=>{
+ const file=cameraSyncFile,type=cameraSyncType,seq=cameraSyncSerial;
+ if(!file||!type||cameraSyncBusy||!binaryMode)return;
+ cameraSyncBusy=true;refreshCameraSync();$('cameraautostatus').textContent='Matching motion data…';
+ try{
+  const fn=type==='dji'?matchDjiMotion:matchGoProMotion;
+  const result=await fn(file,duration,getBinaryFields(),t=>sampleBinaryFields(t),s=>$('cameraautostatus').textContent=s);
+  if(seq!==cameraSyncSerial)return;
+  if(type==='dji'){djiAutoMatch=result;djiMatchSource=file}else{goproMatch=result;goproMatchSource=file}
+  $('cameraautores').textContent=result.status==='estimate'?
+   ('Motion matched · '+result.matchedWindows+'/'+result.totalWindows+' sections\nConfidence: '+result.confidence+'\nCalculated equivalent speed: '+result.speed.toFixed(3)+'%\nTiming residual: '+(result.residual*1000).toFixed(1)+' ms'):
+   ('No reliable match: '+result.reason);
+  $('cameraautostatus').textContent=result.status==='estimate'?'Motion sync ready. Tick Apply Auto Sync and export.':'Sync was inconclusive.';
+ }catch(err){if(seq===cameraSyncSerial)$('cameraautostatus').textContent='Auto Sync failed: '+err.message}
+ finally{cameraSyncBusy=false;refreshCameraSync()}
+});
+function clearCameraAutoSync(){
+ cameraSyncSerial++;cameraSyncFile=null;cameraSyncType=null;cameraSyncBusy=false;
+ $('cameraautosyncfile').value='';$('cameraautoapply').checked=false;
+ $('cameraautores').textContent='';$('cameraautodetect').textContent='Load your BBL and select your camera MP4 to begin.';
+ $('cameraautostatus').textContent='';refreshCameraSync();
+}
+let djiVideoInfo=null,djiVideoFile=null,djiTimingReport='',djiAutoMatch=null,djiMatchRunning=false,djiMatchSource=null;
+let goproFile=null,goproMatch=null,goproMatchSource=null,goproRunning=false;
+function refreshGoProSync(){
+ const ready=!!(binaryMode&&goproFile&&goproMatch?.status==='estimate'&&goproMatchSource===goproFile&&!goproRunning);
+ $('gopromatchrun').disabled=!binaryMode||!goproFile||goproRunning;
+ $('goproautoexport').disabled=!ready;
+ if(!ready)$('goproautoexport').checked=false;
+ $('goproexportstatus').textContent=ready?('GoPro match '+goproMatch.speed.toFixed(3)+'% · full camera video '+goproMatch.videoDuration.toFixed(3)+'s. '+($('goproautoexport').checked?'AUTO SYNC ENABLED — start overlay at 00:00.':'Tick to apply to export.')):'Available after a reliable GoPro gyro match. Only applies when GoPro Auto Sync is enabled.';
+}
+function clearGoProSync(){
+ goproMatch=null;goproMatchSource=null;goproFile=null;$('goprovideo').value='';$('goproautoexport').checked=false;$('gopromatchresult').textContent='';
+ refreshGoProSync();
+}
+$('goprovideo').addEventListener('change',e=>{
+ goproFile=e.target.files?.[0]||null;goproMatch=null;goproMatchSource=null;$('goproautoexport').checked=false;$('gopromatchresult').textContent='';
+ $('gopromatchstatus').textContent=goproFile?'Ready to inspect GoPro GPMF metadata locally.':'Choose the original GoPro MP4.';
+ refreshGoProSync();
+});
+$('goproautoexport').addEventListener('change',()=>{
+ if($('goproautoexport').checked)$('djiautoexport').checked=false;
+ refreshGoProSync();renderDjiSync();
+});
+$('gopromatchrun').addEventListener('click',async()=>{
+ const f=goproFile;if(!f||!binaryMode||goproRunning)return;
+ goproRunning=true;goproMatch=null;goproMatchSource=null;$('goproautoexport').checked=false;refreshGoProSync();
+ const status=$('gopromatchstatus');status.textContent='Reading GPMF metadata locally…';
+ try{
+  const result=await matchGoProMotion(f,duration,getBinaryFields(),t=>sampleBinaryFields(t),msg=>{status.textContent=msg});
+  if(f!==goproFile){status.textContent='GoPro selection changed; match discarded.';return}
+  goproMatch=result;goproMatchSource=f;
+  const fmt=n=>Number.isFinite(n)?n.toFixed(3):'N/A';
+  $('gopromatchresult').textContent=result.status==='estimate'?
+    'Suggested overlay speed: '+fmt(result.speed)+'%\nGoPro recording: '+fmt(result.videoDuration)+'s\nCamera/BBL offset: '+fmt(result.offset)+'s (positive means video begins before BBL)\nMatched sections: '+result.matchedWindows+' / '+result.totalWindows+'\nConfidence: '+result.confidence+'\nResidual: '+fmt(result.residual*1000)+' ms\nGPMF gyro samples: '+result.gyroSamples+'\nScores: '+result.scores.map(fmt).join(' / ')+'\nExperimental. Verify against the video before using full-length exported overlays.':
+    'No safe automatic GoPro sync: '+result.reason+'\nMatched sections: '+result.matchedWindows+' / '+result.totalWindows+'\nScores: '+result.scores.map(fmt).join(' / ');
+  status.textContent=result.status==='estimate'?'GoPro motion match ready.':'GoPro motion matching inconclusive.';
+ }catch(e){status.textContent='GoPro matcher: '+e.message;$('gopromatchresult').textContent='';}
+ finally{goproRunning=false;refreshGoProSync()}
+});
+
+function renderDjiSync(){
+ const status=$('djisyncstatus'),output=$('djisyncresult');
+ const section=recordedArmedRange();
+ const ready=!!(djiAutoMatch?.status==='estimate'&&djiMatchSource===djiVideoFile&&djiVideoInfo&&binaryMode&&!djiMatchRunning);
+ $('djiautoexport').disabled=!ready;
+ if(!ready)$('djiautoexport').checked=false;
+ $('djiautoexportstatus').textContent=ready?('Matched: '+djiAutoMatch.speed.toFixed(3)+'% · export duration '+djiVideoInfo.duration.toFixed(3)+'s. '+($('djiautoexport').checked?'AUTO SYNC ENABLED — output starts at DJI video 00:00.':'Tick to automatically sync export to DJI video starting at 00:00.')):'Run a successful motion match to enable. Output uses the original DJI video duration and can be placed at 00:00, 100% speed in Resolve.';
+ $('djimotionrun').disabled=djiMatchRunning||!binaryMode||!section||!djiVideoFile;
+ if(!binaryMode||!section){status.textContent='Load a BBL flight with recorded armed state and a disarm event.';output.textContent='';return}
+ if(!djiVideoInfo){status.textContent='BBL armed duration: '+section.duration.toFixed(3)+'s. Choose the matching original MP4.';output.textContent='';return}
+ const b=section.duration,v=djiVideoInfo.duration;
+ const raw=$('djiframeoffset').value.trim(),fps=Number($('djitimelinefps').value);
+ const measured=raw!==''&&Number.isFinite(Number(raw))?Number(raw):null;
+ const currentSpeed=Number($('djicurrentspeed').value);
+ const validSpeed=Number.isFinite(currentSpeed)&&currentSpeed>0&&currentSpeed<=200;
+ // Positive measured delay means sticks happen early. Increase playback
+ // duration by that delay, taking the CURRENT Resolve speed into account.
+ const adjusted=measured!==null&&validSpeed?currentSpeed*b/(b+measured/fps*currentSpeed/100):null;
+ const validAdjusted=adjusted!==null&&Number.isFinite(adjusted)&&adjusted>0&&adjusted<=200;
+ const lines=[
+  'BBL interval: '+b.toFixed(3)+' s'+(section.startIsExact?' (exact arm event)':' (starts at BBL boundary; exact arm event not recorded)'),
+  'DJI MP4 duration: '+v.toFixed(3)+' s',
+  'Video samples: '+djiVideoInfo.frames+' · timestamp FPS '+djiVideoInfo.averageFPS.toFixed(6),
+  'Irregular MP4 PTS intervals: '+djiVideoInfo.irregular,
+  '',djiVideoInfo.metadataReport,
+  '',
+  'Duration difference: '+(b-v).toFixed(3)+' s (NOT a reliable speed correction)',
+  'Recording start/stop delays prevent deriving a trustworthy speed from the two file lengths.',
+  ...(measured===null?['','To calculate speed: align stick motion near the beginning, then count frames ahead (+) or behind (-) near the end.']:!validSpeed?['','Enter a valid current overlay speed.']:!validAdjusted?['','Measurements could not be converted into a valid speed.']:['','End drift: '+measured+' frames at '+fps+' fps ('+(measured/fps).toFixed(3)+' s)','Current overlay speed: '+currentSpeed.toFixed(3)+'%','Suggested NEW overlay speed: '+adjusted.toFixed(3)+'%','Confirm with movement in the middle and end.']),
+  '',
+  ...(djiAutoMatch?['','AUTO MOTION MATCH',JSON.stringify(djiAutoMatch,null,2)]:[]),
+  'Diagnostic only; no change to exported footage.'
+ ];
+ output.textContent=lines.join('\n');
+ status.textContent='Ready · BBL and MP4 loaded locally.';
+ djiTimingReport='DJI SYNC DRIFT CALCULATOR · v0.15.0\n'+lines.join('\n')+'\n\n'+djiVideoInfo.report;
+}
+$('djivideo').addEventListener('change',async e=>{
+ const f=e.target.files?.[0];djiVideoFile=f||null;djiVideoInfo=null;djiAutoMatch=null;djiMatchSource=null;$('djiautoexport').checked=false;$('djimotionresult').textContent='';
+ if(!f){renderDjiSync();return}
+ $('djisyncstatus').textContent='Reading MP4 metadata locally (video is not uploaded)…';
+ try{
+  const info=await inspectDjiVideoLocally(f);
+  if(djiVideoFile!==f)return;
+  djiVideoInfo=info;renderDjiSync();
+ }catch(err){$('djisyncstatus').textContent='MP4 inspection failed: '+err.message;$('djisyncresult').textContent='';}
+});
+$('djimotionrun').addEventListener('click',async()=>{
+ const f=djiVideoFile,section=recordedArmedRange();
+ if(djiMatchRunning||!f||!binaryMode||!section)return;
+ djiMatchRunning=true;djiAutoMatch=null;djiMatchSource=null;$('djiautoexport').checked=false;renderDjiSync();
+ const status=$('djimotionstatus');status.textContent='Reading local metadata…';
+ try{
+  const result=await matchDjiMotion(f,duration,getBinaryFields(),t=>sampleBinaryFields(t),msg=>{status.textContent=msg});
+  if(f!==djiVideoFile){status.textContent='File selection changed. Match discarded.';return}
+  djiAutoMatch=result;djiMatchSource=f;
+  const fmt=x=>Number.isFinite(x)?x.toFixed(3):'N/A';
+  if(result.status==='estimate'){
+   $('djimotionresult').textContent='Suggested Resolve overlay speed: '+fmt(result.speed)+'%\nMotion sections matched: '+result.matchedWindows+' / '+result.totalWindows+' (outliers excluded)\nConfidence: '+result.confidence+'\nMotion match scores: '+result.scores.map(fmt).join(' / ')+'\nMaximum accepted timing residual: '+fmt(result.residual*1000)+' ms\nCamera quaternions sampled: '+result.quaternions+'\nExperimental estimate. Verify at beginning and end before relying on auto-synced exports.';
+   status.textContent='Motion matching complete; inspect the recommendation.';
+  }else{
+   $('djimotionresult').textContent='No reliable automatic estimate. '+result.reason+'\nSections passing initial correlation: '+result.matchedWindows+' / '+result.totalWindows+'\nWindow scores: '+result.scores.map(fmt).join(' / ')+'\nDo not use an unverified automatic percentage.';
+   status.textContent='Match insufficiently reliable.';
+  }
+ }catch(err){status.textContent='Automatic matching unavailable: '+err.message;$('djimotionresult').textContent='';}
+ finally{djiMatchRunning=false;renderDjiSync()}
+});
+$('djiautoexport').addEventListener('change',()=>{if($('djiautoexport').checked)$('goproautoexport').checked=false;renderDjiSync();refreshGoProSync()});
+$('djiframeoffset').addEventListener('input',renderDjiSync);
+$('djitimelinefps').addEventListener('change',renderDjiSync);
+$('djicurrentspeed').addEventListener('input',renderDjiSync);
+$('djisynccopy').addEventListener('click',async()=>{
+ if(!djiTimingReport){$('djisyncstatus').textContent='Load both files first.';return}
+ try{await navigator.clipboard.writeText(djiTimingReport);$('djisyncstatus').textContent='Report copied.'}
+ catch(err){$('djisyncstatus').textContent='Clipboard blocked; select and copy the visible result.'}
+});
+
 function exportSelectedRange(){
+ if($('goproautoexport').checked){
+  if(!binaryMode||!goproFile||goproMatchSource!==goproFile||goproMatch?.status!=='estimate')throw Error('GoPro Auto Sync requires a fresh successful motion match.');
+  const {slope,intercept}=goproMatch.fit||{},scale=1+slope,duration=goproMatch.videoDuration;
+  if(!Number.isFinite(scale)||scale<.98||scale>1.02||!Number.isFinite(intercept)||!(duration>0))throw Error('Invalid GoPro motion sync transform.');
+  return {start:0,end:duration,duration,autoDji:true,autoGoPro:true,scale,intercept,speed:100/scale};
+ }
+ if($('djiautoexport').checked){
+  if(!binaryMode||!djiVideoInfo||!djiVideoFile||djiMatchSource!==djiVideoFile||djiAutoMatch?.status!=='estimate')throw Error('DJI Auto Sync needs a fresh successful motion match.');
+  const {slope,intercept}=djiAutoMatch.fit||{};
+  const scale=1+slope;
+  if(!Number.isFinite(scale)||scale<.98||scale>1.02||!Number.isFinite(intercept)||!(djiVideoInfo.duration>0))throw Error('Invalid DJI synchronization transform.');
+  const videoDuration=djiVideoInfo.duration;
+  return {start:0,end:videoDuration,duration:videoDuration,autoDji:true,scale,intercept,speed:100/scale};
+ }
  const total=totalTime();
  const mode=$('exportrangemode').value;
  if(mode==='full')return {start:0,end:total,duration:total};
@@ -1706,7 +2273,28 @@ function exportSelectedRange(){
  return {start,end,duration:end-start};
 }
 // Convert export seconds back to original Blackbox seconds; default is identity.
-function exportFrameTimestamp(range,elapsed){return range.start+elapsed}
+function exportFrameTimestamp(range,elapsed){
+ if(range.autoDji){
+  // Match model: DJI cameraTime = intercept + scale * BBLseconds.
+  // Render each output frame in the DJI camera's clock, starting at camera 00:00.
+  const bbl=(elapsed-range.intercept)/range.scale;
+  return (Number($('lead').value)||0)+bbl;
+ }
+ return range.start+elapsed;
+}
+function renderExportMappedFrame(t,target,out,range){
+ // For pre-arm camera footage keep truly transparent frames rather than showing
+ // frozen telemetry at BBL boundary.
+ const lead=Math.max(0,Number($('lead').value)||0);
+ if(range.autoDji&&(t<lead||t>lead+duration)){
+  const [w,h]=$('size').value.split('x').map(Number);
+  const desiredWidth=target==='both'?w:Math.round(w/2);
+  if(out.width!==desiredWidth||out.height!==h){out.width=desiredWidth;out.height=h}
+  out.getContext('2d').clearRect(0,0,out.width,out.height);
+  return;
+ }
+ renderExportFrame(t,target,out);
+}
 function syncExportRangeControls(){
  const mode=$('exportrangemode').value;
  $('exportrangeinputs').hidden=mode!=='custom';
@@ -1739,7 +2327,7 @@ async function estimateMovOutput(target,range,fps,frames,output){
   for(let n=0;n<count;n++){
    const index=count===1?0:Math.round(n*(frames-1)/(count-1));
    const t=exportFrameTimestamp(range,index/fps);
-   renderExportFrame(t,target,output);
+   renderExportMappedFrame(t,target,output,range);
    prepareMovPngFrame(output);
    if(coverage===null){
     // Alpha is sampled on a sparse grid, not saved as flight data.
@@ -1822,12 +2410,13 @@ function prepareMovPngFrame(canvas){
 async function exportVideo(target){if((!samples.length&&!binaryMode)||recording){exportDebug('Export skipped: no flight log or export already running','WARN');return;}
  let range;try{range=exportSelectedRange()}catch(e){exportDebugError('Invalid export range',e);$('status').textContent=e.message;$('exportrangesettings').open=true;return}
  exportDebug('Settings: format='+$('videoformat').value+', target='+target+', resolution='+$('size').value+', FPS='+$('fps').value+', range='+range.start.toFixed(3)+'-'+range.end.toFixed(3)+'s, compression='+$('movcompression').value+', input='+(binaryMode?'BBL/BFL':'CSV'))
+ if(range.autoDji)exportDebug((range.autoGoPro?'GoPro':'DJI')+' Auto Sync ON: MP4 duration='+range.duration.toFixed(6)+'s; time mapping camera=('+range.intercept.toFixed(6)+')+('+range.scale.toFixed(8)+')*BBL; clip speed equivalent='+range.speed.toFixed(4)+'%. Place the MOV at 00:00, 100% speed.');
  const output=document.createElement('canvas');if($('videoformat').value==='mov'){
  const fps=+$('fps').value,frames=Math.ceil(range.duration*fps);
  // Chunked fallback uses a 1 GiB encoded-data cap, not a fixed duration.
  if(!frames||!Number.isFinite(frames)||fps<=0){$('status').textContent='Invalid export duration or FPS';return}
  // Use ordinary browser downloads; never ask for persistent folder/file access.
- const suggestedBase='blackbox-sticks-'+target+'-alpha';
+ const suggestedBase='blackbox-sticks-'+target+(range.autoGoPro?'-GOPRO-AUTO-SYNC':range.autoDji?'-DJI-AUTO-SYNC':'')+'-alpha';
  const stamp=new Date().toISOString().replace(/[-:]/g,'').replace('T','-').slice(0,15);
  const exportBase=suggestedBase+'-'+stamp;
  // Check real PNG sample sizes before generating potentially gigabytes of
@@ -1890,7 +2479,7 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
    await new Promise(r=>setTimeout(r,300));
   };
   for(let i=0;i<frames;i++){
-   time=exportFrameTimestamp(range,i/fps);renderExportFrame(time,target,output);prepareMovPngFrame(output);
+   time=exportFrameTimestamp(range,i/fps);renderExportMappedFrame(time,target,output,range);prepareMovPngFrame(output);
    const blob=await encodeMovPngFrame(output);
    if(chunks.length&&clipBytes+blob.size>maxBytes)await flushClip();
    if(blob.size>maxBytes)throw Error('Single PNG frame exceeds chunk size limit.');
@@ -1904,7 +2493,7 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
  }catch(e){exportDebugError('Chunked MOV export failed',e);$('status').textContent='MOV export failed: '+e.message;exportProgress(0,'Export failed')}
  finally{recording=false;$('video').disabled=false;update()}
  return
- }if((!samples.length&&!binaryMode)||recording)return;if(!canvas.captureStream||!window.MediaRecorder){exportDebug('Browser does not support MediaRecorder','ERROR');$('status').textContent='This browser does not support canvas video recording';return}const fps=+$('fps').value;renderExportFrame(exportFrameTimestamp(range,0),target,output);const stream=output.captureStream(0),track=stream.getVideoTracks()[0],format=$('videoformat').value,mime=(format==='mp4'?['video/mp4;codecs=avc1.42E01E','video/mp4']:['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']).find(x=>MediaRecorder.isTypeSupported(x));if(!mime){$('status').textContent=format.toUpperCase()+' recording is unsupported in this browser. Select the other format.';return}const chunks=[];let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:4000000})}catch(e){$('status').textContent=e.message;return}recording=true;playing=false;$('video').disabled=true;const finished=new Promise(resolve=>{rec.onstop=()=>{exportDebug('MediaRecorder stopped; captured '+chunks.length+' chunks');recording=false;$('video').disabled=false;download(new Blob(chunks,{type:mime}),'blackbox-sticks-'+target+'.'+format);$('status').textContent=format==='mp4'?'MP4 exported with solid background. Use compositing in Resolve.':'WebM exported. Verify alpha transparency in Resolve before relying on it.';update();resolve()}});rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};rec.onerror=e=>{exportDebugError('MediaRecorder error',e.error||e);$('status').textContent='Recording error: '+(e.error?.message||'unknown')};rec.start();const total=range.duration,frames=Math.ceil(total*fps);$('status').textContent='Recording '+frames+' frames in real time…';for(let i=0;i<frames;i++){time=exportFrameTimestamp(range,i/fps);renderExportFrame(time,target,output);if(track.requestFrame)track.requestFrame();await new Promise(resolve=>setTimeout(resolve,1000/fps));if(i%fps===0)$('status').textContent='Recording '+Math.round(i/frames*100)+'%'}rec.stop();await finished};
+ }if((!samples.length&&!binaryMode)||recording)return;if(!canvas.captureStream||!window.MediaRecorder){exportDebug('Browser does not support MediaRecorder','ERROR');$('status').textContent='This browser does not support canvas video recording';return}const fps=+$('fps').value;renderExportMappedFrame(exportFrameTimestamp(range,0),target,output,range);const stream=output.captureStream(0),track=stream.getVideoTracks()[0],format=$('videoformat').value,mime=(format==='mp4'?['video/mp4;codecs=avc1.42E01E','video/mp4']:['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']).find(x=>MediaRecorder.isTypeSupported(x));if(!mime){$('status').textContent=format.toUpperCase()+' recording is unsupported in this browser. Select the other format.';return}const chunks=[];let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:4000000})}catch(e){$('status').textContent=e.message;return}recording=true;playing=false;$('video').disabled=true;const finished=new Promise(resolve=>{rec.onstop=()=>{exportDebug('MediaRecorder stopped; captured '+chunks.length+' chunks');recording=false;$('video').disabled=false;download(new Blob(chunks,{type:mime}),'blackbox-sticks-'+target+'.'+format);$('status').textContent=format==='mp4'?'MP4 exported with solid background. Use compositing in Resolve.':'WebM exported. Verify alpha transparency in Resolve before relying on it.';update();resolve()}});rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};rec.onerror=e=>{exportDebugError('MediaRecorder error',e.error||e);$('status').textContent='Recording error: '+(e.error?.message||'unknown')};rec.start();const total=range.duration,frames=Math.ceil(total*fps);$('status').textContent='Recording '+frames+' frames in real time…';for(let i=0;i<frames;i++){time=exportFrameTimestamp(range,i/fps);renderExportMappedFrame(time,target,output,range);if(track.requestFrame)track.requestFrame();await new Promise(resolve=>setTimeout(resolve,1000/fps));if(i%fps===0)$('status').textContent='Recording '+Math.round(i/frames*100)+'%'}rec.stop();await finished};
 $('video').onclick=async()=>{const choice=$('exportsticks').value;exportDebugLastProgress=-1;exportDebug('Export clicked; browser='+navigator.userAgent);try{if(choice==='separate'){await exportVideo('left');if($('videoformat').value!=='mov'){await new Promise(r=>setTimeout(r,250))}await exportVideo('right')}else await exportVideo(choice)}catch(e){exportDebugError('Unhandled export failure',e);recording=false;$('video').disabled=false;$('status').textContent='Export failed: '+(e.message||e);exportProgress(0,'Export failed')}};
 
 // Contextual help for every settings heading; native browser tooltip on hover/focus.
@@ -3857,7 +4446,7 @@ let windowStickCurve=null,windowQuadCurve=null;
  setTimeout(redraw,60);
  // Keep the Elements menu collapsed when the page first loads.
  // Users can expand it whenever they want; refresh the list without forcing it open.
- window.addEventListener('load',()=>{if(menu)menu.open=false;redraw()});
+ window.addEventListener('load',()=>{if(menu)menu.open=!!document.getElementById('workflow-elements');redraw()});
 })();
 
 // Element-level customisation keeps the main menus compact.
@@ -3918,5 +4507,139 @@ $('previewvisible').addEventListener('change',syncPreviewPhoto);
 $('previewfit').addEventListener('change',syncPreviewPhoto);
 $('previewclear').addEventListener('click',()=>{if(previewImageUrl&&previewImageUrl.startsWith('blob:'))URL.revokeObjectURL(previewImageUrl);previewImageUrl=null;$('previewphoto').removeAttribute('src');$('previewupload').value='';syncPreviewPhoto()});
 
-function tick(now){if(playing&&!recording){time+=Math.min(.1,(now-last)/1000);if(time>=totalTime()){if(demoMode){time=0;last=now}else{time=totalTime();playing=false;$('play').textContent='▶ Play'}}update()}last=now;requestAnimationFrame(tick)}requestAnimationFrame(tick);applyBetaTheme();startDefaultDemo();syncPreviewPhoto();document.querySelectorAll('details').forEach(panel=>{panel.open=false});updateTimingInfo();draw(0);
+
+/* Non-destructive UI grouping: reparent existing DOM nodes instead of cloning
+   or rewriting controls. Legacy IDs and event listeners stay attached. */
+function setupWorkflowLayout(){
+ const [left,right]=[...document.querySelectorAll('.layout > section.panel')];
+ if(!left||!right||left.dataset.workflowDone)return;
+ left.id='workflow-left';right.id='workflow-right';
+ const leftNodes=[...left.children],rightNodes=[...right.children];
+ const idx=(nodes,id)=>nodes.findIndex(node=>node===$(id)||node.contains($(id)));
+ const item=(id)=>$(id);
+ function section(parent,id,title,open=false){
+  const detail=document.createElement('details');detail.id=id;detail.className='workflow-section';detail.open=open;
+  const heading=document.createElement('summary');heading.textContent=title;
+  const content=document.createElement('div');content.className='workflow-content';
+  detail.append(heading,content);parent.append(detail);return content;
+ }
+ function append(list,box){for(const node of list)if(node)box.append(node)}
+ // Take a snapshot of original direct children before any DOM moves.
+ const canvasStart=idx(leftNodes,'canvasformat'),themeAt=idx(leftNodes,'betaPanel'),
+   bfAt=idx(leftNodes,'bfmode'),timingAt=idx(leftNodes,'timingdetails');
+ const pngAt=idx(rightNodes,'png');
+ // Cache these live DOM elements BEFORE detaching the right column.
+ // document.getElementById cannot find temporarily detached elements.
+ const retainedRight={
+  exportsticks:item('exportsticks'),videoformat:item('videoformat'),
+  video:item('video'),progress:item('exportprogress'),status:item('status')
+ };
+ if([canvasStart,themeAt,bfAt,timingAt,pngAt].some(i=>i<0))throw Error('Workflow UI layout: source control group missing');
+ const leftLog=section(left,'workflow-log','01 · Blackbox Log',true);
+ append(leftNodes.slice(0,canvasStart).filter(node=>node.tagName!=='STRONG'),leftLog);
+ const leftCanvas=section(left,'workflow-canvas','02 · Canvas Settings');
+ append(leftNodes.slice(canvasStart,themeAt),leftCanvas);
+ const leftTheme=section(left,'workflow-themes','03 · Themes');
+ append([leftNodes[themeAt]],leftTheme);
+ const themeDetails=item('betaPanel');
+ if(themeDetails)themeDetails.open=true;
+ const leftElements=section(left,'workflow-elements','04 · Elements');
+ append(leftNodes.slice(themeAt+1,bfAt),leftElements);
+ const manager=item('elementmanagerv2');
+ if(manager){
+  const inner=manager.closest('details.advanced');
+  if(inner){inner.open=true;inner.classList.add('workflow-flat-inner')}
+  const oldTitle=manager.querySelector(':scope > .em-head');
+  if(oldTitle)oldTitle.hidden=true;
+ }
+ // Integrate the existing custom image controls into Elements directly.
+ const customImagePanel=item('customimagepanel');
+ if(customImagePanel){
+  customImagePanel.open=true;
+  customImagePanel.classList.add('workflow-flat-inner','workflow-custom-image');
+  const heading=customImagePanel.querySelector(':scope > summary');
+  if(heading)heading.textContent='Custom image element';
+  leftElements.append(customImagePanel);
+ }
+ const leftPresets=section(left,'workflow-presets','05 · Presets');
+ const preset=item('presetmanager');
+ if(preset){leftPresets.append(preset);preset.open=true;preset.classList.add('workflow-flat-inner')}
+ const leftBF=section(left,'workflow-bflog','06 · Betaflight Log Settings');
+ append([leftNodes[bfAt]],leftBF);
+ if(leftNodes[bfAt]?.tagName==='DETAILS'){leftNodes[bfAt].open=true;leftNodes[bfAt].classList.add('workflow-flat-inner')}
+ const leftAdvanced=section(left,'workflow-advanced','07 · Advanced Settings');
+ if(themeDetails)themeDetails.classList.add('workflow-flat-inner');
+ append(leftNodes.slice(bfAt+1),leftAdvanced);
+ // Rebuild right column from its original DOM nodes (no cloning, no re-wiring).
+ right.replaceChildren();
+ append(rightNodes.slice(0,pngAt),right);
+ const sync=rightNodes.find(node=>node.id==='cameraautosync');
+ if(!sync)throw Error('Workflow UI layout: camera sync panel missing');
+ right.append(sync);sync.open=false;
+ // Use the identical content wrapper as Export Settings, retaining every original control.
+ const syncBody=document.createElement("div");syncBody.className="workflow-content";
+ for(const child of [...sync.children].filter(child=>child.tagName!=="SUMMARY"))syncBody.append(child);
+ sync.append(syncBody);
+ const advancedSync=item('cameraautoadvanced');
+ if(advancedSync){advancedSync.open=false;advancedSync.querySelector('summary').textContent='Camera sync diagnostics & manual correction';leftAdvanced.append(advancedSync)}
+ const exportSettings=section(right,'workflow-exportsettings','Export Settings');
+ append([
+   rightNodes.find(node=>node===retainedRight.exportsticks||node.contains(retainedRight.exportsticks)),
+   rightNodes.find(node=>node===retainedRight.videoformat||node.contains(retainedRight.videoformat)),
+   rightNodes.find(node=>node.id==='exportrangesettings'),
+   rightNodes.find(node=>node.id==='movcompresssettings')
+ ],exportSettings);
+ const action=rightNodes.find(node=>node===retainedRight.video||node.contains(retainedRight.video));
+ if(!action)throw Error('Workflow UI layout: export button was not found');
+ action.classList.add('workflow-export-action');right.append(action);
+ const note=rightNodes[rightNodes.indexOf(action)+1];
+ if(note?.classList.contains('small'))right.append(note);
+ const progress=retainedRight.progress,status=retainedRight.status;
+ if(progress)right.append(progress);
+ if(status)right.append(status);
+ const lastHint=rightNodes.find(node=>node.classList.contains('small')&&node.textContent.includes('exported image has a transparent background'));
+ if(lastHint)right.append(lastHint);
+ const debug=item('exportdebugdetails');if(debug)leftAdvanced.append(debug);
+ // Any unclassified legacy controls are preserved under Advanced.
+ for(const node of rightNodes)if(!node.isConnected)leftAdvanced.append(node);
+ if(!right.contains(retainedRight.video)||!right.contains(retainedRight.progress)||!right.contains(retainedRight.status)||!exportSettings.contains(retainedRight.videoformat)||!exportSettings.contains(retainedRight.exportsticks))throw Error('Workflow UI layout: export controls not in the intended right-column sections');
+ // Make sure no original direct children are lost during grouping.
+ const allOriginal=[...leftNodes,...rightNodes].filter(node=>node.tagName!=='STRONG');
+ const lost=allOriginal.filter(node=>!node.isConnected);
+ if(lost.length)throw Error('Workflow layout lost '+lost.length+' existing elements');
+ left.dataset.workflowDone='yes';
+ const targets={log:'workflow-log',design:'workflow-canvas',sync:'cameraautosync',export:'workflow-exportsettings'};
+ for(const button of document.querySelectorAll('#workflow-nav [data-workflow-step]')){
+  button.addEventListener('click',()=>{
+   const id=targets[button.dataset.workflowStep],panel=item(id);if(!panel)return;
+   panel.open=true;panel.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+ }
+ const refresh=()=>{
+  const logged=!!(binaryMode||telemetryRows.length)&&!demoMode;
+  const match=cameraSyncType==='dji'?djiAutoMatch:goproMatch;
+  const ready=!!(cameraSyncFile&&match?.status==='estimate');
+  const states={
+   log:[logged,logged?'Loaded':'Select log'],
+   design:[logged,logged?'Ready':'Optional'],
+   sync:[ready,ready?'Matched':cameraSyncFile?'Pending':'Optional'],
+   export:[logged&&!item('video').disabled,logged?'Ready':'Waiting']
+  };
+  for(const [id,[done,label]] of Object.entries(states)){
+   const button=document.querySelector('#workflow-nav [data-workflow-step="'+id+'"]');
+   if(!button)continue;
+   button.classList.toggle('wf-complete',done);
+   button.querySelector('.wf-dot').textContent=done?'✓':({log:'1',design:'2',sync:'3',export:'4'})[id];
+   item('wf-'+id+'-state').textContent=label;
+  }
+ };
+ document.addEventListener('change',()=>queueMicrotask(refresh));
+ const obs=new MutationObserver(refresh);
+ for(const id of ['flightinfo','cameraautores','cameraautostatus','video']){
+  const el=item(id);if(el)obs.observe(el,{childList:true,characterData:true,subtree:true,attributes:id==='video',attributeFilter:id==='video'?['disabled']:undefined});
+ }
+ refresh();
+}
+
+function tick(now){if(playing&&!recording){time+=Math.min(.1,(now-last)/1000);if(time>=totalTime()){if(demoMode){time=0;last=now}else{time=totalTime();playing=false;$('play').textContent='▶ Play'}}update()}last=now;requestAnimationFrame(tick)}requestAnimationFrame(tick);applyBetaTheme();startDefaultDemo();syncPreviewPhoto();document.querySelectorAll('details').forEach(panel=>{panel.open=false});setupWorkflowLayout();updateTimingInfo();draw(0);
 </script></body></html>
