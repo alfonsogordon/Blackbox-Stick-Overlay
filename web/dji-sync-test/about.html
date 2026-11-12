@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About · Overlay Studio TEST</title>
+<style>
+:root{font-family:Inter,system-ui,Segoe UI,sans-serif;color:#e8efff;background:#0a101b}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#172640 0%,#0a101b 55%)}
+main{max-width:920px;margin:auto;padding:24px 22px 45px}a{color:#7cded8}header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:27px}
+a.back{text-decoration:none;font-weight:700}h1{font-size:clamp(32px,5vw,47px);margin:4px 0 12px}h2{font-size:22px;margin:0 0 14px}p{color:#b6c8dc;line-height:1.75;margin:0 0 15px}.subtitle{font-size:16px;max-width:700px}
+.kicker{color:#78ddd4;font-size:12px;text-transform:uppercase;letter-spacing:2px;font-weight:700}
+section{background:#111c2c;border:1px solid #324963;border-radius:18px;padding:clamp(20px,4vw,35px);margin:19px 0}
+code{color:#9de5dc}ul{color:#b6c8dc;line-height:1.9;padding-left:22px}li{margin-bottom:5px}
+.version{color:#84dbd7;font-weight:700;font-size:12px}
+.note{border-left:3px solid #68bfb7;padding-left:14px;color:#aac0d1;font-size:13px}
+footer{text-align:center;color:#8fa8b8;font-size:12px;margin-top:34px;line-height:1.7}
+</style></head><body><main>
+<header><a class="back" href="./">← Back to Overlay Studio TEST</a><span class="version">ABOUT · TEST v0.1</span></header>
+<div class="kicker">Betaflight · Blackbox · FPV</div><h1>About Overlay Studio</h1>
+<p class="subtitle">An FPV overlay tool built to turn flight logs into customisable stick displays, flight-data HUDs and precisely synchronised video overlays — directly in your browser.</p>
+<section><h2>The story behind it</h2>
+<p>Overlay Studio began with a simple idea: make it easier to show what the sticks were doing during an FPV flight, alongside the footage itself.</p>
+<p>What started as a Blackbox stick-overlay tool grew as new ideas and real-world testing revealed what else would be useful: customisable visual themes, telemetry elements, saved layouts, transparent exports and tools to get everything lined up accurately in an editor.</p>
+<p>Video synchronisation became a particular challenge. Camera recordings and flight-controller logs don't always start together — and even a small difference between their clocks can cause visible drift over a long flight. The Studio now experiments with matching actual flight movement from camera metadata to Betaflight gyro data, instead of relying on recording start and stop times.</p>
+<p>It's a practical project shaped by FPV use, testing and plenty of iterative improvements. The aim is to make the powerful features approachable while keeping the workflow straightforward.</p>
+<p class="note">This story is a draft. The personal details and wording can be revised before the About page reaches V1.</p></section>
+<section><h2>How Overlay Studio works</h2>
+<p><strong>1. Read the flight log.</strong> Betaflight <code>.bbl</code>/<code>.bfl</code> logs and supported CSV data are read locally in your browser. The Studio extracts stick commands, gyro motion and available flight telemetry.</p>
+<p><strong>2. Design the overlay.</strong> Select a layout and theme, choose the elements you want to show, move and resize them in the preview and save a reusable preset.</p>
+<p><strong>3. Match camera motion (optional).</strong> For compatible DJI O4 and GoPro recordings, the Studio reads embedded orientation or gyro metadata and matches it to motion from the Blackbox log. Multiple sections across the flight help estimate both the initial offset and any progressive timing drift. If matching is unreliable, it should not recommend automatic synchronisation.</p>
+<p><strong>4. Export for editing.</strong> The Studio generates an overlay locally. With successful Camera Auto Sync enabled, the overlay is timed to the camera recording so it can be placed at the start of the video in an editor such as DaVinci Resolve, at normal playback speed.</p>
+<p><strong>5. Keep control.</strong> Camera Auto Sync is optional. You can still export normally, use custom time ranges or inspect advanced diagnostics.</p></section>
+<section><h2>Privacy and local processing</h2>
+<p>Your flight logs and camera recordings are processed on your device, inside your browser. They are not uploaded to the Overlay Studio website. For motion matching, the Studio reads camera metadata from the selected video file, not the video frames themselves. Your original files are not modified.</p>
+<p>Saved presets use browser-local storage unless you choose to export or share them. Generated videos are downloaded from your browser.</p></section>
+<section><h2>Credits and acknowledgements</h2>
+<p>Overlay Studio builds on the work of the FPV and open-source community. Particular thanks to the projects and documentation that make reading flight logs and camera motion metadata possible.</p>
+<ul>
+<li><a href="https://github.com/betaflight/betaflight" target="_blank" rel="noopener noreferrer">Betaflight</a> and the <a href="https://github.com/betaflight/blackbox-log-viewer" target="_blank" rel="noopener noreferrer">Blackbox Explorer / log viewer</a> ecosystem</li>
+<li><a href="https://gopro.github.io/gpmf-parser/" target="_blank" rel="noopener noreferrer">GoPro GPMF documentation</a> for camera sensor metadata</li>
+<li><a href="https://gyroflow.xyz/" target="_blank" rel="noopener noreferrer">Gyroflow</a> and the camera-motion metadata community</li>
+<li><a href="https://github.com/parhipov/DJIFix" target="_blank" rel="noopener noreferrer">DJIFix</a> for research into DJI O4 motion metadata</li>
+</ul>
+<p>Found a bug or have an idea? Join the <a href="https://discord.gg/NGuuRW7m5J" target="_blank" rel="noopener noreferrer">Squadding Quads Discord</a>.</p></section>
+<footer>Overlay Studio TEST · Built for FPV · <a href="./">Return to the Studio</a></footer>
+</main></body></html>
