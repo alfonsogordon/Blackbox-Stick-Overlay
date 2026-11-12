@@ -71,20 +71,66 @@ export async function matchDjiMotion(file,bblDuration,bblFieldNames,bblFrameAtTi
  const blackSmooth=movingAverage(black.map(x=>Number.isFinite(x[1])?x[1]:0),2);
  const blackFn=interpolate(black.map((x,i)=>[x[0],blackSmooth[i]]));
  const camMax=camera.at(-1)[0];
- const windows=[[10,Math.min(42,bblDuration*.33)],[Math.max(45,bblDuration*.45),Math.min(bblDuration*.72,bblDuration-25)],[Math.max(60,bblDuration-43),bblDuration-9]].filter(([a,b])=>b-a>=14);
- if(windows.length<2)throw Error('Flight too short for drift comparison.');
- onProgress?.('Matching motion at start, middle, and end…');
- // Shift maps BBL t to camera t. 8 seconds covers common recording delays.
+ // Overlapping 18-second windows (~360 samples per comparison), spaced
+ // across the whole flight. Caps at 20 windows so long logs remain usable.
+ const windowSize=Math.min(18,Math.max(8,bblDuration/7));
+ const begin=8,finish=bblDuration-8-windowSize;
+ if(finish<=begin+windowSize*.6)throw Error('Flight too short for reliable multi-window drift comparison.');
+ const requested=Math.min(20,Math.max(7,Math.ceil((finish-begin)/8)+1));
+ const windows=Array.from({length:requested},(_,i)=>{
+  const a=begin+(finish-begin)*i/(requested-1);return [a,a+windowSize];
+ });
+ onProgress?.('Matching DJI and BBL motion across '+windows.length+' sections…');
+ // Initial global offset searches +/-8 seconds. Subsequent sections search
+ // about the drift-compensated estimate, not a fixed file-length ratio.
  const first=bestShift(blackFn,cam,...windows[0],0,8,.1);
- const refined=bestShift(blackFn,cam,...windows[0],first.shift,.18,.01);
+ const refined=bestShift(blackFn,cam,...windows[0],first.shift,.2,.01);
  const results=[{time:(windows[0][0]+windows[0][1])/2,...refined}];
- for(const [a,b] of windows.slice(1)){const coarse=bestShift(blackFn,cam,a,b,refined.shift,1.2,.04);results.push({time:(a+b)/2,...bestShift(blackFn,cam,a,b,coarse.shift,.07,.01)})}
- const scores=results.map(x=>x.score);
- if(scores.some(s=>s<.45))return {status:'low-confidence',reason:'Motion correlation was too weak in one or more sections. No safe automatic speed recommendation.',scores,results,quaternions:samples.length};
- const firstPoint=results[0],lastPoint=results.at(-1),slope=(lastPoint.shift-firstPoint.shift)/(lastPoint.time-firstPoint.time);
- const speed=100/(1+slope);
- const predicted=results.map(p=>firstPoint.shift+slope*(p.time-firstPoint.time));
- const residual=Math.max(...results.map((p,i)=>Math.abs(p.shift-predicted[i])));
- if(!Number.isFinite(speed)||speed<98||speed>102||residual>.15)return {status:'low-confidence',reason:'Movement alignment is inconsistent across the flight. No reliable speed recommendation.',scores,results,quaternions:samples.length,residual};
- return {status:'estimate',speed,results,scores,residual,quaternions:samples.length,offset:results[0].shift};
+ for(let i=1;i<windows.length;i++){
+  const [a,b]=windows[i],t=(a+b)/2;
+  const previous=results.at(-1);
+  const predicted=results.length>=3?
+   previous.shift+(previous.shift-results[0].shift)*(t-previous.time)/Math.max(.1,previous.time-results[0].time):
+   previous.shift;
+  const coarse=bestShift(blackFn,cam,a,b,predicted,.65,.04);
+  const fine=bestShift(blackFn,cam,a,b,coarse.shift,.06,.01);
+  results.push({time:t,...fine});
+  if(i%3===0){onProgress?.('Matched '+(i+1)+' / '+windows.length+' sections…');await new Promise(r=>setTimeout(r,0))}
+ }
+ // Fit timing drift across the full recording, not just first and last.
+ // Reject anomalous sections iteratively, but require broad coverage.
+ function lineFit(points){
+  let sw=0,st=0,ss=0,stt=0,sts=0;
+  for(const p of points){
+   const w=Math.max(.01,p.score*p.score);sw+=w;st+=w*p.time;ss+=w*p.shift;stt+=w*p.time*p.time;sts+=w*p.time*p.shift;
+  }
+  const den=sw*stt-st*st;
+  if(Math.abs(den)<1e-8)return null;
+  const slope=(sw*sts-st*ss)/den;
+  return {slope,intercept:(ss-slope*st)/sw};
+ }
+ const good=results.filter(p=>p.score>=.55);
+ const minimum=Math.max(5,Math.ceil(results.length*.75));
+ const insufficient=(reason,fit=null)=>({status:'low-confidence',reason,results,scores:results.map(x=>x.score),quaternions:samples.length,matchedWindows:good.length,totalWindows:results.length,fit});
+ if(good.length<minimum)return insufficient('Too few motion sections correlated strongly; no reliable automatic speed recommendation.');
+ let inliers=good.slice(),fit=lineFit(inliers);
+ if(!fit)return insufficient('Unable to fit a camera-to-BBL timing line.');
+ for(let pass=0;pass<3;pass++){
+  const next=good.filter(p=>Math.abs(p.shift-(fit.intercept+fit.slope*p.time))<=.10);
+  if(next.length<minimum)break;
+  inliers=next;fit=lineFit(inliers)||fit;
+ }
+ const residual=Math.max(...inliers.map(p=>Math.abs(p.shift-(fit.intercept+fit.slope*p.time))));
+ const spread=inliers.at(-1).time-inliers[0].time;
+ const speed=100/(1+fit.slope);
+ if(inliers.length<minimum||spread<bblDuration*.55||residual>.1||
+    !Number.isFinite(speed)||speed<98||speed>102)
+  return insufficient('Motion timing is not consistent across enough of the flight. No safe automatic speed recommendation.',fit);
+ const inlierTimes=new Set(inliers.map(p=>p.time));
+ for(const p of results)p.inlier=inlierTimes.has(p.time);
+ const scores=results.map(p=>p.score);
+ return {status:'estimate',speed,results,scores,residual,quaternions:samples.length,
+  matchedWindows:inliers.length,totalWindows:results.length,
+  offset:fit.intercept,fit:{intercept:fit.intercept,slope:fit.slope},
+  confidence:inliers.length>=Math.ceil(results.length*.9)&&residual<.04?'high':'moderate'};
 }
