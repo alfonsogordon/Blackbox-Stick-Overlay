@@ -95,10 +95,13 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 #workflow-left .workflow-custom-image>summary{display:block!important;padding:0 0 8px!important;font-weight:700;color:#88dfd6;list-style:none;pointer-events:none}
 #workflow-left .workflow-custom-image>summary::marker{content:''}
 #workflow-right{background:#111c2c!important;backdrop-filter:none!important}
-/* Portrait: the preview must not enter two nested sticky/scroll containers. */
+/* Keep portrait preview and title together above scrolling settings. The full-width,
+   opaque dock prevents controls/text showing through either side of a narrow canvas. */
+#preview-dock{display:contents}
 @media(min-width:981px){
- body.studio-portrait #workflow-right{position:relative!important;max-height:none!important;overflow:visible!important;top:auto!important;align-self:start}
- body.studio-portrait #workflow-right #previewframe{position:relative!important;top:auto!important;box-shadow:none!important}
+ body.studio-portrait #workflow-right{position:sticky!important;top:12px!important;max-height:calc(100dvh - 24px)!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain}
+ body.studio-portrait #preview-dock{display:block;position:sticky;top:0;z-index:12;background:#111c2c;padding:0 0 14px;box-shadow:0 12px 18px -13px #000b;isolation:isolate}
+ body.studio-portrait #workflow-right #previewframe{position:relative!important;top:auto!important;box-shadow:none!important;z-index:auto!important}
 }
 body.studio-portrait #previewframe{width:min(100%,280px,calc((100dvh - 190px)*.5625));min-width:0;margin-inline:auto}
 body.studio-portrait .preview-expanded #previewframe{width:min(100%,400px,calc((100dvh - 160px)*.5625))}
@@ -4700,6 +4703,15 @@ function setupWorkflowLayout(){
  // Rebuild right column from its original DOM nodes (no cloning, no re-wiring).
  right.replaceChildren();
  append(rightNodes.slice(0,pngAt),right);
+ // A full-width sticky backdrop is essential for narrow vertical previews: no
+ // labels or export text can scroll visibly behind the exposed side gutters.
+ const previewHeading=right.querySelector(':scope > .preview-heading');
+ const previewFrame=right.querySelector(':scope > #previewframe');
+ if(previewHeading&&previewFrame){
+  const dock=document.createElement('div');dock.id='preview-dock';
+  right.insertBefore(dock,previewHeading);
+  dock.append(previewHeading,previewFrame);
+ }
  const sync=rightNodes.find(node=>node.id==='cameraautosync');
  if(!sync)throw Error('Workflow UI layout: camera sync panel missing');
  right.append(sync);sync.open=false;
