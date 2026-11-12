@@ -6,7 +6,47 @@ const u32=(v,p)=>v.getUint32(p);
 function boxes(v,start,end){const a=[];for(let p=start;p+8<=end;){let n=u32(v,p),h=8;if(n===1){n=Number(v.getBigUint64(p+8));h=16}else if(n===0)n=end-p;if(!Number.isSafeInteger(n)||n<h||p+n>end)throw Error('Invalid MP4 atom at '+p);a.push({type:word(new Uint8Array(v.buffer,v.byteOffset),p+4),start:p+h,end:p+n});p+=n}return a}
 const find=(v,parent,key)=>boxes(v,parent.start,parent.end).find(x=>x.type===key);
 function requireBox(v,p,k){const b=find(v,p,k);if(!b)throw Error('Missing '+k+' atom');return b}
-async function mp4Index(file){let pos=0;for(let n=0;n<10000&&pos<file.size;n++){const v=new DataView(await file.slice(pos,pos+16).arrayBuffer());if(v.byteLength<8)break;let size=u32(v,0);if(size===1)size=Number(v.getBigUint64(8));if(size===0)size=file.size-pos;const type=word(new Uint8Array(v.buffer),4);if(!Number.isSafeInteger(size)||size<8||pos+size>file.size)throw Error('Bad MP4 header');if(type==='moov'){if(size>128*1048576)throw Error('MP4 index too large');return {v:new DataView(await file.slice(pos,pos+size).arrayBuffer()),root:{start:size>=16&&u32(v,0)===1?16:8,end:size}}}pos+=size}throw Error('MP4 metadata index missing')}
+async function mp4Index(file){
+ const trail=[],maxAtoms=100000;let pos=0,fragmented=false;
+ const parseMoov=async(offset,size,header)=>{
+  if(size>128*1048576)throw Error('MP4 moov index exceeds 128 MiB; no video payload read');
+  const data=new DataView(await file.slice(offset,offset+size).arrayBuffer());
+  const root={start:header,end:data.byteLength};
+  const entries=boxes(data,root.start,root.end);
+  if(!entries.some(x=>x.type==='mvhd')||!entries.some(x=>x.type==='trak'))throw Error('MP4 moov index is incomplete');
+  return {v:data,root};
+ };
+ for(let i=0;i<maxAtoms&&pos<file.size;i++){
+  const v=new DataView(await file.slice(pos,Math.min(pos+16,file.size)).arrayBuffer());
+  if(v.byteLength<8)break;
+  const raw=u32(v,0),type=word(new Uint8Array(v.buffer),4);
+  let size=raw,header=8;
+  if(raw===1){if(v.byteLength<16)break;size=Number(v.getBigUint64(8));header=16}
+  else if(raw===0)size=file.size-pos;
+  if(!Number.isSafeInteger(size)||size<header||pos+size>file.size){trail.push('invalid '+type+' @'+pos);break}
+  if(trail.length<16)trail.push(type+' @'+pos+' size '+size);
+  if(type==='moof')fragmented=true;
+  if(type==='moov')return parseMoov(pos,size,header);
+  pos+=size;
+ }
+ // Some action-camera files have unusual top-level atom layouts; find a
+ // plausible moov atom in the *tail* without scanning or decoding video data.
+ // Memory-bounded: examine up to 96 MiB in overlapping 4 MiB slices.
+ const scanBytes=Math.min(file.size,96*1048576),block=4*1048576,overlap=32;
+ for(let upper=file.size;upper>file.size-scanBytes;upper-=block-overlap){
+  const lower=Math.max(file.size-scanBytes,upper-block);
+  const bytes=new Uint8Array(await file.slice(lower,upper).arrayBuffer());
+  for(let i=bytes.length-4;i>=4;i--){
+   if(bytes[i]!==109||bytes[i+1]!==111||bytes[i+2]!==111||bytes[i+3]!==118)continue;
+   const v=new DataView(bytes.buffer,bytes.byteOffset+i-4,4);
+   const size=v.getUint32(0),start=lower+i-4;
+   if(size<32||size>128*1048576||start+size>file.size)continue;
+   try{return await parseMoov(start,size,8)}catch(err){/* skip false positives inside mdat */}
+  }
+  if(lower===file.size-scanBytes)break;
+ }
+ throw Error('MP4 metadata index missing. File size '+(file.size/1048576).toFixed(1)+' MiB; scanned headers: '+trail.join(' | ')+(fragmented?' | fragmented moof detected':'')+'. Check this is a complete original .MP4, not an incomplete recording, LRV proxy or transfer.');
+}
 function indexedGpmf(v,root){
  for(const tr of boxes(v,root.start,root.end).filter(x=>x.type==='trak')){
   const mdia=find(v,tr,'mdia'),minf=mdia&&find(v,mdia,'minf'),stbl=minf&&find(v,minf,'stbl');
