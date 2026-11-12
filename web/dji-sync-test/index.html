@@ -200,6 +200,7 @@ body.studio-tour-open{overflow:hidden}
 <div class="small" style="margin-top:7px">All choices remain transparent PNG-in-MOV for Resolve and other compatible editors. TEST lossless recompression preserves pixels and only replaces PNG frames when smaller. TEST alpha changes semi-transparent pixels and may affect soft edges/glows. Test a short range first; High quality remains the default.</div>
 </details><details class="element-custom" id="exportdebugdetails" style="margin-top:10px"><summary>Export debug log</summary><div class="small" style="margin:8px 0">Timestamped local export diagnostics. No flight data is logged. Copy and share this log if an export fails.</div><div class="row" style="margin-bottom:8px"><button type="button" id="copyexportdebug">Copy log</button><button type="button" id="clearexportdebug">Clear log</button></div><pre id="exportdebuglog" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:280px;overflow:auto;background:#0a1422;border:1px solid #34465f;border-radius:10px;padding:12px;font:11px/1.5 monospace;color:#d4e5f5">No export attempts logged yet.</pre></details><div id="exportprogress" role="progressbar" aria-label="Video export progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="display:none;margin:16px 0"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><strong>Exporting video</strong><strong id="exportpercent">0%</strong></div><div style="height:14px;background:#18283b;border:1px solid #3a536e;border-radius:20px;overflow:hidden"><div id="exportfill" style="height:100%;width:0%;background:linear-gradient(90deg,#36bcb8,#83eee2);transition:width .15s"></div></div><div id="exportdetail" class="small" style="margin-top:7px">Preparing export…</div></div><div id="status" class="status">Load a decoded Blackbox CSV to animate the sticks.</div><div class="small">The exported image has a transparent background. Use it above your FPV video in Resolve.</div></section></div>
 <footer style="max-width:790px;margin:34px auto 6px;padding:20px 18px 0;border-top:1px solid #304059;text-align:center;color:#94a6bd;font-size:12px;line-height:1.85">
+  <button type="button" id="restart-studio-guide" style="display:block;width:auto;margin:0 auto 14px;padding:8px 13px;border:1px solid #537c85;border-radius:8px;background:#172b3a;color:#d5f2f0;font-size:12px;cursor:pointer">Show Welcome Guide Again</button>
   This was made as a bit of fun, for anyone to enjoy. There may be bugs along the way, so if you spot one, please let us know over on the
   <a href="https://discord.gg/NGuuRW7m5J" target="_blank" rel="noopener noreferrer" style="color:#82cfca;text-decoration:underline;text-underline-offset:3px">Squadding Quads Discord</a>.
   Above all else, remember the most important thing… <strong style="color:#c4e5dd;letter-spacing:.04em">HAVE FUN!</strong>
@@ -4735,6 +4736,8 @@ function tick(now){if(playing&&!recording){time+=Math.min(.1,(now-last)/1000);if
   {title:'Export your video',description:'Choose your export settings and generate the overlay. With Auto Sync applied, start the exported MOV at 00:00 in your editor at 100% speed.',target:'workflow-exportsettings'}
  ];
  let active=false,index=0,highlight=null;
+ const tourPanels=new Set();
+ function collapseTourPanels(){for(const panel of tourPanels){if(panel.isConnected)panel.open=false}tourPanels.clear()}
  const overlay=document.createElement('div');overlay.id='studio-tour-overlay';
  const card=document.createElement('section');card.id='studio-tour-card';card.setAttribute('role','dialog');card.setAttribute('aria-modal','true');card.setAttribute('aria-label','Overlay Studio quick guide');
  card.innerHTML='<div class="tour-step" id="tour-count"></div><h2 id="tour-title"></h2><p id="tour-description"></p><div class="tour-dots" id="tour-dots"></div><div class="tour-buttons"><button type="button" class="tour-skip" id="tour-skip">Skip</button><button type="button" id="tour-back">Back</button><button type="button" class="tour-primary" id="tour-next">Next</button></div>';
@@ -4742,14 +4745,14 @@ function tick(now){if(playing&&!recording){time+=Math.min(.1,(now-last)/1000);if
  const get=id=>card.querySelector('#'+id);
  function clearHighlight(){if(highlight){highlight.classList.remove('studio-tour-highlight');highlight=null}}
  function close(save){
-  active=false;overlay.classList.remove('is-active');card.hidden=true;document.body.classList.remove('studio-tour-open');clearHighlight();
+  active=false;overlay.classList.remove('is-active');card.hidden=true;document.body.classList.remove('studio-tour-open');clearHighlight();collapseTourPanels();
   if(save){try{localStorage.setItem(storageKey,'done')}catch(_){}}
  }
  function show(){
-  clearHighlight();
+  clearHighlight();collapseTourPanels();
   const step=steps[index],target=document.getElementById(step.target);
   if(target){
-   if(target.tagName==='DETAILS')target.open=true;
+   if(target.tagName==='DETAILS'){target.open=true;tourPanels.add(target)}
    target.scrollIntoView({block:'nearest',behavior:'instant'});
    target.classList.add('studio-tour-highlight');highlight=target;
   }
@@ -4758,7 +4761,7 @@ function tick(now){if(playing&&!recording){time+=Math.min(.1,(now-last)/1000);if
   get('tour-back').disabled=index===0;get('tour-next').textContent=index===steps.length-1?'Finish':'Next';
   get('tour-dots').replaceChildren(...steps.map((_,i)=>{const dot=document.createElement('span');if(i===index)dot.classList.add('active');return dot}));
  }
- function open(){if(active)return;active=true;index=0;card.hidden=false;overlay.classList.add('is-active');document.body.classList.add('studio-tour-open');show();get('tour-next').focus()}
+ function open(){if(active)return;active=true;index=0;collapseTourPanels();card.hidden=false;overlay.classList.add('is-active');document.body.classList.add('studio-tour-open');show();get('tour-next').focus()}
  get('tour-skip').addEventListener('click',()=>close(true));
  get('tour-back').addEventListener('click',()=>{index=Math.max(0,index-1);show()});
  get('tour-next').addEventListener('click',()=>{if(index===steps.length-1)close(true);else{index++;show()}});
@@ -4767,5 +4770,6 @@ function tick(now){if(playing&&!recording){time+=Math.min(.1,(now-last)/1000);if
  let completed=false;try{completed=localStorage.getItem(storageKey)==='done'}catch(_){}
  if(params.get('tour')==='1'||!completed)setTimeout(open,350);
  window.restartStudioTour=open;
+ document.getElementById('restart-studio-guide')?.addEventListener('click',open);
 })();
 </script></body></html>
