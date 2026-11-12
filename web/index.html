@@ -80,9 +80,9 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 <pre id="bblcli" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#0a1422;border:1px solid #34465f;border-radius:10px;padding:12px;font-size:11px;line-height:1.55;color:#d4e5f5"></pre>
 <div class="small" style="margin-top:10px"><strong>Optional sensor-dependent commands (verify with <code>get blackbox</code> before using):</strong></div><pre id="bfoptional" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#0a1422;border:1px solid #34465f;border-radius:10px;padding:12px;font-size:11px;color:#d4e5f5"></pre>
 </details><details class="advanced" id="timingdetails"><summary>Export duration &amp; sync details</summary><div id="timinginfo" class="helppanel" style="margin-top:12px" aria-live="polite">Load a log to see the export timing breakdown.</div></details><div class="note">Privacy: imported CSV data stays in your browser. No uploads. Video export depends on browser codec support; transparency is not guaranteed in every browser.</div></section><section class="panel"><div class="preview-heading"><strong>Live preview</strong><button id="expandpreview" type="button" aria-pressed="false">⛶ Expand preview</button></div><div class="preview" id="previewframe" style="margin-top:16px;position:relative"><img id="previewphoto" alt="Optional footage preview background" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;display:none"><canvas id="view" width="800" height="300" style="position:relative;z-index:1"></canvas><div id="previewguides" aria-hidden="true" style="display:none;position:absolute;inset:0;z-index:2;pointer-events:none"></div><div id="elementselection" aria-hidden="true" style="display:none;position:absolute;pointer-events:none;z-index:5;border:1px solid rgba(151,219,225,.55);box-shadow:0 0 0 1px rgba(8,21,34,.32);border-radius:5px"><div style="position:absolute;right:-4px;bottom:-4px;width:8px;height:8px;background:#86c7ce;border:1px solid #203b49;border-radius:2px"></div><span id="elementselectionlabel" style="position:absolute;left:0;top:-22px;background:#0c2037cc;color:#bad8df;font:500 10px system-ui;padding:2px 5px;border-radius:4px;white-space:nowrap"></span></div></div><div class="row" style="margin-top:10px"><button id="demo" type="button">▶ Preview demo (no log)</button></div><details class="advanced"><summary>Preview footage background</summary><label>Upload a screenshot from your GoPro footage</label><input id="previewupload" type="file" accept="image/png,image/jpeg,image/webp,image/avif"><label><input type="checkbox" id="previewvisible" checked style="width:auto;margin-right:8px"> Show background in preview</label><label>Background fit</label><select id="previewfit"><option value="cover">Fill preview (crop if needed)</option><option value="contain">Fit entire image</option></select><div class="row"><button id="previewclear" type="button">Remove preview image</button></div><div class="small">Preview-only background. Lower footage brightness to improve overlay contrast; exports stay transparent.</div></details><div class="controls"><button id="play">▶ Play</button><div id="timelinearmwrap" class="timeline-arm-wrap"><input id="scrub" type="range" min="0" max="1000" value="0"><div id="timelinearmmarkers" class="timeline-arm-markers" aria-label="Recorded arming events" hidden></div></div><span id="clock" class="small">0:00.0</span></div><div id="timelinearmstatus" class="small" style="margin-top:7px;text-align:center;color:#b4dfd5" hidden></div><div class="row"><button id="png">Save PNG frame</button><button id="video" disabled>Export video</button></div><div class="small" style="margin-top:7px;color:#dfbd87"><strong>Export note:</strong> Saving over an existing file may fail. Choose a new filename rather than replacing the old one.</div><div id="exportstickswrap"><label>Export sticks</label><select id="exportsticks"><option value="both">Both sticks (one video)</option><option value="left">Left stick only</option><option value="right">Right stick only</option><option value="separate">Separate left + right videos</option></select></div><div class="two"><div><label>Video format</label><select id="videoformat"><option value="mov">MOV (transparent PNG codec, experimental)</option><option value="mp4">MP4 (solid black background)</option><option value="webm">WebM (alpha experimental)</option></select><div class="small">Transparent MOV downloads normally through your browser. Large exports are split into numbered clips (up to 1 GiB each); your browser may ask to allow multiple downloads.</div></div><div id="mp4backgroundwrap"><label>MP4 background</label><select id="bgcolor"><option value="#000000">Black</option><option value="#00ff00">Green screen</option></select></div></div><details class="element-custom" id="exportrangesettings" style="margin-top:10px"><summary>Export time range</summary>
-<div style="margin-top:9px"><label style="margin:0 0 7px">Export section</label><select id="exportrangemode"><option value="full" selected>Full Blackbox log (default)</option><option value="armed">Armed → Disarmed (recorded flags)</option><option value="custom">Custom In / Out time</option></select></div>
+<div style="margin-top:9px"><label style="margin:0 0 7px">Export section</label><select id="exportrangemode"><option value="full">Full Blackbox log</option><option value="armed" selected>Armed → Disarmed (automatic)</option><option value="custom">Custom In / Out time</option></select></div>
 <div class="two" id="exportrangeinputs" hidden><div><label for="exportin">In (start)</label><input id="exportin" type="text" inputmode="decimal" value="00:00.000" placeholder="MM:SS.mmm"></div><div><label for="exportout">Out (end)</label><input id="exportout" type="text" inputmode="decimal" value="00:00.000" placeholder="MM:SS.mmm"></div></div>
-<div class="small" id="exportrangestatus" style="margin-top:8px">Full log may include pre-arm and post-disarm time. Armed → Disarmed uses recorded flags when available.</div><div id="camerasyncwrap" style="margin-top:12px" hidden><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="camerasyncenabled" style="width:auto"> Match camera clip duration (experimental)</label><label for="camerasyncduration">Camera clip duration (MM:SS.mmm)</label><input type="text" id="camerasyncduration" inputmode="decimal" placeholder="02:15.310"><div class="small" id="camerasyncstatus" style="margin-top:6px">Off by default; no video upload required. For arm/disarm recorded clips, align disarm in Resolve.</div></div></details><details class="element-custom" id="movcompresssettings" style="margin-top:10px"><summary>MOV compression (experimental)</summary>
+<div class="small" id="exportrangestatus" style="margin-top:8px">Full log may include pre-arm and post-disarm time. Armed → Disarmed uses recorded flags when available.</div></details><details class="element-custom" id="movcompresssettings" style="margin-top:10px"><summary>MOV compression (experimental)</summary>
 <label for="movcompression">Compression quality</label>
 <select id="movcompression"><option value="lossless">Lossless (original)</option><option value="high" selected>High quality — smaller PNG frames (recommended)</option><option value="balanced">Balanced — reduced colours</option><option value="compact">Compact — strongest reduction</option><option value="losslessopt">TEST · Lossless recompression (identical pixels)</option><option value="highopt">TEST · High + lossless recompression</option><option value="highalpha">TEST · High + alpha optimisation (may soften glows)</option><option value="highalphaopt">TEST · High + alpha + lossless recompression</option></select>
 <div class="small" style="margin-top:7px">All choices remain transparent PNG-in-MOV for Resolve and other compatible editors. TEST lossless recompression preserves pixels and only replaces PNG frames when smaller. TEST alpha changes semi-transparent pixels and may affect soft edges/glows. Test a short range first; High quality remains the default.</div>
@@ -1662,15 +1662,21 @@ function parseExportTime(raw){
 function recordedArmedRange(){
  if(demoMode||!(duration>0))return null;
  const state=flightTimerState(),events=state.events||[];
- const startIndex=events.findIndex(e=>e.armed);
  const recordedArms=binaryMode?binaryFlightEvents.filter(e=>e.kind==='flight_mode'&&e.armed&&!e.previousArmed):[];
- // A flight already armed when the log begins has no ARM ON event. In that
- // case use the first confirmed armed slow-frame sample at the log boundary.
- if(startIndex<0&&!recordedArms.length)return null;
+ const armEvent=recordedArms.length?recordedArms[0]:null;
+ // Blackbox may begin logging while already armed. The first observed
+ // armed sample is NOT an arm-on event: use the log boundary (t=0).
+ const initialArmed=state.index>=0&&(()=>{
+  const value=telemetryAt(0,state.index);
+  return value!==null&&Number.isFinite(value)&&(['flightmodeflags','armingflags'].includes(state.kind)?((Math.trunc(value)&1)!==0):value!==0);
+ })();
+ const firstArmed=events.find(e=>e.armed);
+ const start=armEvent?armEvent.at:initialArmed?0:(firstArmed?0:null);
+ if(start===null)return null;
  const armedAt=t=>{
   if(state.index<0)return false;
-  const v=telemetryAt(clamp(t,0,duration),state.index);
-  return v!==null&&Number.isFinite(v)&&(['flightmodeflags','armingflags'].includes(state.kind)?((Math.trunc(v)&1)!==0):v!==0);
+  const value=telemetryAt(clamp(t,0,duration),state.index);
+  return value!==null&&Number.isFinite(value)&&(['flightmodeflags','armingflags'].includes(state.kind)?((Math.trunc(value)&1)!==0):value!==0);
  };
  const refine=event=>{
   let lo=Math.max(0,event.at-Math.max(.001,state.step)),hi=Math.min(duration,event.at);
@@ -1678,16 +1684,11 @@ function recordedArmedRange(){
   for(let i=0;i<16;i++){const mid=(lo+hi)/2;if(armedAt(mid)===event.armed)hi=mid;else lo=mid}
   return hi;
  };
- const stateStart=startIndex>=0?refine(events[startIndex]):null;
- const eventStart=recordedArms.length?recordedArms[0].at:null;
- // The first recorded armed sample may be later than the true arming transition.
- const start=eventStart!==null?eventStart:stateStart;
- const endIndex=events.findIndex((e,i)=>i>startIndex&&!e.armed);
- // Logging can stop at DISARM before the slow state records ARM=OFF.
  const eventDisarm=binaryMode?binaryFlightEvents.find(e=>e.kind==='disarm'&&e.at>=start):null;
  const modeDisarm=binaryMode?binaryFlightEvents.find(e=>e.kind==='flight_mode'&&e.previousArmed&&!e.armed&&e.at>=start):null;
- const end=eventDisarm?eventDisarm.at:modeDisarm?modeDisarm.at:endIndex>=0?refine(events[endIndex]):null;
- return end!==null&&end>start?{start,end,duration:end-start}:null;
+ const sampledDisarm=events.find(e=>!e.armed&&e.at>start);
+ const end=eventDisarm?eventDisarm.at:modeDisarm?modeDisarm.at:sampledDisarm?refine(sampledDisarm):null;
+ return end!==null&&end>start?{start,end,duration:end-start,startIsExact:!!armEvent}:null;
 }
 function exportSelectedRange(){
  const total=totalTime();
@@ -1695,17 +1696,9 @@ function exportSelectedRange(){
  if(mode==='full')return {start:0,end:total,duration:total};
  if(mode==='armed'){
   const section=recordedArmedRange();
-  if(!section)throw Error('No complete recorded arm/disarm pair found. Choose Full log or Custom range.');
+  if(!section)throw Error('No usable armed interval and disarm event in the BBL. Cannot produce an accurately trimmed export.');
   const lead=Math.max(0,Number($('lead').value)||0);
-  const range={start:lead+section.start,end:lead+section.end,duration:section.duration};
-  if($('camerasyncenabled').checked){
-   const cameraDuration=parseExportTime($('camerasyncduration').value);
-   if(!Number.isFinite(cameraDuration)||cameraDuration<=0)throw Error('Enter a valid camera duration in MM:SS.mmm or disable matching.');
-   if(Math.abs(cameraDuration-range.duration)>Math.max(2,range.duration*.05))throw Error('Camera duration differs substantially from armed duration; verify the selected flight.');
-   range.sourceDuration=range.duration;
-   range.duration=cameraDuration;
-  }
-  return range;
+  return {start:lead+section.start,end:lead+section.end,duration:section.duration};
  }
  const start=parseExportTime($('exportin').value),end=parseExportTime($('exportout').value);
  if(!Number.isFinite(start)||!Number.isFinite(end)||start<0||end>total+.0005||end<=start)
@@ -1713,17 +1706,14 @@ function exportSelectedRange(){
  return {start,end,duration:end-start};
 }
 // Convert export seconds back to original Blackbox seconds; default is identity.
-function exportFrameTimestamp(range,elapsed){return range.start+elapsed*((range.sourceDuration||range.duration)/range.duration)}
+function exportFrameTimestamp(range,elapsed){return range.start+elapsed}
 function syncExportRangeControls(){
  const mode=$('exportrangemode').value;
- $('camerasyncwrap').hidden=mode!=='armed';
  $('exportrangeinputs').hidden=mode!=='custom';
  if(mode==='full'){$('exportrangestatus').textContent='Full Blackbox log: '+formatExportTime(totalTime())+' (may include pre-arm/post-disarm time).';return}
  if(mode==='armed'){
   const section=recordedArmedRange();
-  $('exportrangestatus').textContent=section?'Recorded armed duration: '+formatExportTime(section.duration)+' (log '+formatExportTime(section.start)+' to '+formatExportTime(section.end)+'). No lead-in/out.':'No complete recorded arm/disarm pair available for this log.';
-  const cameraDuration=parseExportTime($('camerasyncduration').value);
-  $('camerasyncstatus').textContent=!$('camerasyncenabled').checked?'Off by default; original exports are unchanged.':!section?'No complete arm/disarm interval found.':!(cameraDuration>0)?'Enter camera clip duration in MM:SS.mmm.':'Output '+formatExportTime(cameraDuration)+' vs log '+formatExportTime(section.duration)+'; rate '+(section.duration/cameraDuration).toFixed(6)+'x. Align at disarm in Resolve.';
+  $('exportrangestatus').textContent=section?'BBL export duration: '+formatExportTime(section.duration)+' (log '+formatExportTime(section.start)+' to '+formatExportTime(section.end)+'). No lead-in/out. Start may use log boundary when the arm transition predates recording.':'No confirmed armed interval ending at disarm available in this log.';
   return;
  }
  const start=parseExportTime($('exportin').value),end=parseExportTime($('exportout').value);
@@ -1734,8 +1724,7 @@ $('exportrangemode').addEventListener('change',()=>{
  if($('exportrangemode').value==='custom'&&$('exportout').value==='00:00.000')$('exportout').value=formatExportTime(totalTime());
  syncExportRangeControls();
 });
-for(const id of ['exportin','exportout','camerasyncduration'])$(id).addEventListener('input',syncExportRangeControls);
-$('camerasyncenabled').addEventListener('change',syncExportRangeControls);
+for(const id of ['exportin','exportout'])$(id).addEventListener('input',syncExportRangeControls);
 // Optional per-frame colour quantisation is applied only to MOV PNG output.
 // Alpha stays byte-for-byte unchanged so transparent compositing still works.
 // The original lossless path never reads or modifies pixels.
