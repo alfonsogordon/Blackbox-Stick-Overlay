@@ -48,7 +48,7 @@ label[data-tip],summary[data-tip],.sectiontitle[data-tip],strong[data-tip]{curso
 #elementselection .overlay-corner-handle{position:absolute;right:-12px;bottom:-12px;width:24px;height:24px;border:2px solid #0b2638;border-radius:7px;background:#78e2ea;box-shadow:0 2px 8px #071523aa;cursor:nwse-resize;pointer-events:auto;touch-action:none;z-index:20;box-sizing:border-box}
 #elementselection:not(.selection-pinned) .overlay-corner-handle{display:none}
 #elementselection .overlay-corner-handle:after{content:"";position:absolute;right:4px;bottom:4px;width:8px;height:8px;border-right:2px solid #11384a;border-bottom:2px solid #11384a}
-</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.65</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="0"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="0"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
+</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">WEB PREVIEW · v0.14.66</span><span class="header-description">Glass-style stick overlays · Process logs locally in your browser</span></div></header><div class="layout"><section class="panel"><strong>Source &amp; timing</strong><label>Blackbox log / CSV</label><input id="file" type="file" accept=".csv,.bbl,.bfl"><div class="small" style="margin-top:7px">BBL/BFL decoded locally in your browser. CSV also supported.</div><div id="flightwrap" style="display:none"><label for="flight">Flight in log</label><select id="flight"></select><div id="flightinfo" class="small" style="margin-top:6px"></div></div><div class="two"><div><label>Canvas format</label><select id="canvasformat"><option value="sticks">Stick overlay (original)</option><option value="16:9">16:9 full OSD</option><option value="4:3">4:3 full OSD</option><option value="9:16">9:16 vertical (Shorts / Reels)</option><option value="3:4">3:4 vertical</option></select></div><div><label>Overlay size</label><select id="size"><option value="800x300">800 × 300 (compact)</option><option value="1200x450">1200 × 450</option><option value="1600x600" selected>1600 × 600 (sharp)</option><option value="2400x900">2400 × 900 (ultra)</option><option value="3200x1200">3200 × 1200 (max)</option><option value="640x240">640 × 240</option></select></div><div><label>FPS</label><select id="fps"><option>60</option><option>30</option><option>50</option><option>25</option><option>24</option></select></div></div><div class="two"><div><label>Lead-in (seconds) · adds time before log</label><input id="lead" type="number" min="0" max="30" step=".1" value="0"></div><div><label>Lead-out (seconds) · adds time after log</label><input id="tail" type="number" min="0" max="30" step=".1" value="0"></div></div><div class="small" style="margin-top:9px">Lead-in adds time <strong>before</strong> the first logged stick movement. Lead-out adds time <strong>after</strong> the last movement. Both extend the exported video's duration; the sticks hold their first/last logged positions during these periods.</div><details class="advanced" id="betaPanel" open><summary>Visual themes &amp; HUD</summary><input id="betaenabled" type="checkbox" checked hidden><div id="betacontrols"><label>Layout preset</label><select id="betapreset"><option value="stickoverlay" selected>Stick Overlay</option><option value="classic">OSD</option><option value="full">Full Details</option></select><details class="element-custom" id="presetmanager" style="margin-top:14px"><summary>My presets · Save / Import / Export</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><select id="userpresets" style="grid-column:1/-1"><option value="">Select saved preset…</option></select><button id="saveuserpreset" type="button">Save current</button><button id="loaduserpreset" type="button">Load selected</button><button id="exportuserpreset" type="button">Export selected</button><button id="exportcurrentpreset" type="button">Export current</button><button id="importuserpreset" type="button">Import JSON…</button><button id="deleteuserpreset" type="button">Delete selected</button><input type="file" id="importpresetfile" accept=".json,application/json" hidden style="display:none"></div><div class="small" style="margin-top:8px">Presets are saved locally in this browser. Export a JSON file to back them up, transfer them, or send a finished theme/layout for inclusion in the app. No flight log data is included.</div></details><label>Colour theme</label><select id="betatheme"><option value="classic" selected>Clean White</option><option value="cyan">Neon Sci-Fi</option><option value="green">Military Green</option><option value="sunsetcinema">Sunset — Cinematic</option><option value="sunset">Sunset — Synthwave</option><option value="violet">Cyberpunk Violet</option><option value="amber">Retro Amber</option><option value="ice">Ice Blue</option><option value="custom">Custom Theme · My Artwork</option></select><div class="small">Themes control appearance; layout presets only determine initial elements. Missing telemetry is hidden automatically when a log loads.</div>
 <details id="customthemepanel" class="element-custom" style="margin-top:8px" hidden><summary>Create / manage custom theme</summary>
 <div class="small" style="margin:8px 0">Upload transparent PNG or WebP artwork as your HUD graphics. Choose custom theme colours below, adjust the image and save it as a reusable theme. Artwork stays in your browser unless you export the theme.</div>
 <label>Custom artwork (PNG / WebP)</label><input id="customthemefile" type="file" accept=".png,.webp,image/png,image/webp">
@@ -1666,6 +1666,39 @@ for(const id of ['exportin','exportout'])$(id).addEventListener('input',syncExpo
 // Optional per-frame colour quantisation is applied only to MOV PNG output.
 // Alpha stays byte-for-byte unchanged so transparent compositing still works.
 // The original lossless path never reads or modifies pixels.
+// Estimate actual encoded PNG frame sizes before a long MOV export. A small
+// cross-flight sample is more representative than FPS or resolution alone,
+// because HUD artwork, blur and alpha coverage change each PNG's byte size.
+async function estimateMovOutput(target,range,fps,frames,output){
+ const count=Math.min(frames,9),sampleBytes=[];
+ const oldTime=time,started=performance.now();
+ let coverage=null;
+ try{
+  for(let n=0;n<count;n++){
+   const index=count===1?0:Math.round(n*(frames-1)/(count-1));
+   const t=range.start+index/fps;
+   renderExportFrame(t,target,output);
+   prepareMovPngFrame(output);
+   if(coverage===null){
+    // Alpha is sampled on a sparse grid, not saved as flight data.
+    const data=output.getContext('2d',{willReadFrequently:true}).getImageData(0,0,output.width,output.height).data;
+    let painted=0,opaque=0,total=0;
+    for(let y=0;y<output.height;y+=16)for(let x=0;x<output.width;x+=16){
+     const a=data[(y*output.width+x)*4+3];
+     painted+=a>0?1:0;opaque+=a===255?1:0;total++;
+    }
+    coverage={painted:Math.round(100*painted/total),opaque:Math.round(100*opaque/total)};
+   }
+   const blob=await new Promise((resolve,reject)=>output.toBlob(b=>b?resolve(b):reject(Error('PNG sample encoding failed')),'image/png'));
+   sampleBytes.push(blob.size);
+   await new Promise(resolve=>setTimeout(resolve,0));
+  }
+ }finally{time=oldTime;update()}
+ const mean=sampleBytes.reduce((a,b)=>a+b,0)/sampleBytes.length;
+ const totalBytes=mean*frames;
+ exportDebug('MOV preflight: '+output.width+'x'+output.height+' '+fps+' fps, '+frames+' frames; PNG samples ['+sampleBytes.map(n=>(n/1048576).toFixed(2)).join(', ')+'] MiB; mean '+(mean/1048576).toFixed(2)+' MiB/frame, alpha pixels '+coverage.painted+'%, fully opaque '+coverage.opaque+'%, projected '+(totalBytes/1073741824).toFixed(2)+' GiB; sampled in '+((performance.now()-started)/1000).toFixed(1)+'s.');
+ return {totalBytes,mean,coverage};
+}
 function prepareMovPngFrame(canvas){
  const mode=$('movcompression').value;
  if(mode==='lossless')return;
@@ -1711,9 +1744,21 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
   try{handle=await window.showSaveFilePicker({suggestedName:suggestedBase+'.mov',types:[{description:'QuickTime transparent MOV',accept:{'video/quicktime':['.mov']}}]})}
   catch(e){if(e.name==='AbortError'){exportDebug('Save dialog cancelled','WARN');return}exportDebugError('Save dialog failed',e);$('status').textContent='Could not open Save dialog: '+e.message;return}
  }else if(!confirm('Direct-to-folder export is not supported by this browser. Download numbered clips instead?'))return;
+ // Check real PNG sample sizes before generating potentially gigabytes of
+ // frames. Skip the 4 GiB single-MOV attempt when it is predictably too large.
+ let estimate=null;
+ try{
+  $('status').textContent='Checking MOV frame sizes before export…';
+  estimate=await estimateMovOutput(target,range,fps,frames,output);
+  $('status').textContent='Estimated MOV size '+(estimate.totalBytes/1073741824).toFixed(2)+' GiB ('+(estimate.mean/1048576).toFixed(2)+' MiB/frame). '+(estimate.totalBytes>=3.7*1073741824?'Using numbered clips.':'Preparing export.');
+ }catch(e){
+  exportDebugError('MOV size preflight failed; continuing normally',e);
+ }
+ const directSingle=!(estimate&&estimate.totalBytes>=3.7*1073741824);
+ if(!directSingle)exportDebug('Projected MOV exceeds safe single-file size; using numbered clips immediately to avoid encoding the flight twice.','WARN');
  // Stream a single transparent MOV to disk when the browser supports it.
  // For a selected folder, the same permission also covers numbered clips.
- if(folder||handle){
+ if((folder||handle)&&directSingle){
   const singleName=folder?exportBase+'.mov':handle.name;
   let singleCreated=false;
   recording=true;playing=false;$('video').disabled=true;exportProgress(0,'Preparing single-file MOV…');
@@ -1733,6 +1778,7 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
     const blob=await new Promise((resolve,reject)=>output.toBlob(b=>b?resolve(b):reject(Error('PNG encoding failed')),'image/png'));
     if(bytes+blob.size>=0xffffffff-header.length-8)throw Error('MOV exceeds the 4 GB QuickTime limit. Use chunked export.');
     await writer.write(blob);sizes.push(blob.size);bytes+=blob.size;
+    if((i+1)%Math.max(1,Math.floor(frames/10))===0)exportDebug('MOV actual '+(i+1)+'/'+frames+' frames: '+(bytes/1073741824).toFixed(2)+' GiB total, '+(bytes/(i+1)/1048576).toFixed(2)+' MiB/frame; projected '+(bytes*frames/(i+1)/1073741824).toFixed(2)+' GiB');
     // Estimate the final file size early to avoid a long failed export.
     if(i===Math.min(frames-1,Math.max(120,Math.round(fps*5)))){
      const projected=bytes*frames/(i+1);
@@ -1785,6 +1831,7 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
    if(chunks.length&&clipBytes+blob.size>maxBytes)await flushClip();
    if(blob.size>maxBytes)throw Error('Single PNG frame exceeds chunk size limit.');
    chunks.push(blob);clipBytes+=blob.size;
+   if((i+1)%Math.max(1,Math.floor(frames/10))===0)exportDebug('Chunked MOV actual '+(i+1)+'/'+frames+' frames: ' encoded; current clip '+(clipBytes/1048576).toFixed(1)+' MiB, current mean '+(clipBytes/chunks.length/1048576).toFixed(2)+' MiB/frame');
    if((i-firstFrame)%Math.max(1,Math.round(fps/2))===0){exportProgress(100*i/frames,'Clip '+part+' · Frame '+(i+1)+' / '+frames);await new Promise(r=>setTimeout(r,0))}
   }
   await flushClip();
