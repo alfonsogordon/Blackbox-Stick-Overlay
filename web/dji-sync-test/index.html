@@ -3168,7 +3168,7 @@ function demoTelemetryRows(){
  for(let t=0;t<=demoDuration+.001;t+=.1)rows.push([t,
   2350-18*t/demoDuration,140+50*Math.sin(t*.6),12,1700+500*Math.sin(t*.4),
   420+50*Math.cos(t*.3),120+30*Math.sin(t*.5),90+25*Math.sin(t*.2),
-  85+8*Math.sin(t*.3),500+t*14,150*Math.sin(t*.6),90*Math.cos(t*.5),
+  85+8*Math.sin(t*.3),500+t*14,Math.round(demoRcSample(t)[0]*.42),Math.round(demoRcSample(t)[1]*.42),
    // Simulated GPS course in degrees: visible changes, looping with the demo.
    (210+85*Math.sin(t*Math.PI/18)+25*Math.sin(t*Math.PI/9)+360)%360]);
  return rows;
@@ -3275,6 +3275,9 @@ function quadHudMotion(t){
  const norm=key=>String(key).toLowerCase().replace(/[^a-z0-9]/g,'');
  const names=telemetryNames.map(norm);
  const sample=(...keys)=>{
+  // The demo has no recorded IMU: Auto must follow its actual simulated RC
+  // trace, not the synthetic attitude columns used to illustrate telemetry.
+  if(demoMode)return null;
   for(const key of keys){const i=names.indexOf(key);if(i>=0){const value=telemetryAt(elapsed,i);if(value!==null&&Number.isFinite(value))return value}}
   return null;
  };
@@ -3351,7 +3354,7 @@ function refreshHudMotionStatus(){
  const status=$('hudmotionsourcestatus');if(!status)return;
  const motion=quadHudMotion(time);
  const names={imu:'Recorded IMU / attitude',sticks:'Estimated from sticks',none:'No IMU / attitude data available',off:'Movement disabled'};
- status.textContent=(names[motion.source]||'Motion')+' · Stick fallback is illustrative, not measured aircraft attitude.';
+ status.textContent=(demoMode&&motion.source==='sticks'?'Demo movement linked to simulated stick inputs':(names[motion.source]||'Motion'))+' · Stick fallback is illustrative, not measured aircraft attitude.';
  $('hudmotionstrengthvalue').textContent=$('hudmotionstrength').value+'%';
  $('hudsticksmoothingvalue').textContent=$('hudsticksmoothing').value+'%';
 }
