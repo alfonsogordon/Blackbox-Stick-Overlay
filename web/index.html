@@ -1831,7 +1831,7 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
    if(chunks.length&&clipBytes+blob.size>maxBytes)await flushClip();
    if(blob.size>maxBytes)throw Error('Single PNG frame exceeds chunk size limit.');
    chunks.push(blob);clipBytes+=blob.size;
-   if((i+1)%Math.max(1,Math.floor(frames/10))===0)exportDebug('Chunked MOV actual '+(i+1)+'/'+frames+' frames: ' encoded; current clip '+(clipBytes/1048576).toFixed(1)+' MiB, current mean '+(clipBytes/chunks.length/1048576).toFixed(2)+' MiB/frame');
+   if((i+1)%Math.max(1,Math.floor(frames/10))===0)exportDebug('Chunked MOV actual '+(i+1)+'/'+frames+' frames encoded; current clip '+(clipBytes/1048576).toFixed(1)+' MiB, current mean '+(clipBytes/chunks.length/1048576).toFixed(2)+' MiB/frame');
    if((i-firstFrame)%Math.max(1,Math.round(fps/2))===0){exportProgress(100*i/frames,'Clip '+part+' · Frame '+(i+1)+' / '+frames);await new Promise(r=>setTimeout(r,0))}
   }
   await flushClip();
