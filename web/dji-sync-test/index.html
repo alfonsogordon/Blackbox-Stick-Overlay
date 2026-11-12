@@ -3640,20 +3640,61 @@ function drawPortraitHudGraphics(w,h,t){
   }
   line([[.5,.102],[.5,.132]],hudBright,.9,2);
   line([[.47,.095],[.5,.083],[.53,.095]],hudBright,.78,1.4);
-  // F-16-like pitch ladder with broken zero line. Artwork tilts with log attitude
-  // only when HUD motion is enabled, never changes telemetry itself.
+  // Match the landscape F-16 attitude ladder: the horizon/pitch bars
+  // move substantially behind a fixed flight-path marker, while the outer
+  // instruments remain screen-locked. Demo Auto uses the same RC trace.
+  // Real logs use recorded attitude when the chosen source supports it.
+  const logTime=clamp(t-(Number($('lead').value)||0),0,duration);
+  const fieldNames=telemetryNames.map(n=>n.toLowerCase().replace(/[^a-z0-9]/g,''));
+  const field=(...keys)=>{
+   if(demoMode)return null;
+   for(const key of keys){
+    const i=fieldNames.indexOf(key);
+    if(i>=0){const v=telemetryAt(logTime,i);if(v!==null&&Number.isFinite(v))return v}
+   }
+   return null;
+  };
+  const headingRoll=field('heading0'),headingPitch=field('heading1');
+  const attitudeRoll=field('attituderoll','attitude0','angleroll');
+  const attitudePitch=field('attitudepitch','attitude1','anglepitch');
+  const recorded=motion&&$('hudmotionsource').value!=='sticks'&&$('hudmotionsource').value!=='off'&&
+   ((headingRoll!==null&&headingPitch!==null)||(attitudeRoll!==null&&attitudePitch!==null));
+  const bank=recorded?
+   (headingRoll!==null?headingRoll:attitudeRoll*Math.PI/1800)*intensity:
+   motionRoll*Math.PI/3;
+  const pitchOffset=recorded?
+   clamp((headingPitch!==null?headingPitch:attitudePitch*Math.PI/1800)*intensity,-Math.PI*.5,Math.PI*.5)*h*.30:
+   clamp(motionPitch,-1.5,1.5)*h*.22;
+  const ladderCy=h*.49;
   ctx.save();
-  ctx.translate(w*.5,h*.49);ctx.rotate(-motionRoll*.025);
-  ctx.translate(0,motionPitch*h*.008);
-  ctx.translate(-w*.5,-h*.49);
-  for(const n of [-3,-2,-1,0,1,2,3]){
-   const y=.49+n*.049,width=n===0?.18:.115-Math.abs(n)*.007;
-   if(n===0){
-    line([[.5-width,y],[.465,y]],hudBright,.9,1.8);
-    line([[.535,y],[.5+width,y]],hudBright,.9,1.8);
-   }else{
-    line([[.5-width,y],[.5-.055,y],[.5-.055,y+(n>0?-.009:.009)]],hudGreen,.47,1.2);
-    line([[.5+.055,y+(n>0?-.009:.009)],[.5+.055,y],[.5+width,y]],hudGreen,.47,1.2);
+  // Portrait centre combiner window: no scrolling bars across corner art or
+  // surrounding telemetry, even with high motion strength.
+  ctx.beginPath();ctx.rect(w*.225,h*.23,w*.55,h*.55);ctx.clip();
+  ctx.translate(w*.5,ladderCy);
+  ctx.rotate(-bank);
+  ctx.translate(0,pitchOffset);
+  // Long ladder extends beyond the window so steep freestyle moves still show
+  // bars instead of disappearing completely at high pitch values.
+  for(let n=-11;n<=11;n++){
+   const y=n*h*.058;
+   const width=n===0?.19:Math.max(.07,.139-Math.abs(n)*.005);
+   const inner=.033*w,outer=width*w;
+   ctx.strokeStyle=n===0?hudBright:hudGreen;
+   ctx.globalAlpha=opacity*(n===0?.95:.62);
+   ctx.lineWidth=u*(n===0?2.3:1.4);
+   ctx.beginPath();
+   for(const side of [-1,1]){
+    ctx.moveTo(side*inner,y);
+    ctx.lineTo(side*outer,y);
+    if(n!==0)ctx.lineTo(side*outer,y+(n>0?-.012:.012)*h);
+   }
+   ctx.stroke();
+   if(n!==0){
+    ctx.globalAlpha=opacity*.63;ctx.fillStyle=hudGreen;
+    ctx.font='500 '+Math.max(9,u*10)+'px monospace';
+    ctx.textBaseline='middle';
+    ctx.textAlign='right';ctx.fillText(String(Math.abs(n)*5),-(width+.015)*w,y);
+    ctx.textAlign='left';ctx.fillText(String(Math.abs(n)*5),(width+.015)*w,y);
    }
   }
   ctx.restore();
