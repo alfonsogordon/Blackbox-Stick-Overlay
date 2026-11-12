@@ -31,3 +31,22 @@ export function sampleBinaryFields(seconds) {
   const micros = Math.max(start, Math.min(end, start + seconds * 1000000));
   return log.getFrameAtTime(micros);
 }
+
+/**
+ * Extract Betaflight event frames used by Blackbox Explorer's timeline.
+ * The main-frame array alone does not expose arming/disarming events.
+ * Events are expressed relative to the selected flight log's start.
+ */
+export function getBinaryEvents() {
+ if (!log) return [];
+ const result = [], chunks = log.getChunksInTimeRange(start,end);
+ for (const chunk of chunks) {
+  for (const frame of chunk.events || []) {
+   if (!Number.isFinite(frame.time)) continue;
+   const at=Math.max(0,(frame.time-start)/1000000);
+   if (frame.event===30) result.push({at,kind:"flight_mode",armed:(Number(frame.data?.newFlags||0)&1)!==0,previousArmed:(Number(frame.data?.lastFlags||0)&1)!==0});
+   else if(frame.event===15)result.push({at,kind:"disarm",armed:false,reason:frame.data?.reason??null});
+  }
+ }
+ return result.sort((a,b)=>a.at-b.at);
+}
