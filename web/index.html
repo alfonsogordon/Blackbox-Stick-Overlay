@@ -1803,12 +1803,12 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
   if(large||longRunning){
    const minutes=Math.max(1,Math.ceil(estimatedSeconds/60));
    const approximateTime=estimatedSeconds<60?'under a minute':minutes>=60?'around '+(minutes/60).toFixed(1)+' hours':'around '+minutes+' minutes';
-   const message='Large MOV export warning\\n\\n'
-    +'Estimated total download: '+sizeGiB.toFixed(2)+' GiB\\n'
-    +'Likely numbered clips: '+projectedClips+' (up to 1 GiB each)\\n'
-    +'Duration: '+formatExportTime(range.duration)+' at '+fps+' FPS ('+frames+' frames)\\n'
-    +'Approximate export time: '+approximateTime+'\\n\\n'
-    +'This is an early estimate from '+estimate.samples+' sampled frames. Complex scenes or slow compression can take much longer and generate more clips. Large exports may require browser permission for multiple downloads.\\n\\n'
+   const message='Large MOV export warning\n\n'
+    +'Estimated total download: '+sizeGiB.toFixed(2)+' GiB\n'
+    +'Likely numbered clips: '+projectedClips+' (up to 1 GiB each)\n'
+    +'Duration: '+formatExportTime(range.duration)+' at '+fps+' FPS ('+frames+' frames)\n'
+    +'Approximate export time: '+approximateTime+'\n\n'
+    +'This is an early estimate from '+estimate.samples+' sampled frames. Complex scenes or slow compression can take much longer and generate more clips. Large exports may require browser permission for multiple downloads.\n\n'
     +'Continue exporting?';
    exportDebug('Pre-export warning: estimated '+sizeGiB.toFixed(2)+' GiB, '+projectedClips+' clips, '+estimatedSeconds.toFixed(0)+'s processing ('+estimate.samples+' samples).');
    if(!confirm(message)){
