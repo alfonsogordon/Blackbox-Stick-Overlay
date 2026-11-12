@@ -165,6 +165,7 @@ body.studio-tour-open{overflow:hidden}
 <div class="small" id="exportrangestatus" style="margin-top:8px">Full log may include pre-arm and post-disarm time. Armed → Disarmed uses recorded flags when available.</div></details><details class="workflow-section" id="cameraautosync">
 <summary>Camera Auto Sync</summary>
 <div class="small" style="margin-top:9px">Automatically match DJI O4 Pro or GoPro motion to your Blackbox log, then apply the corrected timing to the exported overlay.</div>
+<div class="small" style="margin-top:7px"><strong>Camera footage must contain gyro/motion data for Auto Sync to work.</strong> Use the original camera recording with in-camera stabilisation turned off (for example, DJI RockSteady or HorizonSteady). Stabilised or edited footage may not contain usable gyro metadata and cannot be motion-matched.</div>
 <label for="cameraautosyncfile">Original camera MP4</label><input id="cameraautosyncfile" type="file" accept=".mp4,.mov,video/mp4,video/quicktime">
 <div class="small" style="margin-top:7px"><strong>Your footage stays on your device.</strong> Footage and Blackbox logs are processed locally in your browser. Nothing is uploaded, shared or stored online. Only camera motion metadata is read — video frames are not decoded or played. Your original files remain unchanged.</div>
 <div id="cameraautodetect" class="small" style="margin-top:9px">Load your BBL and select your camera MP4 to begin.</div>
