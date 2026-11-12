@@ -16,12 +16,13 @@ footer{text-align:center;color:#8fa8b8;font-size:12px;margin-top:34px;line-heigh
 <header><a class="back" href="./">← Back to Overlay Studio TEST</a><span class="version">ABOUT · TEST v0.1</span></header>
 <div class="kicker">Betaflight · Blackbox · FPV</div><h1>About Overlay Studio</h1>
 <p class="subtitle">An FPV overlay tool built to turn flight logs into customisable stick displays, flight-data HUDs and precisely synchronised video overlays — directly in your browser.</p>
-<section><h2>The story behind it</h2>
-<p>Overlay Studio began with a simple idea: make it easier to show what the sticks were doing during an FPV flight, alongside the footage itself.</p>
-<p>What started as a Blackbox stick-overlay tool grew as new ideas and real-world testing revealed what else would be useful: customisable visual themes, telemetry elements, saved layouts, transparent exports and tools to get everything lined up accurately in an editor.</p>
-<p>Video synchronisation became a particular challenge. Camera recordings and flight-controller logs don't always start together — and even a small difference between their clocks can cause visible drift over a long flight. The Studio now experiments with matching actual flight movement from camera metadata to Betaflight gyro data, instead of relying on recording start and stop times.</p>
-<p>It's a practical project shaped by FPV use, testing and plenty of iterative improvements. The aim is to make the powerful features approachable while keeping the workflow straightforward.</p>
-<p class="note">This story is a draft. The personal details and wording can be revised before the About page reaches V1.</p></section>
+<section><h2>How it all started</h2>
+<p>It all started after a chat with <strong>Squadding Quads</strong> about FPV stick cams. They're great for showing what's happening on the radio, but they don't always give you the clearest picture of how the sticks are really moving during a flight.</p>
+<p>That got me thinking: Betaflight already records the stick inputs in its Blackbox logs, so why not use that data to make an overlay that shows exactly what was recorded?</p>
+<p>So I decided to have a go at making a little app to turn Blackbox data into stick overlays for FPV videos.</p>
+<p>And then, as these things tend to go, <strong>I got a bit carried away!</strong></p>
+<p>The simple stick overlay grew into a full editor with different themes, custom elements, telemetry, presets and transparent video exports. Then came the tricky part: getting the overlays to stay perfectly in time with footage from DJI and GoPro. That led to matching the camera's own motion data against the flight log, so the exported overlay can line up without manually counting frames or adjusting clip speed.</p>
+<p>It's still built around the same idea: make something useful for FPV pilots, have fun building it, and keep improving it as people try it.</p></section>
 <section><h2>How Overlay Studio works</h2>
 <p><strong>1. Read the flight log.</strong> Betaflight <code>.bbl</code>/<code>.bfl</code> logs and supported CSV data are read locally in your browser. The Studio extracts stick commands, gyro motion and available flight telemetry.</p>
 <p><strong>2. Design the overlay.</strong> Select a layout and theme, choose the elements you want to show, move and resize them in the preview and save a reusable preset.</p>
