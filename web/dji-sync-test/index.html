@@ -1258,7 +1258,50 @@ canvas.addEventListener('pointermove',e=>{
 canvas.addEventListener('pointerup',()=>{draggedTelemetry=null;resizeTelemetry=false});
 canvas.addEventListener('pointercancel',()=>{draggedTelemetry=null;resizeTelemetry=false});
 function parseCSV(text){const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/).filter(Boolean);if(lines.length<3)throw Error('CSV has no samples');const cols=lines[0].split(',').map(s=>s.trim().replace(/^"|"$/g,''));const find=(names)=>{const i=cols.findIndex(c=>names.includes(c.toLowerCase().replace(/\s/g,'')));if(i<0)throw Error('Missing column: '+names[0]);return i};const ti=find(['time','time(us)','time_us','timestamp']);const ix=[0,1,2,3].map(i=>find(['rccommand['+i+']','rccommand'+i]));const rows=[];for(let n=1;n<lines.length;n++){const a=lines[n].split(',');const v=[Number(a[ti]),...ix.map(i=>Number(a[i]))];if(v.every(Number.isFinite))rows.push(v)}if(rows.length<2)throw Error('Not enough valid RC samples');rows.sort((a,b)=>a[0]-b[0]);const factor=rows.at(-1)[0]-rows[0][0]>10000?1e-6:1;const start=rows[0][0];return rows.map(v=>[(v[0]-start)*factor,...v.slice(1)])}
-function getSample(t){if(demoMode){const a=t*2*Math.PI;return [Math.round(370*Math.sin(a*.37)*Math.cos(a*.11)),Math.round(390*Math.cos(a*.29)),Math.round(400*Math.sin(a*.23+.7)),Math.round(1500+420*Math.sin(a*.17-.6))]}if(binaryMode)return sampleBinary(t);if(!samples.length)return [0,0,0,1000];if(t<=0)return samples[0].slice(1);if(t>=duration)return samples.at(-1).slice(1);let lo=0,hi=samples.length-1;while(lo+1<hi){const mid=(lo+hi)>>1;if(samples[mid][0]<t)lo=mid;else hi=mid}const a=samples[lo],b=samples[hi],r=(t-a[0])/(b[0]-a[0]||1);return [1,2,3,4].map(i=>a[i]+r*(b[i]-a[i]))}
+// An editable, hand-shaped 12-second flight-like RC trace for the default demo.
+// Channel order matches decoded Betaflight samples: roll, pitch, yaw, throttle.
+// Replace these waypoints with extracted real-log RC samples when available.
+// Values at 0 and 12 seconds match so the preview loops without a jump.
+const demoRcKeys=[
+ [0,   5, -35,   5, 1440],
+ [.6,  14, -65,  12, 1490],
+ [1.3, 55, -105, 28, 1570],
+ [2.0, 115,-90,  42, 1630],
+ [2.6, 75, -45,  20, 1540],
+ [3.2,-10, -120,-12, 1480],
+ [3.9,-85, -125,-48, 1530],
+ [4.5,-145,-60, -68, 1650],
+ [5.0,-50,  20, -28, 1580],
+ [5.6, 20,  125, 10, 1320],
+ [6.2, 95,  85,  50, 1450],
+ [6.8, 180,-35,  85, 1700],
+ [7.3, 65, -100, 32, 1620],
+ [7.9,-45, -80, -25, 1530],
+ [8.5,-125,-15, -65, 1470],
+ [9.1,-45,  65, -15, 1370],
+ [9.7, 65, -90,  35, 1560],
+ [10.3, 135,-125, 65, 1660],
+ [10.9, 55, -80,  25, 1510],
+ [11.5, 15, -40,  10, 1450],
+ [12,  5, -35,   5, 1440]
+];
+function demoRcSample(t){
+ const total=12,sec=((t%total)+total)%total;
+ let i=0;while(i<demoRcKeys.length-2&&demoRcKeys[i+1][0]<sec)i++;
+ const p0=demoRcKeys[Math.max(0,i-1)],p1=demoRcKeys[i],p2=demoRcKeys[i+1],p3=demoRcKeys[Math.min(demoRcKeys.length-1,i+2)];
+ const dt=p2[0]-p1[0]||1,v=(sec-p1[0])/dt;
+ const smooth=(channel)=>{
+  const m1=(p2[channel]-p0[channel])/(p2[0]-p0[0]||1);
+  const m2=(p3[channel]-p1[channel])/(p3[0]-p1[0]||1);
+  const h00=2*v*v*v-3*v*v+1,h10=v*v*v-2*v*v+v,h01=-2*v*v*v+3*v*v,h11=v*v*v-v*v;
+  return h00*p1[channel]+h10*dt*m1+h01*p2[channel]+h11*dt*m2;
+ };
+ return [Math.round(Math.max(-500,Math.min(500,smooth(1)))),
+         Math.round(Math.max(-500,Math.min(500,smooth(2)))),
+         Math.round(Math.max(-500,Math.min(500,smooth(3)))),
+         Math.round(Math.max(1000,Math.min(2000,smooth(4))))];
+}
+function getSample(t){if(demoMode)return demoRcSample(t);if(binaryMode)return sampleBinary(t);if(!samples.length)return [0,0,0,1000];if(t<=0)return samples[0].slice(1);if(t>=duration)return samples.at(-1).slice(1);let lo=0,hi=samples.length-1;while(lo+1<hi){const mid=(lo+hi)>>1;if(samples[mid][0]<t)lo=mid;else hi=mid}const a=samples[lo],b=samples[hi],r=(t-a[0])/(b[0]-a[0]||1);return [1,2,3,4].map(i=>a[i]+r*(b[i]-a[i]))}
 function configureCanvas(){const format=$('canvasformat').value,size=$('size'),old=size.value;
  // Portrait formats use their own HUD frame rather than suppressing themed artwork.
  const portrait=format==='9:16'||format==='3:4';
