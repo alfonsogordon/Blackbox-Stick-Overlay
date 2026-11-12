@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FPV MP4 Timing Inspector · Test v0.1.0</title>
+<style>
+:root{font:15px system-ui,Segoe UI,sans-serif;color:#e5edf6;background:#0a111d;color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;padding:25px 16px;background:radial-gradient(ellipse at top,#1a3145,#0a111d 72%);min-height:100vh}
+main{max-width:920px;margin:auto}h1{margin:8px 0;font-size:29px}h2{font-size:17px;margin:3px 0 12px}
+p,.muted{color:#a7b8cc;line-height:1.55}.eyebrow{color:#79ded8;font-size:12px;font-weight:700;letter-spacing:.14em}
+.panel{background:#142235;border:1px solid #35516a;border-radius:15px;padding:18px;margin:17px 0}
+input,button,select{font:inherit;background:#1d324a;border:1px solid #47708a;border-radius:8px;color:#eef6ff;padding:10px}
+input[type=file]{width:100%}button{background:#247c80;cursor:pointer;font-weight:650}button:disabled{opacity:.5;cursor:default}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.row>*{flex:none}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:9px}
+.stat{background:#102033;border:1px solid #354c61;border-radius:9px;padding:13px}.stat label{display:block;font-size:11px;color:#9fbbd0;margin-bottom:6px}.stat strong{font-size:20px;overflow-wrap:anywhere}
+pre{background:#091727;border:1px solid #314960;border-radius:10px;padding:13px;overflow:auto;max-height:420px;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.55 ui-monospace,Consolas,monospace}
+#status{min-height:24px;color:#99d7d7}#results[hidden]{display:none}a{color:#8ae4df}
+.small{font-size:12px}.warning{color:#f4c98b}canvas{width:100%;height:210px;background:#0a1625;border-radius:8px}
+</style></head><body><main>
+<div class="eyebrow">STANDALONE DIAGNOSTIC · TEST v0.1.0</div>
+<h1>MP4 Frame Timing Inspector</h1>
+<p>For investigating DJI O4 Pro 100fps drift. Select the <b>original MP4</b> to inspect its internal video timestamps. This page stays separate from Overlay Studio and does not upload or decode footage.</p>
+<section class="panel"><h2>Select original MP4 / MOV</h2>
+<input id="file" type="file" accept=".mp4,.mov,.m4v,video/mp4,video/quicktime">
+<div class="row" style="margin-top:13px"><label for="expected">Expected recording FPS</label><select id="expected"><option>100</option><option>60</option><option>50</option><option>30</option><option>120</option></select></div>
+<p class="small">Only small file headers and the MP4 metadata index (moov atom) are read. The large video payload stays on your computer. Files with a very large metadata index may need a different inspection method.</p>
+<div id="status" role="status">Choose a video to begin.</div></section>
+<section class="panel" id="results" hidden>
+<h2>Video timing results</h2><div class="grid" id="stats"></div>
+<p id="explain"></p>
+<h2>Timestamp drift vs expected constant frame rate</h2>
+<canvas id="chart" width="880" height="210" aria-label="Timing drift graph"></canvas>
+<p class="small">The graph plots presentation timestamp offset relative to ideal evenly spaced frames. A sloping line indicates differing timestamp rates; individual spikes or steps indicate timing irregularities. This does not independently prove the camera's physical capture clock drifted.</p>
+<div class="row"><button id="copy">Copy diagnostic report</button><button id="save">Save report (.txt)</button></div>
+<pre id="report"></pre>
+</section>
+<p class="muted small">Test v0.1.0 · Read-only inspection · No network requests · Supports ordinary non-fragmented MP4/MOV files with stts tables. It does not change the main Overlay Studio.</p>
+</main><script>
+'use strict';
+const $=id=>document.getElementById(id),decoder=new TextDecoder('latin1');
+const u32=(v,p)=>v.getUint32(p),i32=(v,p)=>v.getInt32(p);
+function big(v,p){return Number(v.getBigUint64(p))}
+function text(v,p,len){return decoder.decode(new Uint8Array(v.buffer,v.byteOffset+p,len))}
+function fmt(n,d=5){return Number.isFinite(n)?n.toFixed(d):'N/A'}
+function clock(s){return Math.floor(s/60)+':'+(s%60).toFixed(3).padStart(6,'0')}
+async function header(file,p){const b=await file.slice(p,Math.min(file.size,p+16)).arrayBuffer();return new DataView(b)}
+async function locateMoov(file){
+ let p=0,iterations=0,fragmented=false;
+ while(p<file.size&&iterations++<10000){
+  const h=await header(file,p);if(h.byteLength<8)break;
+  let size=u32(h,0),start=8;const type=text(h,4,4);
+  if(size===1){if(h.byteLength<16)throw Error('Incomplete extended atom header');size=big(h,8);start=16}
+  else if(size===0)size=file.size-p;
+  if(size<start||!Number.isSafeInteger(size)||p+size>file.size)throw Error('Invalid MP4 atom at '+p+' ('+type+')');
+  if(type==='moof')fragmented=true;
+  if(type==='moov'){
+   if(size>128*1024*1024)throw Error('MP4 metadata exceeds 128 MiB; this test page does not read extremely large moov atoms.');
+   return {data:new DataView(await file.slice(p,p+size).arrayBuffer()),header:start,fragmented};
+  }
+  p+=size;
+ }
+ throw Error(fragmented?'Fragmented MP4: no complete moov index found; this version cannot inspect fragment timestamps.':'No MP4 moov metadata atom found.');
+}
+function boxes(view,start,end){
+ const arr=[];let p=start;
+ while(p+8<=end){
+  let size=u32(view,p),head=8;const type=text(view,p+4,4);
+  if(size===1){if(p+16>end)break;size=big(view,p+8);head=16}
+  else if(size===0)size=end-p;
+  if(!Number.isSafeInteger(size)||size<head||p+size>end)throw Error('Invalid nested atom '+type+' at offset '+p);
+  arr.push({type,from:p+head,end:p+size,start:p,size});p+=size;
+ }
+ return arr;
+}
+function child(view,parent,type){return boxes(view,parent.from,parent.end).find(b=>b.type===type)}
+function requireChild(view,parent,type){const b=child(view,parent,type);if(!b)throw Error('Missing '+type+' atom');return b}
+function parseTrack(view,trak){
+ const mdia=requireChild(view,trak,'mdia'),hdlr=requireChild(view,mdia,'hdlr');
+ if(text(view,hdlr.from+8,4)!=='vide')return null;
+ const mdhd=requireChild(view,mdia,'mdhd'),version=view.getUint8(mdhd.from);
+ const timescale=u32(view,mdhd.from+(version===1?20:12));
+ if(!timescale)throw Error('Invalid video timescale');
+ const minf=requireChild(view,mdia,'minf'),stbl=requireChild(view,minf,'stbl');
+ const stts=requireChild(view,stbl,'stts'),entryCount=u32(view,stts.from+4);
+ if(entryCount>2000000)throw Error('Unusually large stts table');
+ const runs=[];let count=0,ticks=0,minDelta=Infinity,maxDelta=0;
+ for(let i=0;i<entryCount;i++){
+  const p=stts.from+8+i*8;if(p+8>stts.end)throw Error('Truncated stts table');
+  const n=u32(view,p),delta=u32(view,p+4);if(!delta||!n)throw Error('Invalid sample timing entry');
+  runs.push([n,delta]);count+=n;ticks+=n*delta;
+  minDelta=Math.min(minDelta,delta);maxDelta=Math.max(maxDelta,delta);
+ }
+ if(count>20000000)throw Error('Unreasonably large sample count');
+ const ctts=child(view,stbl,'ctts'),offsets=[];
+ if(ctts){const ver=view.getUint8(ctts.from),n=u32(view,ctts.from+4);for(let j=0;j<n;j++){const p=ctts.from+8+j*8;if(p+8>ctts.end)throw Error('Truncated ctts');offsets.push([u32(view,p),ver===1?i32(view,p+4):u32(view,p+4)])}}
+ const stsz=child(view,stbl,'stsz');let tableSamples=null;
+ if(stsz)tableSamples=u32(view,stsz.from+8);
+ const stsd=child(view,stbl,'stsd');let codec=stsd&&stsd.from+16<=stsd.end?text(view,stsd.from+12,4):'unknown';
+ return {timescale,runs,count,ticks,minDelta,maxDelta,offsets,tableSamples,codec};
+}
+function buildReport(file,t,expected){
+ const fps=Number(expected),interval=1/fps;
+ if(t.count<2)throw Error('Not enough video frames');
+ const frameTimes=new Float64Array(t.count);let idx=0,dts=0,offsetAt=0,offsetRemain=0,offsetIdx=0;
+ function nextOffset(){
+  if(!t.offsets.length)return 0;
+  while(offsetRemain===0&&offsetIdx<t.offsets.length){offsetRemain=t.offsets[offsetIdx][0];offsetAt=t.offsets[offsetIdx][1];offsetIdx++}
+  if(offsetRemain===0)throw Error('Composition offset count is shorter than sample count');
+  offsetRemain--;return offsetAt;
+ }
+ for(const [n,delta] of t.runs)for(let j=0;j<n;j++){frameTimes[idx++]=(dts+nextOffset())/t.timescale;dts+=delta}
+ // Composition timestamps can be out of order in decode order due to B frames.
+ const times=Array.from(frameTimes).sort((a,b)=>a-b);
+ const first=times[0],last=times[times.length-1];
+ let intervals=[],anomalies=0,min=Infinity,max=-Infinity;
+ for(let i=1;i<times.length;i++){const d=times[i]-times[i-1];min=Math.min(min,d);max=Math.max(max,d);if(Math.abs(d-interval)>Math.max(.0005,interval*.05))anomalies++;if(i<=9)intervals.push(d)}
+ const effective=(t.count-1)/(last-first);
+ const expectedLast=(t.count-1)*interval,observedLast=last-first;
+ const drift=observedLast-expectedLast;
+ const deviation=[];const step=Math.max(1,Math.floor((t.count-1)/300));
+ for(let i=0;i<t.count;i+=step)deviation.push([i/(t.count-1),(times[i]-first-i*interval)*1000]);
+ deviation.push([1,drift*1000]);
+ const lines=[
+ 'FPV MP4 TIMING REPORT · TEST v0.1.0',
+ 'File: '+file.name,
+ 'Size bytes: '+file.size,
+ 'Expected FPS: '+fps,
+ 'Codec fourcc: '+t.codec,
+ 'Timebase: '+t.timescale+' ticks/sec',
+ 'Frame/sample count (stts): '+t.count,
+ 'Frame count (stsz): '+(t.tableSamples??'not present'),
+ 'Timing runs (stts): '+t.runs.length,
+ 'Composition offset runs (ctts): '+t.offsets.length,
+ 'DTS duration: '+fmt(t.ticks/t.timescale,6)+' s',
+ 'First presentation timestamp: '+fmt(first,6)+' s',
+ 'Last presentation timestamp: '+fmt(last,6)+' s',
+ 'Presentation first-to-last span: '+fmt(observedLast,6)+' s',
+ 'Ideal first-to-last span at '+fps+'fps: '+fmt(expectedLast,6)+' s',
+ 'Effective presentation FPS: '+fmt(effective,7),
+ 'Presentation end drift vs ideal: '+fmt(drift*1000,3)+' ms',
+ 'Observed presentation interval min / max: '+fmt(min*1000,4)+' / '+fmt(max*1000,4)+' ms',
+ 'Non-ideal presentation intervals (>5% or 0.5ms): '+anomalies+' / '+(t.count-1),
+ 'Sample rate interval min / max (DTS): '+fmt(t.minDelta/t.timescale*1000,4)+' / '+fmt(t.maxDelta/t.timescale*1000,4)+' ms',
+ 'First nine PTS intervals (ms): '+intervals.map(x=>fmt(x*1000,4)).join(', '),
+ 'STTS runs (first 15): '+t.runs.slice(0,15).map(x=>x[0]+'x'+x[1]).join(', '),
+ 'NOTE: MP4 timestamps establish playback timing, not actual camera exposure timing.',
+ 'NOTE: Matching frame rates can still drift against independent BBL clocks.'
+ ];
+ return {lines:lines.join('\n'),deviation,count:t.count,effective,drift,observedLast,expectedLast,anomalies,min,max,codec:t.codec,timescale:t.timescale};
+}
+function draw(points){
+ const c=$('chart'),g=c.getContext('2d'),w=c.width,h=c.height;g.clearRect(0,0,w,h);
+ g.fillStyle='#a4b9c9';g.font='12px system-ui';const ys=points.map(p=>p[1]);let lo=Math.min(0,...ys),hi=Math.max(0,...ys);if(hi-lo<1){hi+=1;lo-=1}
+ const X=x=>50+x*(w-65),Y=y=>15+(hi-y)/(hi-lo)*(h-45);
+ g.strokeStyle='#365c75';g.lineWidth=1;for(let i=0;i<=4;i++){let y=lo+(hi-lo)*i/4;g.beginPath();g.moveTo(50,Y(y));g.lineTo(w-15,Y(y));g.stroke();g.fillText(y.toFixed(1)+'ms',2,Y(y)+4)}
+ g.strokeStyle='#7be1d8';g.lineWidth=2;g.beginPath();points.forEach((p,i)=>i?g.lineTo(X(p[0]),Y(p[1])):g.moveTo(X(p[0]),Y(p[1])));g.stroke();
+ g.fillText('Start',50,h-5);g.fillText('End',w-40,h-5);
+}
+let reportText='',activeFile=null;
+async function inspect(){
+ const file=activeFile;if(!file)return;
+ $('results').hidden=true;$('status').textContent='Reading MP4 metadata (video stays local)…';
+ try{
+  const moov=await locateMoov(file),tracks=boxes(moov.data,moov.header,moov.data.byteLength).filter(b=>b.type==='trak');
+  let candidate=null,errors=[];
+  for(const track of tracks){try{const t=parseTrack(moov.data,track);if(t&&(!candidate||t.count>candidate.count))candidate=t}catch(err){errors.push(err.message)}}
+  if(!candidate)throw Error('No supported video track with frame timing table found. '+errors.join(' | '));
+  const result=buildReport(file,candidate,$('expected').value);
+  reportText=result.lines;$('report').textContent=reportText;$('results').hidden=false;
+  const items=[
+   ['Video samples',result.count.toLocaleString()],
+   ['Effective FPS',fmt(result.effective,6)],
+   ['PTS span',clock(result.observedLast)],
+   ['End drift vs '+$('expected').value+'fps',fmt(result.drift*1000,2)+' ms'],
+   ['Irregular intervals',result.anomalies.toLocaleString()],
+   ['Codec',result.codec]
+  ];
+  $('stats').replaceChildren();
+  for(const [k,v] of items){const el=document.createElement('div');el.className='stat';const l=document.createElement('label'),b=document.createElement('strong');l.textContent=k;b.textContent=v;el.append(l,b);$('stats').append(el)}
+  $('explain').textContent=Math.abs(result.drift)<.05?'The MP4 presentation clock is close to constant '+$('expected').value+'fps. This does not rule out a mismatch with BBL time, but it gives no evidence of an approximately one-second discrepancy in the MP4 timestamp rate.':'The MP4 timestamps deviate from a constant '+$('expected').value+'fps clock. Compare the total measured drift to the offset seen against your Blackbox overlay.';
+  $('status').textContent='Inspection complete. Nothing uploaded.';
+  draw(result.deviation);
+ }catch(err){$('status').textContent='Could not inspect: '+err.message;console.error(err)}
+}
+$('file').addEventListener('change',e=>{activeFile=e.target.files[0];inspect()});
+$('expected').addEventListener('change',()=>{if(activeFile)inspect()});
+$('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(reportText);$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy diagnostic report',1600)}catch(err){$('status').textContent='Clipboard blocked: select and copy the report below.'}});
+$('save').addEventListener('click',()=>{const blob=new Blob([reportText],{type:'text/plain'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mp4-timing-report.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),15000)});
+</script></body></html>
