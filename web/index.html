@@ -1662,12 +1662,13 @@ function parseExportTime(raw){
 function recordedArmedRange(){
  if(demoMode||!(duration>0))return null;
  const state=flightTimerState(),events=state.events||[];
- if(state.index<0||!events.length)return null;
  const startIndex=events.findIndex(e=>e.armed);
- if(startIndex<0)return null;
- const endIndex=events.findIndex((e,i)=>i>startIndex&&!e.armed);
- if(endIndex<0)return null;
+ const recordedArms=binaryMode?binaryFlightEvents.filter(e=>e.kind==='flight_mode'&&e.armed&&!e.previousArmed):[];
+ // A flight already armed when the log begins has no ARM ON event. In that
+ // case use the first confirmed armed slow-frame sample at the log boundary.
+ if(startIndex<0&&!recordedArms.length)return null;
  const armedAt=t=>{
+  if(state.index<0)return false;
   const v=telemetryAt(clamp(t,0,duration),state.index);
   return v!==null&&Number.isFinite(v)&&(['flightmodeflags','armingflags'].includes(state.kind)?((Math.trunc(v)&1)!==0):v!==0);
  };
@@ -1677,12 +1678,15 @@ function recordedArmedRange(){
   for(let i=0;i<16;i++){const mid=(lo+hi)/2;if(armedAt(mid)===event.armed)hi=mid;else lo=mid}
   return hi;
  };
- const start=refine(events[startIndex]);
- // Prefer the actual DISARM event timestamp when present, rather than
- // assuming that a slow-rate flightModeFlags sample marks the exact instant.
+ const stateStart=startIndex>=0?refine(events[startIndex]):null;
+ const eventStart=recordedArms.length?recordedArms[0].at:null;
+ const start=eventStart!==null?eventStart:stateStart;
+ const endIndex=events.findIndex((e,i)=>i>startIndex&&!e.armed);
+ // Logging can stop at DISARM before the slow state records ARM=OFF.
  const eventDisarm=binaryMode?binaryFlightEvents.find(e=>e.kind==='disarm'&&e.at>=start):null;
- const end=eventDisarm?eventDisarm.at:refine(events[endIndex]);
- return end>start?{start,end,duration:end-start}:null;
+ const modeDisarm=binaryMode?binaryFlightEvents.find(e=>e.kind==='flight_mode'&&e.previousArmed&&!e.armed&&e.at>=start):null;
+ const end=eventDisarm?eventDisarm.at:modeDisarm?modeDisarm.at:endIndex>=0?refine(events[endIndex]):null;
+ return end!==null&&end>start?{start,end,duration:end-start}:null;
 }
 function exportSelectedRange(){
  const total=totalTime();
