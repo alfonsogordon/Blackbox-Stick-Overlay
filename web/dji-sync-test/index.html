@@ -4652,6 +4652,9 @@ function setupWorkflowLayout(){
  const leftAdvanced=section(left,'workflow-advanced','07 · Advanced Settings');
  if(themeDetails)themeDetails.classList.add('workflow-flat-inner');
  append(leftNodes.slice(bfAt+1),leftAdvanced);
+ // Keep the guide replay control inside Advanced Settings, not the page footer.
+ const guideReplayButton=item('restart-studio-guide');
+ if(guideReplayButton){guideReplayButton.style.margin='12px 0 4px';leftAdvanced.append(guideReplayButton)}
  // Rebuild right column from its original DOM nodes (no cloning, no re-wiring).
  right.replaceChildren();
  append(rightNodes.slice(0,pngAt),right);
