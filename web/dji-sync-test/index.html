@@ -1258,35 +1258,92 @@ canvas.addEventListener('pointermove',e=>{
 canvas.addEventListener('pointerup',()=>{draggedTelemetry=null;resizeTelemetry=false});
 canvas.addEventListener('pointercancel',()=>{draggedTelemetry=null;resizeTelemetry=false});
 function parseCSV(text){const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/).filter(Boolean);if(lines.length<3)throw Error('CSV has no samples');const cols=lines[0].split(',').map(s=>s.trim().replace(/^"|"$/g,''));const find=(names)=>{const i=cols.findIndex(c=>names.includes(c.toLowerCase().replace(/\s/g,'')));if(i<0)throw Error('Missing column: '+names[0]);return i};const ti=find(['time','time(us)','time_us','timestamp']);const ix=[0,1,2,3].map(i=>find(['rccommand['+i+']','rccommand'+i]));const rows=[];for(let n=1;n<lines.length;n++){const a=lines[n].split(',');const v=[Number(a[ti]),...ix.map(i=>Number(a[i]))];if(v.every(Number.isFinite))rows.push(v)}if(rows.length<2)throw Error('Not enough valid RC samples');rows.sort((a,b)=>a[0]-b[0]);const factor=rows.at(-1)[0]-rows[0][0]>10000?1e-6:1;const start=rows[0][0];return rows.map(v=>[(v[0]-start)*factor,...v.slice(1)])}
-// An editable, hand-shaped 12-second flight-like RC trace for the default demo.
-// Channel order matches decoded Betaflight samples: roll, pitch, yaw, throttle.
-// Replace these waypoints with extracted real-log RC samples when available.
-// Values at 0 and 12 seconds match so the preview loops without a jump.
+// Simulated 36-second FPV demo: flowing lines interspersed with brisk freestyle
+// snap rolls, flips, split-S-style inputs, yaw turns and throttle punches.
+// Channel order: roll, pitch, yaw, throttle; not actual extracted log samples.
+// First and final waypoints match so the loop is seamless.
+const demoDuration=36;
 const demoRcKeys=[
- [0,   5, -35,   5, 1440],
- [.6,  14, -65,  12, 1490],
- [1.3, 55, -105, 28, 1570],
- [2.0, 115,-90,  42, 1630],
- [2.6, 75, -45,  20, 1540],
- [3.2,-10, -120,-12, 1480],
- [3.9,-85, -125,-48, 1530],
- [4.5,-145,-60, -68, 1650],
- [5.0,-50,  20, -28, 1580],
- [5.6, 20,  125, 10, 1320],
- [6.2, 95,  85,  50, 1450],
- [6.8, 180,-35,  85, 1700],
- [7.3, 65, -100, 32, 1620],
- [7.9,-45, -80, -25, 1530],
- [8.5,-125,-15, -65, 1470],
- [9.1,-45,  65, -15, 1370],
- [9.7, 65, -90,  35, 1560],
- [10.3, 135,-125, 65, 1660],
- [10.9, 55, -80,  25, 1510],
- [11.5, 15, -40,  10, 1450],
- [12,  5, -35,   5, 1440]
+ // Warm-up: smooth cruising, banking, gentle S-turn.
+ [0,    5, -35,   5, 1440],
+ [.7,  16, -70,  12, 1510],
+ [1.5, 65,-105,  28, 1570],
+ [2.3, 120,-85,  42, 1640],
+ [3.0, 40, -65,  12, 1530],
+ [3.8,-85,-115, -40, 1490],
+ [4.6,-135,-70, -68, 1640],
+ [5.4,-20, -85, -10, 1500],
+ [6.2, 65,-115,  35, 1580],
+ [7.0, 10, -50,   5, 1470],
+ // Fast bank / punch / recovery.
+ [7.4,  225,-170,  85, 1810],
+ [7.7,  420,-140, 135, 1900],
+ [8.1, -275,-110, -45, 1250],
+ [8.5, -70, -75, -15, 1510],
+ [9.2,  60,-140,  30, 1600],
+ [9.8, -10,-100,  10, 1460],
+ // Forward flip: sharp pitch input then recovery, throttle reduced at apex.
+ [10.1, 30, 365,  20, 1340],
+ [10.35,-20, 485,  12, 1160],
+ [10.65, 15,-430, -10, 1280],
+ [11.0,  25,-130,  10, 1790],
+ [11.6,  -5, -90,  10, 1570],
+ [12.4, -80,-105, -35, 1540],
+ // Rapid left yaw turn into roll, then settle.
+ [12.9,-180,-115,-330, 1660],
+ [13.15,-340,-80,-455, 1740],
+ [13.48, 375,-40, 245, 1300],
+ [13.9,  90,-115,  55, 1650],
+ [14.7, -65,-105, -25, 1520],
+ [15.6, 55, -75,  25, 1510],
+ // Float over feature then strong split-S-style combined pitch/roll.
+ [16.1, -35, 150, -35, 1230],
+ [16.45,-405, 390, -85, 1130],
+ [16.8,  440, 410, 110, 1170],
+ [17.18, 90,-365,  50, 1480],
+ [17.55,-55,-180, -20, 1890],
+ [18.2,  25,-115,  12, 1550],
+ [19.0,-100, -90, -40, 1480],
+ [19.8,  90,-135,  50, 1570],
+ // Second cruise interval, small corrections rather than constant stick travel.
+ [20.5,  25, -90,  15, 1470],
+ [21.3, -60, -65, -25, 1420],
+ [22.0,  95,-120,  35, 1640],
+ [22.7, -20, -70,   0, 1530],
+ // Backflip and quick opposing roll correction.
+ [23.0,  65,-355,  15, 1340],
+ [23.28, 15,-485,  15, 1120],
+ [23.55, -55, 420, -15, 1330],
+ [23.88,  35, 125,  35, 1860],
+ [24.4,  10,-105,  15, 1620],
+ [25.0, -45,-145, -25, 1560],
+ // Fast right roll with throttle punch and a second flick.
+ [25.4, 315, -120,  80, 1750],
+ [25.62,485, -85, 120, 1920],
+ [25.93,-445,-45, -80, 1260],
+ [26.2,  245, -65,  55, 1770],
+ [26.52,-130, -80, -20, 1450],
+ [27.1,  10,-100,   5, 1560],
+ // Fast directional switches and coordinated corner.
+ [27.65,-200,-170,-125, 1710],
+ [28.0, -365,-90,-230, 1780],
+ [28.35, 265, 70, 185, 1330],
+ [28.7,  75,-140,  50, 1630],
+ [29.5, -40,-110, -20, 1510],
+ [30.2,  75,-100,  38, 1540],
+ // Last punch and gentle recovery for loop.
+ [30.7, 145,-195,  65, 1810],
+ [31.0, 260,-240, 110, 1870],
+ [31.4, -110,-50, -45, 1380],
+ [32.0, -70,-120, -35, 1530],
+ [32.7,  90, -80,  30, 1600],
+ [33.4, -40, -65, -12, 1470],
+ [34.2,  22, -48,   8, 1430],
+ [35.0,  12, -38,   6, 1440],
+ [36,    5, -35,   5, 1440]
 ];
 function demoRcSample(t){
- const total=12,sec=((t%total)+total)%total;
+ const total=demoDuration,sec=((t%total)+total)%total;
  let i=0;while(i<demoRcKeys.length-2&&demoRcKeys[i+1][0]<sec)i++;
  const p0=demoRcKeys[Math.max(0,i-1)],p1=demoRcKeys[i],p2=demoRcKeys[i+1],p3=demoRcKeys[Math.min(demoRcKeys.length-1,i+2)];
  const dt=p2[0]-p1[0]||1,v=(sec-p1[0])/dt;
@@ -3108,16 +3165,16 @@ function applyBetaOsdFields(){
 const demoFieldNames=['vbat','amperage','gpsNumSat','gpsSpeed','gpsAltitude','homeDistance','homeDirection','rssi','mahDrawn','attitudeRoll','attitudePitch','gpsGroundCourse'];
 function demoTelemetryRows(){
  const rows=[];
- for(let t=0;t<=12.01;t+=.1)rows.push([t,
-  2350-18*t/12,140+50*Math.sin(t*.6),12,1700+500*Math.sin(t*.4),
+ for(let t=0;t<=demoDuration+.001;t+=.1)rows.push([t,
+  2350-18*t/demoDuration,140+50*Math.sin(t*.6),12,1700+500*Math.sin(t*.4),
   420+50*Math.cos(t*.3),120+30*Math.sin(t*.5),90+25*Math.sin(t*.2),
   85+8*Math.sin(t*.3),500+t*14,150*Math.sin(t*.6),90*Math.cos(t*.5),
-   // Simulated GPS course in degrees: visible changes, seamless 12-second loop.
-   (210+85*Math.sin(t*Math.PI/6)+25*Math.sin(t*Math.PI/3)+360)%360]);
+   // Simulated GPS course in degrees: visible changes, looping with the demo.
+   (210+85*Math.sin(t*Math.PI/18)+25*Math.sin(t*Math.PI/9)+360)%360]);
  return rows;
 }
 function startDefaultDemo(){
- demoMode=true;binaryMode=false;binaryBuffer=null;samples=[];duration=12;time=0;
+ demoMode=true;binaryMode=false;binaryBuffer=null;samples=[];duration=demoDuration;time=0;
  setTelemetry(demoFieldNames,demoTelemetryRows());
  // Demo GPS ground course uses decimal degrees, while demo GPS speed uses cm/s.
  for(const item of telemetryWidgets){
