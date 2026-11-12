@@ -3548,7 +3548,7 @@ function drawPortraitHudGraphics(w,h,t){
  const movement=motion?quadHudMotion(t):{roll:0,pitch:0};
  const intensity=clamp(Number($('hudmotionstrength').value)/100,0,2);
  const motionRoll=movement.roll*intensity,motionPitch=movement.pitch*intensity;
- if(motion&&theme!=='green'&&(motionRoll||motionPitch)){
+ if(motion&&theme!=='green'&&theme!=='sunset'&&(motionRoll||motionPitch)){
   ctx.translate(w*.5,h*.5);
   ctx.rotate(-motionRoll*.029);
   ctx.translate(motionRoll*w*.007,motionPitch*h*.012);
@@ -3794,29 +3794,76 @@ function drawPortraitHudGraphics(w,h,t){
   line([[.3,.955],[.43,.955],[.46,.942]],a,.55,2.2);
   line([[.7,.955],[.57,.955],[.54,.942]],a,.55,2.2);
  }else if(theme==='sunset'){
-  // Synthwave Sunset: magenta/orange outrun horizon, stacked neon rails,
-  // stepped side indicators and a stylised sun built from short arcs.
-  for(const side of [-1,1]){
-   const x=n=>.5+side*n;
-   line([[x(.13),.03],[x(.33),.03],[x(.46),.115]],p,.88,3.4);
-   line([[x(.13),.97],[x(.33),.97],[x(.46),.885]],p,.88,3.4);
-   line([[x(.16),.064],[x(.30),.064],[x(.40),.13]],a,.65,2);
-   line([[x(.16),.936],[x(.30),.936],[x(.40),.87]],a,.65,2);
-   for(let j=0;j<6;j++){
-    const y=.33+j*.063;
-    line([[x(.46),y],[x(.46-(j%2===0?.055:.028)),y]],j%2?a:p,.36+.15*pulse,2);
+  // TEST portrait Synthwave: independent motion layers; graphics only.
+  // At strength 0 the artwork is static, including the ambient accents.
+  const strength=motion?intensity:0;
+  const phase=t*strength;
+  const withLayer=(dx,dy,spin,draw)=>{
+   ctx.save();
+   ctx.translate(w*.5,h*.5);
+   ctx.rotate(-motionRoll*spin);
+   ctx.translate(motionRoll*w*dx,motionPitch*h*dy);
+   ctx.translate(-w*.5,-h*.5);
+   draw();
+   ctx.restore();
+  };
+  // Fixed outrun sun: large staggered neon bands, no opaque background.
+  for(let j=0;j<8;j++){
+   const radius=.077+j*.012;
+   arc(.5,.445,radius,Math.PI*1.08,Math.PI*1.92,j%2?a:p,.24+j*.078,1.5+j*.14);
+  }
+  for(let j=0;j<6;j++){
+   const y=.39+j*.018,half=.084-j*.007;
+   line([[.5-half,y],[.5+half,y]],j%2?p:a,.20+j*.085,1.4);
+  }
+  // Medium-response horizon and perspective grid.
+  withLayer(.007,.022,.075,()=>{
+   line([[.245,.555],[.446,.555]],a,.66,2.1);
+   line([[.554,.555],[.755,.555]],a,.66,2.1);
+   for(let j=0;j<8;j++){
+    const y=.755+j*.029;
+    const half=.16+j*.04;
+    line([[.5-half,y],[.5+half,y]],j%2?a:p,.15+j*.07,1.55);
    }
-  }
-  for(let j=0;j<5;j++){
-   const r=.065+j*.013;
-   arc(.5,.485,r,Math.PI*1.14,Math.PI*1.86,j%2?a:p,.37+j*.075,1.8);
-  }
-  line([[.28,.535],[.44,.535]],a,.53,2.1);
-  line([[.56,.535],[.72,.535]],a,.53,2.1);
-  for(let j=0;j<7;j++){
-   const y=.91+j*.011;
-   line([[.31+j*.019,y],[.69-j*.019,y]],j%2?a:p,.16+j*.065,1.1);
-  }
+   for(let j=-5;j<=5;j++){
+    line([[.5,.655],[.5+j*.095,.968]],j%2?p:a,.14+Math.abs(j)*.03,1.2);
+   }
+  });
+  // Independently lagging diagonal side brackets and staggered rails.
+  withLayer(.014,.011,.038,()=>{
+   for(const side of [-1,1]){
+    const x=n=>.5+side*n;
+    line([[x(.13),.028],[x(.33),.028],[x(.46),.133]],p,.89,3.5);
+    line([[x(.13),.972],[x(.33),.972],[x(.46),.867]],p,.89,3.5);
+    line([[x(.17),.065],[x(.30),.065],[x(.414),.151]],a,.70,2.1);
+    line([[x(.17),.935],[x(.30),.935],[x(.414),.849]],a,.70,2.1);
+    for(let j=0;j<6;j++){
+     const y=.315+j*.065;
+     const length=j%2?.029:.061;
+     line([[x(.46),y],[x(.46-length),y]],j%2?p:a,.37+.12*Math.sin(phase*1.2+j),1.9);
+    }
+   }
+  });
+  // Faster scanner and short accents float over the slower layers.
+  withLayer(.024,.025,.11,()=>{
+   for(let j=0;j<10;j++){
+    const y=.19+j*.035;
+    const x=.5+.042*Math.sin(phase*1.6+j*.7);
+    line([[x-.009,y],[x+.009,y]],j%3?a:p,.24+.12*Math.sin(phase*1.9+j),1.35);
+   }
+   for(const side of [-1,1]){
+    const x=.5+side*.394;
+    for(let j=0;j<3;j++){
+     const y=.69+j*.034;
+     line([[x,y],[x-side*(.023+.011*Math.sin(phase*1.5+j)),y]],a,.27+.13*Math.sin(phase+j),1.5);
+    }
+   }
+  });
+  // Fixed reticle gives the viewer a stable reference during hard flips.
+  line([[.394,.493],[.469,.493]],a,.7,1.7);
+  line([[.531,.493],[.606,.493]],a,.7,1.7);
+  line([[.5,.461],[.5,.478]],p,.8,1.6);
+  line([[.5,.508],[.5,.525]],p,.8,1.6);
  }else if(theme==='sunsetcinema'){
   // Cinematic Sunset: widescreen-inspired soft corner brackets, understated
   // horizon arcs and warm editorial guide marks, with open central space.
