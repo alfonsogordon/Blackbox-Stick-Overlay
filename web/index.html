@@ -1706,12 +1706,12 @@ async function optimizeMovPng(blob){
  try{
   const d=new Uint8Array(await blob.arrayBuffer()),sig=[137,80,78,71,13,10,26,10];
   if(sig.some((n,i)=>d[i]!==n))return blob;
-  const chunks=[],compressed=[];let p=8,sawEnd=false,priorIDAT=false;
+  const chunks=[],compressed=[];let p=8,sawEnd=false,priorIDAT=false,insertAt=-1;
   const read32=i=>(d[i]*16777216+d[i+1]*65536+d[i+2]*256+d[i+3])>>>0;
   while(p+12<=d.length){
    const n=read32(p),end=p+n+12;if(end>d.length)return blob;
    const tag=String.fromCharCode(...d.subarray(p+4,p+8));
-   if(tag==='IDAT'){if(priorIDAT)return blob;compressed.push(d.subarray(p+8,p+8+n))}
+   if(tag==='IDAT'){if(priorIDAT)return blob;if(insertAt<0)insertAt=chunks.length;compressed.push(d.subarray(p+8,p+8+n))}
    else{if(compressed.length)priorIDAT=true;chunks.push({tag,bytes:d.subarray(p,end)})}
    p=end;if(tag==='IEND'){sawEnd=true;break}
   }
@@ -1724,12 +1724,12 @@ async function optimizeMovPng(blob){
   dv.setUint32(0,bytes.length);idat.set([73,68,65,84],4);idat.set(bytes,8);
   let crc=0xffffffff;for(let i=4;i<idat.length-4;i++){crc^=idat[i];for(let j=0;j<8;j++)crc=(crc>>>1)^((crc&1)?0xedb88320:0)}
   dv.setUint32(idat.length-4,(crc^0xffffffff)>>>0);
-  const parts=[d.subarray(0,8)];let inserted=false;
-  for(const c of chunks){
-   if(!inserted&&c.tag==='IEND'){parts.push(idat);inserted=true}
-   parts.push(c.bytes);
+  const parts=[d.subarray(0,8)];
+  for(let i=0;i<chunks.length;i++){
+   if(i===insertAt)parts.push(idat);
+   parts.push(chunks[i].bytes);
   }
-  if(!inserted)return blob;
+  if(insertAt<0||insertAt>=chunks.length)return blob;
   const result=new Blob(parts,{type:'image/png'});
   return result.size<blob.size?result:blob;
  }catch{return blob}
