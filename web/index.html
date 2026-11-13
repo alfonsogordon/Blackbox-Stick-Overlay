@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blackbox Overlay Studio · v1.0.1</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blackbox Overlay Studio · v1.0.2</title>
 <style>
 :root{font-family:Inter,system-ui,Segoe UI,sans-serif;color:#e8efff;background:#0a101b}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172640 0%,#0a101b 55%);min-height:100vh}main{max-width:1360px;margin:auto;padding:38px 20px}h1{font-size:32px;margin:8px 0}p{color:#aab9d2}header{margin-bottom:25px}.tag{color:#73e1da;font-size:12px;letter-spacing:2px;font-weight:700}.layout{display:grid;grid-template-columns:minmax(420px,490px) minmax(0,1fr);gap:20px}.panel{background:#111c2cdd;border:1px solid #31435e;border-radius:20px;padding:22px;box-shadow:0 20px 70px #0004}label{display:block;color:#b4c7df;font-size:13px;margin:16px 0 7px}input,select,button{width:100%;border-radius:10px;border:1px solid #3c526c;background:#19293d;color:#f3f8ff;padding:11px;font:inherit}input[type=file]{font-size:12px}input[type=color]{height:43px;padding:4px 6px;cursor:pointer;appearance:none;-webkit-appearance:none}input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-webkit-color-swatch{border:1px solid #72869e;border-radius:6px}input[type=color]::-moz-color-swatch{border:1px solid #72869e;border-radius:6px}button{background:#287d83;border-color:#51c3c4;cursor:pointer;font-weight:650}button:hover{background:#34989a}button:disabled{opacity:.45;cursor:not-allowed}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(min-width:851px){.layout>section.panel:nth-child(2){position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow-y:auto;scrollbar-width:thin}}.preview{background:linear-gradient(135deg,#1b2739,#0d1521);border:1px solid #32425b;border-radius:14px;overflow:hidden;min-height:0;display:block;aspect-ratio:8 / 3}.preview{isolation:isolate;position:relative}
 /* Preview-only arrival reveal: never applied to rendered video/export frames. */
@@ -126,7 +126,7 @@ body.studio-portrait .preview-expanded #previewframe{width:min(100%,400px,calc((
 .studio-tour-highlight{outline:3px solid #70e4dc!important;outline-offset:5px!important;box-shadow:0 0 0 8px #70e4dc22!important;position:relative;z-index:91}
 body.studio-tour-open{overflow:hidden}
 @media(max-width:640px){#studio-tour-card{right:12px;bottom:12px;padding:16px}#studio-tour-card h2{font-size:18px}}
-</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">v1.0.1</span><nav id="workflow-nav" aria-label="Overlay workflow">
+</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">v1.0.2</span><nav id="workflow-nav" aria-label="Overlay workflow">
 <button type="button" data-workflow-step="log"><span class="wf-dot">1</span><span>Log</span><span class="wf-stage" id="wf-log-state"></span></button>
 <button type="button" data-workflow-step="design"><span class="wf-dot">2</span><span>Design</span><span class="wf-stage" id="wf-design-state"></span></button>
 <button type="button" data-workflow-step="sync"><span class="wf-dot">3</span><span>Sync</span><span class="wf-stage" id="wf-sync-state"></span></button>
@@ -2609,12 +2609,20 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
  }catch(_){}
  const predictedSeconds=cachedFrameMs*frames/1000;
  const timeEstimate=cachedFrameMs?(predictedSeconds>=3600?(predictedSeconds/3600).toFixed(1)+' hours':predictedSeconds>=60?Math.ceil(predictedSeconds/60)+' minutes':Math.max(1,Math.ceil(predictedSeconds))+' seconds'):'Not calibrated yet (first export with these settings)';
- const confirmation='MOV export\n\n'
-  +'Duration: '+formatExportTime(range.duration)+' at '+fps+' FPS ('+frames+' frames)\n'
-  +'Estimated export time: '+timeEstimate+'\n'
-  +'Output: lossless-style PNG MOV, automatically split into clips up to 1 GiB each.\n\n'
-  +(cachedFrameMs?'Based on measured processing speed from an earlier export. Actual speed may vary.':'No reliable previous speed is available. This export will calibrate future estimates.')
-  +'\n\nContinue exporting?';
+ const confirmation=[
+  'MOV export',
+  '',
+  'Flight: '+formatExportTime(range.duration),
+  'Video: '+fps+' FPS  |  '+frames.toLocaleString()+' frames',
+  'Estimated time: '+(cachedFrameMs?'about '+timeEstimate:'Available after your first export'),
+  '',
+  'Format: Transparent MOV',
+  'Large files are automatically saved in smaller parts.',
+  '',
+  cachedFrameMs?'Estimate based on your previous exports.':'Your first export will help estimate future export times.',
+  '',
+  'Start export now?'
+ ].join(String.fromCharCode(10));
  exportDebug('Immediate pre-export confirmation; time estimate: '+timeEstimate);
  if(!confirm(confirmation)){
   exportDebug('Export cancelled before frame processing','WARN');
