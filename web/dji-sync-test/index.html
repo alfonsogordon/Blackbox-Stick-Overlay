@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Overlay Studio · TEST v0.15.7-test</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Overlay Studio · TEST v0.15.8-test</title>
 <style>
 :root{font-family:Inter,system-ui,Segoe UI,sans-serif;color:#e8efff;background:#0a101b}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172640 0%,#0a101b 55%);min-height:100vh}main{max-width:1360px;margin:auto;padding:38px 20px}h1{font-size:32px;margin:8px 0}p{color:#aab9d2}header{margin-bottom:25px}.tag{color:#73e1da;font-size:12px;letter-spacing:2px;font-weight:700}.layout{display:grid;grid-template-columns:minmax(420px,490px) minmax(0,1fr);gap:20px}.panel{background:#111c2cdd;border:1px solid #31435e;border-radius:20px;padding:22px;box-shadow:0 20px 70px #0004}label{display:block;color:#b4c7df;font-size:13px;margin:16px 0 7px}input,select,button{width:100%;border-radius:10px;border:1px solid #3c526c;background:#19293d;color:#f3f8ff;padding:11px;font:inherit}input[type=file]{font-size:12px}input[type=color]{height:43px;padding:4px 6px;cursor:pointer;appearance:none;-webkit-appearance:none}input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-webkit-color-swatch{border:1px solid #72869e;border-radius:6px}input[type=color]::-moz-color-swatch{border:1px solid #72869e;border-radius:6px}button{background:#287d83;border-color:#51c3c4;cursor:pointer;font-weight:650}button:hover{background:#34989a}button:disabled{opacity:.45;cursor:not-allowed}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(min-width:851px){.layout>section.panel:nth-child(2){position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow-y:auto;scrollbar-width:thin}}.preview{background:linear-gradient(135deg,#1b2739,#0d1521);border:1px solid #32425b;border-radius:14px;overflow:hidden;min-height:0;display:block;aspect-ratio:8 / 3}.preview{isolation:isolate;position:relative}
 /* Preview-only arrival reveal: never applied to rendered video/export frames. */
@@ -126,7 +126,7 @@ body.studio-portrait .preview-expanded #previewframe{width:min(100%,400px,calc((
 .studio-tour-highlight{outline:3px solid #70e4dc!important;outline-offset:5px!important;box-shadow:0 0 0 8px #70e4dc22!important;position:relative;z-index:91}
 body.studio-tour-open{overflow:hidden}
 @media(max-width:640px){#studio-tour-card{right:12px;bottom:12px;padding:16px}#studio-tour-card h2{font-size:18px}}
-</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">TEST COPY · v0.15.7-test</span><nav id="workflow-nav" aria-label="Overlay workflow">
+</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">TEST COPY · v0.15.8-test</span><nav id="workflow-nav" aria-label="Overlay workflow">
 <button type="button" data-workflow-step="log"><span class="wf-dot">1</span><span>Log</span><span class="wf-stage" id="wf-log-state"></span></button>
 <button type="button" data-workflow-step="design"><span class="wf-dot">2</span><span>Design</span><span class="wf-stage" id="wf-design-state"></span></button>
 <button type="button" data-workflow-step="sync"><span class="wf-dot">3</span><span>Sync</span><span class="wf-stage" id="wf-sync-state"></span></button>
@@ -2490,13 +2490,15 @@ for(const id of ['exportin','exportout'])$(id).addEventListener('input',syncExpo
 // cross-flight sample is more representative than FPS or resolution alone,
 // because HUD artwork, blur and alpha coverage change each PNG's byte size.
 async function estimateMovOutput(target,range,fps,frames,output){
- const count=Math.min(frames,9),sampleBytes=[];
+ const count=Math.min(frames,20),sampleBytes=[],timedFrames=[];
+ const warmup=Math.min(3,Math.max(0,count-1));
  const oldTime=time,started=performance.now();
  let coverage=null;
  try{
   for(let n=0;n<count;n++){
    const index=count===1?0:Math.round(n*(frames-1)/(count-1));
    const t=exportFrameTimestamp(range,index/fps);
+   const sampleStarted=performance.now();
    renderExportMappedFrame(t,target,output,range);
    prepareMovPngFrame(output);
    if(coverage===null){
@@ -2511,13 +2513,20 @@ async function estimateMovOutput(target,range,fps,frames,output){
    }
    const blob=await encodeMovPngFrame(output);
    sampleBytes.push(blob.size);
+   if(n>=warmup)timedFrames.push(performance.now()-sampleStarted);
    await new Promise(resolve=>setTimeout(resolve,0));
   }
  }finally{time=oldTime;update()}
  const mean=sampleBytes.reduce((a,b)=>a+b,0)/sampleBytes.length;
  const totalBytes=mean*frames;
- exportDebug('MOV preflight: '+output.width+'x'+output.height+' '+fps+' fps, '+frames+' frames; PNG samples ['+sampleBytes.map(n=>(n/1048576).toFixed(2)).join(', ')+'] MiB; mean '+(mean/1048576).toFixed(2)+' MiB/frame, alpha pixels '+coverage.painted+'%, fully opaque '+coverage.opaque+'%, projected '+(totalBytes/1073741824).toFixed(2)+' GiB; sampled in '+((performance.now()-started)/1000).toFixed(1)+'s.');
- return {totalBytes,mean,coverage,samples:sampleBytes.length,elapsedSeconds:(performance.now()-started)/1000};
+ // Discard warm-up and trim outliers before predicting total encoding time.
+ const timings=timedFrames.slice().sort((a,b)=>a-b);
+ const trim=timings.length>=10?Math.floor(timings.length*.15):0;
+ const typical=timings.slice(trim,timings.length-trim);
+ const averageMs=typical.reduce((a,b)=>a+b,0)/Math.max(1,typical.length);
+ const estimatedSeconds=averageMs*frames/1000;
+ exportDebug('MOV preflight: '+output.width+'x'+output.height+' '+fps+' fps, '+frames+' frames; PNG samples ['+sampleBytes.map(n=>(n/1048576).toFixed(2)).join(', ')+'] MiB; mean '+(mean/1048576).toFixed(2)+' MiB/frame, alpha pixels '+coverage.painted+'%, fully opaque '+coverage.opaque+'%, projected '+(totalBytes/1073741824).toFixed(2)+' GiB; sampled in '+((performance.now()-started)/1000).toFixed(1)+'s; timed '+timedFrames.length+' frames excluding '+warmup+' warm-up, ETA '+estimatedSeconds.toFixed(0)+'s.');
+ return {totalBytes,mean,coverage,samples:sampleBytes.length,elapsedSeconds:(performance.now()-started)/1000,estimatedSeconds,timedSamples:timedFrames.length};
 }
 // Lossless PNG recompression experiment: only IDAT changes, so dimensions,
 // alpha and pixel values remain identical. Keep the original if not smaller.
@@ -2593,7 +2602,7 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
  // frames. Skip the 4 GiB single-MOV attempt when it is predictably too large.
  let estimate=null;
  try{
-  $('status').textContent='Checking MOV frame sizes before export…';
+  $('status').textContent='Measuring export speed and size before starting…';
   estimate=await estimateMovOutput(target,range,fps,frames,output);
   $('status').textContent='Estimated MOV size '+(estimate.totalBytes/1073741824).toFixed(2)+' GiB ('+(estimate.mean/1048576).toFixed(2)+' MiB/frame). '+(estimate.totalBytes>=3.7*1073741824?'Using numbered clips.':'Preparing export.');
  }catch(e){
@@ -2607,22 +2616,21 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
   const bytesPerClip=1024*1048576;
   const projectedClips=Math.max(1,Math.ceil(estimate.totalBytes/bytesPerClip));
   const sizeGiB=estimate.totalBytes/1073741824;
-  // Nine PNG samples provide a size estimate only, not a reliable time ETA.
-  const large=sizeGiB>=0.75||projectedClips>1||range.duration>=90;
-  if(large){
-   const message='Large MOV export warning\n\n'
-    +'Estimated total download: '+sizeGiB.toFixed(2)+' GiB\n'
-    +'Likely numbered clips: '+projectedClips+' (up to 1 GiB each)\n'
-    +'Duration: '+formatExportTime(range.duration)+' at '+fps+' FPS ('+frames+' frames)\n'
-    +'Export time: calculated from actual frame speed once export starts.\n\n'
-    +'Size is estimated from '+estimate.samples+' sample frames. Large exports may require browser permission for multiple downloads.\n\n'
-    +'Continue exporting?';
-   exportDebug('Pre-export size estimate: '+sizeGiB.toFixed(2)+' GiB, '+projectedClips+' clips. ETA deferred until actual frames encode.');
-   if(!confirm(message)){
-    exportDebug('Export cancelled after size/time warning','WARN');
-    $('status').textContent='Export cancelled. Estimated size was '+sizeGiB.toFixed(2)+' GiB.';
-    return;
-   }
+  // Show the estimated time *before* the user accepts the export.
+  const secs=estimate.estimatedSeconds;
+  const estimatedTime=secs>=3600?(secs/3600).toFixed(1)+' hours':secs>=60?Math.ceil(secs/60)+' minutes':Math.max(1,Math.ceil(secs))+' seconds';
+  const message='MOV export estimate\n\n'
+   +'Estimated export time: about '+estimatedTime+'\n'
+   +'Estimated total download: '+sizeGiB.toFixed(2)+' GiB\n'
+   +'Likely numbered clips: '+projectedClips+' (up to 1 GiB each)\n'
+   +'Duration: '+formatExportTime(range.duration)+' at '+fps+' FPS ('+frames+' frames)\n\n'
+   +'Measured '+estimate.timedSamples+' frames after warm-up. Actual export time can vary with browser load and frame complexity. Multiple downloads may require browser permission.\n\n'
+   +'Continue exporting?';
+  exportDebug('Pre-export estimate: '+estimatedTime+', '+sizeGiB.toFixed(2)+' GiB, '+projectedClips+' clips; '+estimate.timedSamples+' timed frames.');
+  if(!confirm(message)){
+   exportDebug('Export cancelled after pre-export estimate','WARN');
+   $('status').textContent='Export cancelled after estimate.';
+   return;
   }
  }
  // Standard downloads are kept below a 1 GiB memory-friendly clip cap.
@@ -2630,7 +2638,7 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
  exportDebug('Browser download mode: no folder-access or file-system picker.');
  // Fallback for 4 GB overflow or browsers without direct file writing.
  // Split by actual encoded size at 1 GiB, with no arbitrary 10-second duration limit.
- recording=true;playing=false;$('video').disabled=true;exportProgress(0,'Exporting numbered MOV clips · ETA calculating…');
+ recording=true;playing=false;$('video').disabled=true;exportProgress(0,'Exporting numbered MOV clips…');
  exportDebug('MOV browser downloads: up to 1 GiB encoded frames per clip. Browser may request permission for multiple downloads.');
  try{
   const maxBytes=1024*1048576;
@@ -2648,8 +2656,8 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
   const updateExportEta=(count,part)=>{
    const ready=count>=etaReadyAfter&&etaSamples.length>=Math.min(30,frames);
    const mean=ready?etaSamples.reduce((a,b)=>a+b,0)/etaSamples.length:0;
-   const remaining=ready&&Number.isFinite(mean)?' · ETA '+formatEta(mean*(frames-count)/1000):' · ETA calculating…';
-   exportProgress(100*count/frames,'Clip '+part+' · Frame '+count+' / '+frames+remaining);
+   // Progress remains available; time estimate is given upfront.
+   exportProgress(100*count/frames,'Clip '+part+' · Frame '+count+' / '+frames);
   };
   const flushClip=async()=>{
    if(!chunks.length)return;
