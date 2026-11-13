@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Overlay Studio · TEST v0.15.2-test</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Overlay Studio · TEST v0.15.3-test</title>
 <style>
 :root{font-family:Inter,system-ui,Segoe UI,sans-serif;color:#e8efff;background:#0a101b}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172640 0%,#0a101b 55%);min-height:100vh}main{max-width:1360px;margin:auto;padding:38px 20px}h1{font-size:32px;margin:8px 0}p{color:#aab9d2}header{margin-bottom:25px}.tag{color:#73e1da;font-size:12px;letter-spacing:2px;font-weight:700}.layout{display:grid;grid-template-columns:minmax(420px,490px) minmax(0,1fr);gap:20px}.panel{background:#111c2cdd;border:1px solid #31435e;border-radius:20px;padding:22px;box-shadow:0 20px 70px #0004}label{display:block;color:#b4c7df;font-size:13px;margin:16px 0 7px}input,select,button{width:100%;border-radius:10px;border:1px solid #3c526c;background:#19293d;color:#f3f8ff;padding:11px;font:inherit}input[type=file]{font-size:12px}input[type=color]{height:43px;padding:4px 6px;cursor:pointer;appearance:none;-webkit-appearance:none}input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-webkit-color-swatch{border:1px solid #72869e;border-radius:6px}input[type=color]::-moz-color-swatch{border:1px solid #72869e;border-radius:6px}button{background:#287d83;border-color:#51c3c4;cursor:pointer;font-weight:650}button:hover{background:#34989a}button:disabled{opacity:.45;cursor:not-allowed}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(min-width:851px){.layout>section.panel:nth-child(2){position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow-y:auto;scrollbar-width:thin}}.preview{background:linear-gradient(135deg,#1b2739,#0d1521);border:1px solid #32425b;border-radius:14px;overflow:hidden;min-height:0;display:block;aspect-ratio:8 / 3}.preview{isolation:isolate;position:relative}
 /* Preview-only arrival reveal: never applied to rendered video/export frames. */
@@ -126,7 +126,7 @@ body.studio-portrait .preview-expanded #previewframe{width:min(100%,400px,calc((
 .studio-tour-highlight{outline:3px solid #70e4dc!important;outline-offset:5px!important;box-shadow:0 0 0 8px #70e4dc22!important;position:relative;z-index:91}
 body.studio-tour-open{overflow:hidden}
 @media(max-width:640px){#studio-tour-card{right:12px;bottom:12px;padding:16px}#studio-tour-card h2{font-size:18px}}
-</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">TEST COPY · v0.15.2-test</span><nav id="workflow-nav" aria-label="Overlay workflow">
+</style></head><body><main><header class="compact-header"><div class="header-top"><a href="https://alfonsogordon.github.io/FPSteVe-Toolbox/" class="toolbox-back" aria-label="Back to FPSteVe Toolbox">← Back to FPSteVe Toolbox</a><span class="tag">BETAFLIGHT · BLACKBOX</span></div><div class="header-title"><h1>Overlay Studio</h1><span class="header-version">TEST COPY · v0.15.3-test</span><nav id="workflow-nav" aria-label="Overlay workflow">
 <button type="button" data-workflow-step="log"><span class="wf-dot">1</span><span>Log</span><span class="wf-stage" id="wf-log-state"></span></button>
 <button type="button" data-workflow-step="design"><span class="wf-dot">2</span><span>Design</span><span class="wf-stage" id="wf-design-state"></span></button>
 <button type="button" data-workflow-step="sync"><span class="wf-dot">3</span><span>Sync</span><span class="wf-stage" id="wf-sync-state"></span></button>
@@ -4111,14 +4111,14 @@ function drawBetaGraphics(w,h,t=0){
  }
  const path=(color,alpha,fn)=>{ctx.strokeStyle=color;ctx.globalAlpha=opacity*alpha;ctx.beginPath();fn();ctx.stroke()};
  const segment=(x1,y1,x2,y2,c=p,alpha=.6)=>path(c,alpha,()=>{ctx.moveTo(x1*w,y1*h);ctx.lineTo(x2*w,y2*h)});
- const withLandscapePart=(part,dx,dy,angle,draw)=>{
+ const withLandscapePart=(part,dx,dy,angle,paint)=>{
   if($('hudpart'+part)?.checked===false)return;
   const locked=$('hudlocklayers')?.checked;
   ctx.save();ctx.translate(cx,cy);
-  ctx.rotate(-motionRoll*(locked?.12:angle));
-  ctx.translate(motionRoll*w*(locked?.022:dx),motionPitch*h*(locked?.029:dy));
+  ctx.rotate(-motionRoll*(locked?.029:angle));
+  ctx.translate(motionRoll*w*(locked?.007:dx),motionPitch*h*(locked?.012:dy));
   ctx.translate(-cx,-cy);
-  try{draw()}finally{ctx.restore()}
+  try{paint()}finally{ctx.restore()}
  };
  if(theme==='classic'){
   // White: precision optical centre, almost no decoration.
@@ -4139,7 +4139,7 @@ function drawBetaGraphics(w,h,t=0){
    path(color,alpha,()=>points.forEach(([x,y],i)=>i?ctx.lineTo(x*w,y*h):ctx.moveTo(x*w,y*h)));
    ctx.restore();
   };
-  withLandscapePart('frame',0.013,0.011,0.04,()=>{
+  withLandscapePart('frame',0.015,0.012,0.045,()=>{
   // Wide angled glass-visor outline, with luminous cyan nodes and broken side rails.
   for(const side of [-1,1]){
    const x=n=>.5+side*n;
@@ -4159,8 +4159,8 @@ function drawBetaGraphics(w,h,t=0){
     segment(x(.37),y,x(.37)-side*width,y,i%3===0?a:p,.4+.25*pulse);
    }
   }
-  withLandscapePart('accents',0.025,0.025,0.125,()=>{
   });
+  withLandscapePart('accents',0.027,0.028,0.13,()=>{
   // Large segmented dual counter-rotating scanner rings.
   for(let i=0;i<14;i++){
    const angle=i*Math.PI*2/14+phase*.25;
@@ -4180,8 +4180,8 @@ function drawBetaGraphics(w,h,t=0){
   }
   arc(R*.69,phase*1.1,phase*1.1+.72,a,.85*pulse,5);
   arc(R*1.025,-phase*1.5,-phase*1.5+.37,p,.9,4);
-  withLandscapePart('centre',0.032,0.046,0.2,()=>{
   });
+  withLandscapePart('centre',0.04,0.054,0.18,()=>{
   // Scanning ray and central holographic targeting reticle.
   const sweep=phase*1.25;
   path(a,.16,()=>{ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(sweep)*R*.79,cy+Math.sin(sweep)*R*.79)});
@@ -4192,8 +4192,8 @@ function drawBetaGraphics(w,h,t=0){
   }
   segment(.5,.46,.5,.482,p,.78);
   segment(.5,.518,.5,.54,p,.78);
-  withLandscapePart('grid',0.008,0.02,0.075,()=>{
   });
+  withLandscapePart('grid',0.01,0.023,0.075,()=>{
   // Bottom oscillating spectrum and moving scan stripe.
   for(let i=0;i<36;i++){
    const x=.25+i*.014;
@@ -4213,7 +4213,7 @@ function drawBetaGraphics(w,h,t=0){
   const phase=t*.55,beat=.78+.22*Math.sin(t*2.4),R=Math.min(w*.33,h*.60),gold=a;
   const arc=(radius,start,end,color=p,alpha=.65,width=2)=>{ctx.save();ctx.lineWidth=Math.max(1,u*width);path(color,alpha,()=>ctx.arc(cx,cy,radius,start,end));ctx.restore()};
   const strokePoly=(pts,color=p,alpha=.8,width=2)=>{ctx.save();ctx.lineWidth=Math.max(1,u*width);path(color,alpha,()=>{pts.forEach(([x,y],i)=>i?ctx.lineTo(x*w,y*h):ctx.moveTo(x*w,y*h))});ctx.restore()};
-  withLandscapePart('frame',0.013,0.011,0.04,()=>{
+  withLandscapePart('frame',0.015,0.012,0.045,()=>{
   // Top and bottom armour plating, intentionally broken into angled sections rather than a box.
   for(const side of [-1,1]){
    const flip=x=>.5+side*x;
@@ -4228,8 +4228,8 @@ function drawBetaGraphics(w,h,t=0){
     segment(x,.982,x+side*.012,.982,p,.45+.4*(i/6));
    }
   }
-  withLandscapePart('centre',0.032,0.046,0.2,()=>{
   });
+  withLandscapePart('centre',0.04,0.054,0.18,()=>{
   // Layered outer optical rings, filling the picture height.
   arc(R,Math.PI*.13,Math.PI*.87,p,.55,2);
   arc(R,Math.PI*1.13,Math.PI*1.87,p,.55,2);
@@ -4239,8 +4239,8 @@ function drawBetaGraphics(w,h,t=0){
    const a0=i*Math.PI*2/76,ri=R*(i%5===0?.89:.925),ro=R*(i%5===0?.985:.958);
    path(i%5===0?gold:p,i%5===0?.75:.3,()=>{ctx.moveTo(cx+Math.cos(a0)*ri,cy+Math.sin(a0)*ri);ctx.lineTo(cx+Math.cos(a0)*ro,cy+Math.sin(a0)*ro)});
   }
-  withLandscapePart('accents',0.025,0.025,0.125,()=>{
   });
+  withLandscapePart('accents',0.027,0.028,0.13,()=>{
   // Large animated light segments.
   for(let i=0;i<5;i++){
    const a0=i*Math.PI*2/5+phase*.38;
@@ -4251,8 +4251,8 @@ function drawBetaGraphics(w,h,t=0){
    arc(R*.72,a0,a0+.12,gold,.5,3);
   }
   arc(R*.99,phase*1.5,phase*1.5+.35,gold,.85,4);
-  withLandscapePart('centre',0.032,0.046,0.2,()=>{
   });
+  withLandscapePart('centre',0.04,0.054,0.18,()=>{
   // Radar target reticle and restrained scan sweep.
   arc(Math.max(9,u*24),0,Math.PI*2,gold,.85,1.6);
   segment(.5-.03,.5,.5-.009,.5,gold,.9);
@@ -4261,16 +4261,16 @@ function drawBetaGraphics(w,h,t=0){
   segment(.5,.5+.012,.5,.5+.045,gold,.9);
   const sweep=phase*1.5;
   path(gold,.2,()=>{ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(sweep)*R*.8,cy+Math.sin(sweep)*R*.8)});
-  withLandscapePart('grid',0.008,0.02,0.075,()=>{
   });
+  withLandscapePart('grid',0.01,0.023,0.075,()=>{
   // Glowing scrolling instrumentation on the bottom edge.
   for(let i=0;i<28;i++){
    const x=.28+i*.016;
    const amplitude=.008+.023*(.5+.5*Math.sin(i*.8+t*3));
    segment(x,.94,x,.94-amplitude,i%4===0?gold:p,.45);
   }
-  withLandscapePart('accents',0.025,0.025,0.125,()=>{
   });
+  withLandscapePart('accents',0.027,0.028,0.13,()=>{
   // Moving heading and altitude ticks at the outer edges.
   for(const side of [-1,1])for(let i=0;i<12;i++){
    const y=.25+i*.045;
@@ -4294,7 +4294,7 @@ function drawBetaGraphics(w,h,t=0){
    path(color,alpha,()=>points.forEach(([x,y],i)=>i?ctx.lineTo(x*w,y*h):ctx.moveTo(x*w,y*h)));
    ctx.restore();
   };
-  withLandscapePart('frame',0.013,0.011,0.04,()=>{
+  withLandscapePart('frame',0.015,0.012,0.045,()=>{
   // Angular crystal visor edges and separate glass-like floating panels.
   for(const side of [-1,1]){
    const x=n=>.5+side*n;
@@ -4313,8 +4313,8 @@ function drawBetaGraphics(w,h,t=0){
     segment(x(.36),y,x(.36)-side*(.015+.015*(.5+.5*Math.sin(t*1.5+i*.7))),y,a,.3+.28*pulse);
    }
   }
-  withLandscapePart('centre',0.032,0.046,0.2,()=>{
   });
+  withLandscapePart('centre',0.04,0.054,0.18,()=>{
   // Four large crescent lenses with gaps and subtle counter-rotation.
   for(let i=0;i<8;i++){
    const angle=i*Math.PI/4+phase*.18;
@@ -4326,8 +4326,8 @@ function drawBetaGraphics(w,h,t=0){
   }
   arc(R*.94,phase,phase+.32,a,.82*pulse,5);
   arc(R*.69,-phase*1.2,-phase*1.2+.45,p,.72,3);
-  withLandscapePart('accents',0.025,0.025,0.125,()=>{
   });
+  withLandscapePart('accents',0.027,0.028,0.13,()=>{
   // Tiny optical calibration facets around the circumference.
   for(let i=0;i<48;i++){
    const angle=i*Math.PI/24,inner=R*(i%4===0?.88:.91),outer=R*.96;
@@ -4336,8 +4336,8 @@ function drawBetaGraphics(w,h,t=0){
     ctx.lineTo(cx+Math.cos(angle)*outer,cy+Math.sin(angle)*outer);
    });
   }
-  withLandscapePart('centre',0.032,0.046,0.2,()=>{
   });
+  withLandscapePart('centre',0.04,0.054,0.18,()=>{
   // Floating diamond reticle and vertical scanning prism.
   const rr=Math.max(10,u*26);
   path(a,.8,()=>{ctx.moveTo(cx,cy-rr);ctx.lineTo(cx+rr,cy);ctx.lineTo(cx,cy+rr);ctx.lineTo(cx-rr,cy);ctx.closePath()});
@@ -4345,8 +4345,8 @@ function drawBetaGraphics(w,h,t=0){
    segment(.5+side*.027,.5,.5+side*.082,.5,p,.67);
    segment(.5+side*.10,.5,.5+side*.13,.5,a,.33);
   }
-  withLandscapePart('grid',0.008,0.02,0.075,()=>{
   });
+  withLandscapePart('grid',0.01,0.023,0.075,()=>{
   const scanY=cy-R+(t*.12%1)*R*2;
   segment(.5-R*.7/w,scanY/h,.5+R*.7/w,scanY/h,a,.14);
   for(let i=0;i<26;i++){
@@ -4526,8 +4526,7 @@ function drawBetaGraphics(w,h,t=0){
   // response, arc sway and tiny accent motion. Zero is completely static.
   ctx.save();
   const strength=motion?intensity:0,roll=motionRoll,pitch=motionPitch;
-  const unified=$('hudlocklayers')?.checked;
-  const yy=.48+(unified?0:pitch*.043),bank=unified?0:-roll*.12,phase=t*strength*.22;
+  const yy=.48+pitch*.043,bank=-roll*.12,phase=t*strength*.22;
   const cream='#fff2cc',rose='#ff6cae';
   const stroke=(points,c,alpha,width=1.5)=>{
    ctx.save();ctx.lineWidth=Math.max(1,u*width);
@@ -4538,7 +4537,7 @@ function drawBetaGraphics(w,h,t=0){
    ctx.save();ctx.lineWidth=Math.max(1,u*width);
    path(c,alpha,()=>ctx.ellipse(x*w,y*h,rx*w,ry*h,0,start,end));ctx.restore();
   };
-  withLandscapePart('frame',0.013,0.011,0.04,()=>{
+  withLandscapePart('frame',0.015,0.012,0.045,()=>{
   if(top){
    for(const side of [-1,1]){
     const x=.5+side*.445;
@@ -4548,11 +4547,11 @@ function drawBetaGraphics(w,h,t=0){
    stroke([[.335,.15],[.425,.14]],p,.25);
    stroke([[.575,.14],[.665,.15]],p,.25);
   }
-  withLandscapePart('centre',0.032,0.046,0.2,()=>{
   });
+  withLandscapePart('centre',0.04,0.054,0.18,()=>{
   if(centre){
    // Warm segmented sun arcs, deliberately airy over video footage.
-   const sunY=.405+(unified?0:pitch*.014);
+   const sunY=.405+pitch*.014;
    arc(.5,sunY,.12,.205,Math.PI*1.08,Math.PI*1.39,p,.39,2.4);
    arc(.5,sunY,.12,.205,Math.PI*1.61,Math.PI*1.92,a,.39,2.4);
    arc(.5,sunY,.095,.169,Math.PI*1.11,Math.PI*1.4,rose,.21,1.2);
@@ -4582,8 +4581,8 @@ function drawBetaGraphics(w,h,t=0){
    segment(.5,.464,.5,.479,p,.67);
    segment(.5,.521,.5,.536,p,.67);
   }
-  withLandscapePart('accents',0.025,0.025,0.125,()=>{
   });
+  withLandscapePart('accents',0.027,0.028,0.13,()=>{
   if(sides){
    // Only slender, free-floating accents: absolutely no IAS/ALT boxes.
    for(const side of [-1,1]){
@@ -4595,8 +4594,8 @@ function drawBetaGraphics(w,h,t=0){
     arc(.5+side*.435,.5,.03,.21,-Math.PI*.36,Math.PI*.36,p,.16,1);
    }
   }
-  withLandscapePart('grid',0.008,0.02,0.075,()=>{
   });
+  withLandscapePart('grid',0.01,0.023,0.075,()=>{
   if(bottom){
    // Two delicate, broken floating arcs, never a filled panel.
    arc(.5,.835,.30,.066,Math.PI*.08,Math.PI*.43,p,.34,1.7);
@@ -4614,15 +4613,14 @@ function drawBetaGraphics(w,h,t=0){
   const stick=getSample(tm);
   const roll=motion?clamp((stick[0]||0)/500,-1,1):0,pitch=motion?clamp((stick[1]||0)/500,-1,1):0;
   const ease=v=>Math.sign(v)*(.35*Math.abs(v)+.65*Math.abs(v)**3);
-  const unified=$('hudlocklayers')?.checked;
-  const bank=unified?0:-ease(roll)*(retro?.095:.065),lift=unified?0:ease(pitch)*(retro?.035:.026);
+  const bank=-ease(roll)*(retro?.095:.065),lift=ease(pitch)*(retro?.035:.026);
   const label=(str,x,y,size=12,color=p,alpha=.75,align='left')=>{
    ctx.save();ctx.globalAlpha=opacity*alpha;ctx.fillStyle=color;ctx.font='600 '+Math.max(10,u*size)+'px monospace';ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillText(str,x*w,y*h);ctx.restore();
   };
   // Keep full HUD artwork visible when stick widgets are moved.
   ctx.save();
   if(retro){
-  withLandscapePart('centre',0.032,0.046,0.2,()=>{
+  withLandscapePart('centre',0.04,0.054,0.18,()=>{
    // 80s synthwave: concentric solar disc, segmented sunset, sweeping neon grid.
    for(let j=5;j>=0;j--){
     const radius=r*(1.85+j*.105);
@@ -4632,8 +4630,8 @@ function drawBetaGraphics(w,h,t=0){
     const yy=.255+j*.028;
     segment(.385+j*.007,yy,.615-j*.007,yy,j%3===0?a:p,.14+j*.045);
    }
-  withLandscapePart('grid',0.008,0.02,0.075,()=>{
   });
+  withLandscapePart('grid',0.01,0.023,0.075,()=>{
    for(let j=0;j<=12;j++){
     const x=.08+j*.07;
     segment(.5,.62,x,.945,p,.12+j%2*.09);
@@ -4642,15 +4640,15 @@ function drawBetaGraphics(w,h,t=0){
     const y=.64+(j/7)**1.65*.29;
     segment(.07,y,.93,y,a,.14+j*.035);
    }
-  withLandscapePart('accents',0.025,0.025,0.125,()=>{
   });
+  withLandscapePart('accents',0.027,0.028,0.13,()=>{
    for(let j=0;j<15;j++){
     const x=.1+j*.057;
     const yy=.12+.013*Math.sin(phase+j*.65);
     segment(x,yy,x+.014,yy,a,.25);
    }
-  withLandscapePart('frame',0.013,0.011,0.04,()=>{
   });
+  withLandscapePart('frame',0.015,0.012,0.045,()=>{
    label('SUNSET // 84',.06,.075,13,p,.8);
    label('VECTOR FLIGHT',.94,.075,12,a,.75,'right');
   });
@@ -4672,7 +4670,7 @@ function drawBetaGraphics(w,h,t=0){
    label('HORIZON',.065,.095,12,p,.75);
    label('FLIGHT DATA',.935,.095,12,a,.75,'right');
   }
-  withLandscapePart('grid',0.008,0.02,0.075,()=>{
+  withLandscapePart('grid',0.01,0.023,0.075,()=>{
   // Both horizons bank and pitch with the quad; central aiming reticle stays fixed.
   ctx.save();ctx.translate(cx,cy);ctx.rotate(bank);ctx.translate(-cx,-cy);
   const hy=.5+lift;
@@ -4687,8 +4685,8 @@ function drawBetaGraphics(w,h,t=0){
    segment(.5+.025,y,.5+span,y,a,.28);
   }
   ctx.restore();
-  withLandscapePart('centre',0.032,0.046,0.2,()=>{
   });
+  withLandscapePart('centre',0.04,0.054,0.18,()=>{
   segment(.484,.5,.495,.5,a,.88);
   segment(.505,.5,.516,.5,a,.88);
   segment(.5,.48,.5,.491,a,.75);
@@ -4702,9 +4700,8 @@ function drawBetaGraphics(w,h,t=0){
   ctx.save();
   // HUD artwork may pass behind or across sticks; no rectangular exclusion mask.
 
-  const unified=$('hudlocklayers')?.checked;
-  const shiftX=unified?0:motionRoll*.017,shiftY=unified?0:motionPitch*.014,phase=t*.48;
-  withLandscapePart('frame',0.013,0.011,0.04,()=>{
+  const shiftX=motionRoll*.017,shiftY=motionPitch*.014,phase=t*.48;
+  withLandscapePart('frame',0.015,0.012,0.045,()=>{
   for(const side of [-1,1]){
    const x=v=>.5+side*v;
    path(side<0?p:a,.68,()=>{ctx.moveTo(x(.07)*w,.31*h);ctx.lineTo(x(.17)*w,.23*h);ctx.lineTo(x(.34)*w,.23*h)});
@@ -4720,10 +4717,10 @@ function drawBetaGraphics(w,h,t=0){
     segment(x(.23),y,x(.23+(.06-j*.009)),y,side<0?a:p,.28);
    }
   }
-  withLandscapePart('centre',0.032,0.046,0.2,()=>{
   });
+  withLandscapePart('centre',0.04,0.054,0.18,()=>{
   const tx=.5+shiftX,ty=.5+shiftY;
-  ctx.save();ctx.translate(tx*w,ty*h);ctx.rotate(unified?0:-motionRoll*.11);
+  ctx.save();ctx.translate(tx*w,ty*h);ctx.rotate(-motionRoll*.11);
   for(let k=0;k<3;k++){
    const radius=r*(.52+k*.29);
    path(k%2?a:p,.5-k*.08,()=>ctx.arc(0,0,radius,phase+k*.8,phase+k*.8+Math.PI*.62));
@@ -4737,8 +4734,8 @@ function drawBetaGraphics(w,h,t=0){
   segment(tx+.04,ty,tx+.11,ty,p,.65);
   segment(tx,ty-.085,tx,ty-.025,a,.65);
   segment(tx,ty+.025,tx,ty+.085,a,.65);
-  withLandscapePart('accents',0.025,0.025,0.125,()=>{
   });
+  withLandscapePart('accents',0.027,0.028,0.13,()=>{
   for(let i=0;i<15;i++){
    const x=.18+i*.046;
    const y=.09+(i%3)*.006;
