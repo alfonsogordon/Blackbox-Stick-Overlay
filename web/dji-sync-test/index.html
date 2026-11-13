@@ -145,7 +145,7 @@ body.studio-tour-open{overflow:hidden}
 <input id="customthemeimportfile" type="file" accept=".json,application/json" hidden>
 <div id="customthemestatus" class="small" aria-live="polite" style="margin-top:8px"></div>
 </details><label><input id="betagraphics" type="checkbox" style="width:auto;margin-right:8px"> Theme-specific HUD graphics</label><details class="element-custom"><summary>Customise theme colours</summary><div class="two"><div><label>Primary colour</label><input id="hudprimary" type="color" value="#ffffff"></div><div><label>Accent colour</label><input id="hudaccent" type="color" value="#d7e0e8"></div></div><label><input id="hudlinktelemetry" type="checkbox" checked style="width:auto;margin-right:8px"> Match telemetry headings and values to theme colours</label><label><input id="hudmotion" type="checkbox" checked style="width:auto;margin-right:8px"> Animate graphics from flight data</label><div class="small">Off keeps graphics stationary, including decorative animations.</div><label><input id="betaglow" type="checkbox" style="width:auto;margin-right:8px"> Soft neon glow</label>
-<div id="legacy-graphic-regions"><label>Show graphic regions</label><div class="two"><label><input id="hudtop" type="checkbox" checked style="width:auto"> Top</label><label><input id="hudcentre" type="checkbox" checked style="width:auto"> Centre</label><label><input id="hudsides" type="checkbox" checked style="width:auto"> Side instruments</label><label><input id="hudbottom" type="checkbox" checked style="width:auto"> Bottom</label></div><div class="small">Hide individual graphic regions without hiding your stick or telemetry elements.</div></div><div id="portrait-graphic-parts" hidden><label>Portrait graphic parts</label><div class="two"><label><input id="hudpartframe" type="checkbox" checked style="width:auto"> Frame / side rails</label><label><input id="hudpartcentre" type="checkbox" checked style="width:auto"> Central graphics</label><label><input id="hudpartgrid" type="checkbox" checked style="width:auto"> Horizon / lower graphics</label><label><input id="hudpartaccents" type="checkbox" checked style="width:auto"> Animated accents</label></div><div class="small">Independently show or hide artwork layers. Sticks and telemetry are unaffected.</div><label><input id="hudlocklayers" type="checkbox" style="width:auto;margin-right:8px"> Lock graphic movement together</label><div class="small">Use one shared movement for every visible artwork part instead of separate parallax responses. Turn off to restore independent movement.</div></div><label>Graphics opacity</label><input id="hudopacity" type="range" min="0" max="100" value="100"><button type="button" id="resettheme">Reset colours to theme</button></details><details class="element-custom"><summary>Graphics movement · source & strength</summary><label for="hudmotionsource">Quad movement source</label><select id="hudmotionsource"><option value="auto">Auto · IMU first, sticks as fallback</option><option value="imu">Recorded IMU / attitude only</option><option value="sticks">Estimate from stick movements</option><option value="off">No movement (keep decorative animations)</option></select>
+<div id="legacy-graphic-regions"><label>Show graphic regions</label><div class="two"><label><input id="hudtop" type="checkbox" checked style="width:auto"> Top</label><label><input id="hudcentre" type="checkbox" checked style="width:auto"> Centre</label><label><input id="hudsides" type="checkbox" checked style="width:auto"> Side instruments</label><label><input id="hudbottom" type="checkbox" checked style="width:auto"> Bottom</label></div><div class="small">Hide individual graphic regions without hiding your stick or telemetry elements.</div></div><div id="portrait-graphic-parts" hidden><label>Graphic parts · portrait & landscape</label><div class="two"><label><input id="hudpartframe" type="checkbox" checked style="width:auto"> Frame / side rails</label><label><input id="hudpartcentre" type="checkbox" checked style="width:auto"> Central graphics</label><label><input id="hudpartgrid" type="checkbox" checked style="width:auto"> Horizon / lower graphics</label><label><input id="hudpartaccents" type="checkbox" checked style="width:auto"> Animated accents</label></div><div class="small">Independently show or hide artwork layers. Sticks and telemetry are unaffected.</div><label><input id="hudlocklayers" type="checkbox" style="width:auto;margin-right:8px"> Lock graphic movement together</label><div class="small">Use one shared movement for every visible artwork part instead of separate parallax responses. Turn off to restore independent movement.</div></div><label>Graphics opacity</label><input id="hudopacity" type="range" min="0" max="100" value="100"><button type="button" id="resettheme">Reset colours to theme</button></details><details class="element-custom"><summary>Graphics movement · source & strength</summary><label for="hudmotionsource">Quad movement source</label><select id="hudmotionsource"><option value="auto">Auto · IMU first, sticks as fallback</option><option value="imu">Recorded IMU / attitude only</option><option value="sticks">Estimate from stick movements</option><option value="off">No movement (keep decorative animations)</option></select>
 <label for="hudattitudesmoothing">Recorded attitude smoothing</label><select id="hudattitudesmoothing"><option value="0">Off (raw attitude)</option><option value="20">Light · 20 ms</option><option value="40" selected>Medium · 40 ms (recommended)</option><option value="70">Strong · 70 ms</option><option value="110">Maximum · 110 ms</option></select><div class="small">Smooths only the moving HUD graphics when recorded IMU attitude is used; stick pointers remain unchanged. Live preview and exports use identical motion.</div><label for="hudsticksmoothing">Stick-based movement smoothing <output id="hudsticksmoothingvalue" for="hudsticksmoothing">65%</output></label><input id="hudsticksmoothing" type="range" min="0" max="100" step="5" value="65"><div class="small">Smooths estimated HUD motion only; the stick pointers and recorded IMU attitude stay responsive.</div><label><input id="hudmoveelements" type="checkbox" style="width:auto;margin-right:8px"> Move overlay elements with graphics</label><div class="small">Apply the same roll/pitch parallax to sticks, telemetry and the quad visualiser. Uncheck to keep them fixed.</div><label for="hudmotionstrength">Movement strength <output id="hudmotionstrengthvalue" for="hudmotionstrength">100%</output></label><input id="hudmotionstrength" type="range" min="0" max="200" step="5" value="100">
 <div class="small" id="hudmotionsourcestatus">Auto uses recorded attitude when available. Stick motion is an approximation, not a flight-attitude measurement.</div></details><label>Visor curvature</label><input id="betacurve" type="range" min="0" max="80" value="0"><div class="small">Centre-inward visor bow; zero disables curvature.</div><label>Perspective depth</label><input id="betaperspective" type="range" min="0" max="80" value="0"><div class="small">Perspective compression at the centre of the visor, rather than at its edges.</div><div class="small">Themes, graphics and curvature are independent; turn off individual effects as needed.</div></div></details><details class="advanced"><summary>Layout grid &amp; snapping</summary><label><input type="checkbox" id="snapgrid" checked style="width:auto;margin-right:8px"> Snap elements to grid</label><label>Grid spacing</label><select id="gridspacing"><option value="8">8 divisions (coarse)</option><option value="16">16 divisions</option><option value="24">24 divisions</option><option value="32" selected>32 divisions (fine)</option><option value="48">48 divisions</option><option value="64">64 divisions</option><option value="96">96 divisions</option><option value="128">128 divisions (ultra fine)</option></select><label><input type="checkbox" id="showguides" style="width:auto;margin-right:8px"> Show preview alignment guides &amp; rulers</label><label><input type="checkbox" id="mirrorsticks" style="width:auto;margin-right:8px"> Keep stick positions symmetrical</label><div class="small" style="margin-top:8px">The grid snaps to the exact centre on both axes. Optional rulers, centre lines and guides appear only in the preview, never in PNG or video exports.</div></details><details class="advanced"><summary>Quad attitude visualiser</summary><label><input id="quadshow" type="checkbox" style="width:auto;margin-right:8px"> Show quad model</label><label>Quad model</label><select id="quadmodel"><option value="freestyle">5-inch freestyle X</option><option value="simple">Simple schematic</option></select><label>Quad size</label><input id="quadscale" type="range" min="30" max="250" value="75"><div class="two"><div><label>Arm colour</label><input id="quadarm" type="color" value="#eaf7ff"></div><div><label>Front motors</label><input id="quadfront" type="color" value="#73e1da"></div><div><label>Rear motors</label><input id="quadrear" type="color" value="#ffb469"></div><div><label>Body colour</label><input id="quadbody" type="color" value="#dbe8f8"></div></div><label>Quad opacity</label><input id="quadopacity" type="range" min="10" max="100" value="100"><label>Line thickness</label><input id="quadline" type="range" min="30" max="250" value="100"><label><input id="quadmotors" type="checkbox" checked style="width:auto"> Show motor discs</label><label><input id="quadnose" type="checkbox" checked style="width:auto"> Show front direction</label><div class="small">Drag to reposition. Uses Betaflight Blackbox Explorer computed heading fields (radians) when available. Otherwise shows an illustrative animation; GPS altitude is unrelated.</div></details><details class="advanced"><summary>Stick overlay layout</summary><div class="small">Move the whole stick overlays by dragging them in the preview; use the resize handles to change the overlay size. The sliders below change only the moving pointers.</div><details class="element-custom"><summary>Customise stick colours &amp; opacity</summary><div class="two"><div><label>Left stick colour</label><input id="stickquickleft" type="color" value="#ffffff"></div><div><label>Right stick colour</label><input id="stickquickright" type="color" value="#ffffff"></div></div><label>Overall overlay opacity (quick control)</label><input id="stickquickopacity" type="range" min="10" max="100" value="68"></details><label style="display:flex;gap:8px;align-items:center;margin:10px 0"><input id="linksticksizes" type="checkbox" checked style="width:auto;margin:0"> Resize both pointers together</label><div class="two"><div><label><input id="leftstickshow" type="checkbox" checked style="width:auto"> Show left stick</label><label>Left pointer size</label><input id="leftstickscale" type="range" min="20" max="250" value="100"></div><div><label><input id="rightstickshow" type="checkbox" checked style="width:auto"> Show right stick</label><label>Right pointer size</label><input id="rightstickscale" type="range" min="20" max="250" value="100"></div></div></details><details class="advanced"><summary>Advanced appearance &amp; effects</summary><div class="sectiontitle">Appearance</div><div><label>Overlay opacity</label><input id="opacity" type="range" min="0" max="100" value="100"></div><div class="two"><div><label>Left stick dot</label><input id="leftcolor" type="color" value="#55e9dc"></div><div><label>Right stick dot</label><input id="rightcolor" type="color" value="#bba1ff"></div></div><div class="two"><div><label>Stick background colour</label><input id="stickbg" type="color" value="#000000"></div><div><label>Stick background opacity</label><input id="stickbgopacity" type="range" min="0" max="100" value="50"></div></div><div class="two"><div><label>Pointer shape</label><select id="pointershape"><option value="circle">Circle</option><option value="ring">Ring</option><option value="diamond">Diamond</option><option value="square">Square</option><option value="cross">Crosshair</option><option value="triangle">Triangle</option><option value="star">Star</option><option value="hexagon">Hexagon</option><option value="plus">Plus</option><option value="target">Target</option><option value="sq">SQ</option><option value="custom">Custom image</option></select></div><div><label>Overall pointer size (both sides)</label><input id="pointersize" type="range" min="40" max="200" value="100"></div></div><div class="sectiontitle">Axis direction</div><div class="small">Reverse any axis independently if your log or radio shows it backwards. Applies to preview, trails and exports.</div><div class="two"><div><label><input type="checkbox" id="reverseyaw" style="width:auto;margin-right:8px">Reverse yaw</label></div><div><label><input type="checkbox" id="reversethrottle" style="width:auto;margin-right:8px">Reverse throttle</label></div></div><div class="two"><div><label><input type="checkbox" id="reverseroll" style="width:auto;margin-right:8px">Reverse roll</label></div><div><label><input type="checkbox" id="reversepitch" style="width:auto;margin-right:8px">Reverse pitch</label></div></div><div class="sectiontitle">Movement trails</div><div class="two"><div><label>Pointer trails</label><select id="trailstyle"><option value="off">Off</option><option value="light">Light trail</option><option value="cursor">Cursor echo</option><option value="line">Motion line</option><option value="dotted">Dotted path</option><option value="comet">Comet glow</option><option value="spark">Sparkle path</option><option value="custom">Custom image stamps</option></select></div><div><label>Trail duration</label><input id="traillength" type="range" min="10" max="200" value="65"></div></div><div class="two"><div><label>Trail colour</label><input id="trailcolor" type="color" value="#66eaff"></div><div><label>Trail opacity</label><input id="trailopacity" type="range" min="0" max="100" value="65"></div></div><div class="two"><div><label>Trail samples per second</label><select id="trailsampling"><option value="20">20 (fast)</option><option value="40" selected>40 (balanced)</option><option value="60">60 (smooth)</option><option value="90">90 (fine)</option><option value="120">120 (ultra)</option></select></div><div><label>Trail thickness</label><input id="trailwidth" type="range" min="20" max="250" value="100"></div></div><div class="sectiontitle">Outline &amp; guides</div><div class="two"><div><label>Outline colour</label><input id="outlinecolor" type="color" value="#c3e0fc"></div><div><label>Outline opacity</label><input id="outlineopacity" type="range" min="0" max="100" value="53"></div></div><div class="two"><div><label>Outline shape</label><select id="outlineshape"><option value="rounded">Rounded square</option><option value="square">Square</option><option value="circle">Circle</option><option value="hexagon">Hexagon</option><option value="custom">Custom image</option></select></div><div><label>Outline thickness</label><input id="outlinewidth" type="range" min="20" max="300" value="100"></div></div><div class="two"><div><label>Cross colour</label><input id="crosscolor" type="color" value="#b9d1eb"></div><div><label>Cross opacity</label><input id="crossopacity" type="range" min="0" max="100" value="22"></div></div><div class="two"><div><label>Cross style</label><select id="crossstyle"><option value="dashed">Dashed</option><option value="solid">Solid</option><option value="dotted">Dotted</option><option value="off">Off</option><option value="custom">Custom image</option></select></div><div><label>Cross thickness</label><input id="crosswidth" type="range" min="20" max="300" value="100"></div></div><div class="sectiontitle">Custom artwork <button type="button" id="arthelp" class="helpbutton" aria-label="Custom image requirements" aria-expanded="false" aria-controls="arthelptext" title="Image requirements">?</button></div><div id="arthelptext" class="helppanel" hidden><strong>Custom image requirements</strong><p><b>Formats:</b> PNG or WebP recommended (transparent background). JPEG and SVG also accepted by the uploader.</p><p><b>Recommended size:</b> 256 × 256 px for pointer and trail stamps; 512 × 512 px for stick backgrounds and crosshairs. Square (1:1) images work best.</p><p><b>Maximum file size:</b> 5 MB per image. There is no fixed pixel-resolution requirement; artwork scales to fit.</p><p>Transparent images are best for overlays. Large images may slow rendering, especially with high-density trails. Images stay in your browser.</p><p><b>Privacy:</b> Uploaded artwork is decoded and used in your current browser session only. It is not sent to our server, saved to an account, or added to the GitHub repository. Refreshing or closing the page clears the uploaded artwork; you will need to select it again.</p></div><div class="two"><div><label>Pointer artwork</label><input id="pointerimage" type="file" accept="image/png,image/webp,image/svg+xml,image/jpeg"></div><div><label>Trail stamp artwork</label><input id="trailimage" type="file" accept="image/png,image/webp,image/svg+xml,image/jpeg"></div></div><div class="two"><div><label>Stick background artwork</label><input id="backgroundimage" type="file" accept="image/png,image/webp,image/svg+xml,image/jpeg"></div><div><label>Crosshair artwork</label><input id="crossimage" type="file" accept="image/png,image/webp,image/svg+xml,image/jpeg"></div></div><div class="small">Artwork is drawn locally. Choose Custom image in the matching shape/style dropdown for pointer, trails or crosshair. Background artwork overlays the selected background colour.</div><div class="note"><strong>Image privacy:</strong> Your custom images are processed only in this browser session. They are not uploaded to a server, stored in an account, or retained by this website. Refreshing or closing the page clears them.</div><div class="sectiontitle">Transitions</div><div class="two"><div><label>Fade-in (seconds) · no extra time</label><input id="fadein" type="number" min="0" max="10" step=".1" value="0"></div><div><label>Fade-out (seconds) · no extra time</label><input id="fadeout" type="number" min="0" max="10" step=".1" value="0"></div></div><div class="small" style="margin-top:9px"><strong>Fades do not change video length.</strong> They adjust transparency within the existing exported timeline: fade-in starts at the beginning of the export, and fade-out ends at the end. If you want the sticks to fade in before flight movement starts, set lead-in at least as long as fade-in (likewise for lead-out/fade-out).</div></details><details class="advanced" id="customimagepanel"><summary>Custom image overlay</summary><label>Image file (PNG, JPG, WebP)</label><input id="customimagefile" type="file" accept="image/png,image/jpeg,image/webp,image/avif"><label><input id="customimagevisible" type="checkbox" checked style="width:auto"> Show image in overlay and export</label><div class="two"><div><label>Horizontal position (%)</label><input id="customimagex" type="number" min="0" max="100" value="50"></div><div><label>Vertical position (%)</label><input id="customimagey" type="number" min="0" max="100" value="50"></div></div><div class="two"><div><label>Width (% of canvas)</label><input id="customimagewidth" type="number" min="1" max="100" value="20"></div><div><label>Opacity (%)</label><input id="customimageopacity" type="range" min="0" max="100" value="100"></div></div><button id="customimageclear" type="button">Remove image</button><div class="small">Image is centred at its position and included in PNG and video exports. Uploaded images remain local to this browser session.</div></details><details class="advanced"><summary>Display Other Log Info</summary><div class="small">Choose telemetry values found in the CSV, customise each colour and size, and drag enabled values around the preview. Fields depend on the log and enabled sensors. Drag enabled readouts directly on the preview. BBL and CSV fields are detected automatically.</div><input id="telemetrysearch" type="search" placeholder="Search available log fields..." style="margin-top:12px"><div id="telemetryfields" style="margin-top:12px;max-height:340px;overflow:auto" class="small">Import a CSV to browse its logged fields.</div></details><details class="advanced"><summary>Betaflight Log Settings</summary>
 <label for="bfmode">Logging profile</label><select id="bfmode"><option value="sticks">Sticks only (smallest logs)</option><option value="gps">Sticks + GPS (speed, position, altitude)</option><option value="full">Full overlay telemetry (GPS + attitude)</option></select>
@@ -4093,15 +4093,17 @@ function drawBetaGraphics(w,h,t=0){
  ctx.lineWidth=u;ctx.lineCap='round';ctx.lineJoin='round';
  // Region switches affect only the themed artwork, not actual telemetry/sticks.
  const top=$('hudtop').checked,centre=$('hudcentre').checked,sides=$('hudsides').checked,bottom=$('hudbottom').checked;
+ if(theme==='green'){
  ctx.beginPath();
  if(top)ctx.rect(0,0,w,h*.26);
  if(centre)ctx.rect(w*.25,h*.26,w*.5,h*.47);
  if(sides){ctx.rect(0,h*.26,w*.25,h*.47);ctx.rect(w*.75,h*.26,w*.25,h*.47)}
  if(bottom)ctx.rect(0,h*.73,w,h*.27);
  ctx.clip();
+ }
  // A single, consistent quad-responsive transform for all visual themes.
  // Graphics only: sticks and actual telemetry keep their original positions.
- if(motion&&theme!=='green'&&(motionRoll||motionPitch)){
+ if(motion&&theme!=='green'&&!['cyan','amber','ice','violet','sunset','sunsetcinema'].includes(theme)&&(motionRoll||motionPitch)){
   ctx.translate(cx,cy);
   ctx.rotate(-motionRoll*.029);
   ctx.translate(motionRoll*w*.007,motionPitch*h*.012);
@@ -4109,6 +4111,15 @@ function drawBetaGraphics(w,h,t=0){
  }
  const path=(color,alpha,fn)=>{ctx.strokeStyle=color;ctx.globalAlpha=opacity*alpha;ctx.beginPath();fn();ctx.stroke()};
  const segment=(x1,y1,x2,y2,c=p,alpha=.6)=>path(c,alpha,()=>{ctx.moveTo(x1*w,y1*h);ctx.lineTo(x2*w,y2*h)});
+ const withLandscapePart=(part,dx,dy,angle,draw)=>{
+  if($('hudpart'+part)?.checked===false)return;
+  const locked=$('hudlocklayers')?.checked;
+  ctx.save();ctx.translate(cx,cy);
+  ctx.rotate(-motionRoll*(locked?.12:angle));
+  ctx.translate(motionRoll*w*(locked?.022:dx),motionPitch*h*(locked?.029:dy));
+  ctx.translate(-cx,-cy);
+  try{draw()}finally{ctx.restore()}
+ };
  if(theme==='classic'){
   // White: precision optical centre, almost no decoration.
   for(const side of [-1,1]){segment(.5+side*.025,.5,.5+side*.062,.5);segment(.5+side*.14,.48,.5+side*.14,.52,a,.35)}
@@ -4128,6 +4139,7 @@ function drawBetaGraphics(w,h,t=0){
    path(color,alpha,()=>points.forEach(([x,y],i)=>i?ctx.lineTo(x*w,y*h):ctx.moveTo(x*w,y*h)));
    ctx.restore();
   };
+  withLandscapePart('frame',0.013,0.011,0.04,()=>{
   // Wide angled glass-visor outline, with luminous cyan nodes and broken side rails.
   for(const side of [-1,1]){
    const x=n=>.5+side*n;
@@ -4147,6 +4159,8 @@ function drawBetaGraphics(w,h,t=0){
     segment(x(.37),y,x(.37)-side*width,y,i%3===0?a:p,.4+.25*pulse);
    }
   }
+  withLandscapePart('accents',0.025,0.025,0.125,()=>{
+  });
   // Large segmented dual counter-rotating scanner rings.
   for(let i=0;i<14;i++){
    const angle=i*Math.PI*2/14+phase*.25;
@@ -4166,6 +4180,8 @@ function drawBetaGraphics(w,h,t=0){
   }
   arc(R*.69,phase*1.1,phase*1.1+.72,a,.85*pulse,5);
   arc(R*1.025,-phase*1.5,-phase*1.5+.37,p,.9,4);
+  withLandscapePart('centre',0.032,0.046,0.2,()=>{
+  });
   // Scanning ray and central holographic targeting reticle.
   const sweep=phase*1.25;
   path(a,.16,()=>{ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(sweep)*R*.79,cy+Math.sin(sweep)*R*.79)});
@@ -4176,6 +4192,8 @@ function drawBetaGraphics(w,h,t=0){
   }
   segment(.5,.46,.5,.482,p,.78);
   segment(.5,.518,.5,.54,p,.78);
+  withLandscapePart('grid',0.008,0.02,0.075,()=>{
+  });
   // Bottom oscillating spectrum and moving scan stripe.
   for(let i=0;i<36;i++){
    const x=.25+i*.014;
@@ -4184,6 +4202,7 @@ function drawBetaGraphics(w,h,t=0){
   }
   const scanY=cy-R+(t*.15%1)*R*2;
   segment(.5-R*.75/w,scanY/h,.5+R*.75/w,scanY/h,a,.12);
+  });
   ctx.restore();
  }else if(theme==='amber'){
   // Protect stick controls from decorative rings and framing.
@@ -4194,6 +4213,7 @@ function drawBetaGraphics(w,h,t=0){
   const phase=t*.55,beat=.78+.22*Math.sin(t*2.4),R=Math.min(w*.33,h*.60),gold=a;
   const arc=(radius,start,end,color=p,alpha=.65,width=2)=>{ctx.save();ctx.lineWidth=Math.max(1,u*width);path(color,alpha,()=>ctx.arc(cx,cy,radius,start,end));ctx.restore()};
   const strokePoly=(pts,color=p,alpha=.8,width=2)=>{ctx.save();ctx.lineWidth=Math.max(1,u*width);path(color,alpha,()=>{pts.forEach(([x,y],i)=>i?ctx.lineTo(x*w,y*h):ctx.moveTo(x*w,y*h))});ctx.restore()};
+  withLandscapePart('frame',0.013,0.011,0.04,()=>{
   // Top and bottom armour plating, intentionally broken into angled sections rather than a box.
   for(const side of [-1,1]){
    const flip=x=>.5+side*x;
@@ -4208,6 +4228,8 @@ function drawBetaGraphics(w,h,t=0){
     segment(x,.982,x+side*.012,.982,p,.45+.4*(i/6));
    }
   }
+  withLandscapePart('centre',0.032,0.046,0.2,()=>{
+  });
   // Layered outer optical rings, filling the picture height.
   arc(R,Math.PI*.13,Math.PI*.87,p,.55,2);
   arc(R,Math.PI*1.13,Math.PI*1.87,p,.55,2);
@@ -4217,6 +4239,8 @@ function drawBetaGraphics(w,h,t=0){
    const a0=i*Math.PI*2/76,ri=R*(i%5===0?.89:.925),ro=R*(i%5===0?.985:.958);
    path(i%5===0?gold:p,i%5===0?.75:.3,()=>{ctx.moveTo(cx+Math.cos(a0)*ri,cy+Math.sin(a0)*ri);ctx.lineTo(cx+Math.cos(a0)*ro,cy+Math.sin(a0)*ro)});
   }
+  withLandscapePart('accents',0.025,0.025,0.125,()=>{
+  });
   // Large animated light segments.
   for(let i=0;i<5;i++){
    const a0=i*Math.PI*2/5+phase*.38;
@@ -4227,6 +4251,8 @@ function drawBetaGraphics(w,h,t=0){
    arc(R*.72,a0,a0+.12,gold,.5,3);
   }
   arc(R*.99,phase*1.5,phase*1.5+.35,gold,.85,4);
+  withLandscapePart('centre',0.032,0.046,0.2,()=>{
+  });
   // Radar target reticle and restrained scan sweep.
   arc(Math.max(9,u*24),0,Math.PI*2,gold,.85,1.6);
   segment(.5-.03,.5,.5-.009,.5,gold,.9);
@@ -4235,18 +4261,23 @@ function drawBetaGraphics(w,h,t=0){
   segment(.5,.5+.012,.5,.5+.045,gold,.9);
   const sweep=phase*1.5;
   path(gold,.2,()=>{ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(sweep)*R*.8,cy+Math.sin(sweep)*R*.8)});
+  withLandscapePart('grid',0.008,0.02,0.075,()=>{
+  });
   // Glowing scrolling instrumentation on the bottom edge.
   for(let i=0;i<28;i++){
    const x=.28+i*.016;
    const amplitude=.008+.023*(.5+.5*Math.sin(i*.8+t*3));
    segment(x,.94,x,.94-amplitude,i%4===0?gold:p,.45);
   }
+  withLandscapePart('accents',0.025,0.025,0.125,()=>{
+  });
   // Moving heading and altitude ticks at the outer edges.
   for(const side of [-1,1])for(let i=0;i<12;i++){
    const y=.25+i*.045;
    const x=.5+side*.45;
    segment(x,y,x-side*(i%3===0?.026:.012),y,i%3===0?gold:p,i%3===0?.65:.35);
   }
+  });
   ctx.restore();
  }else if(theme==='ice'){
   // Ice hologram: floating glass panels, refractive arc segments and crystalline scanner.
@@ -4263,6 +4294,7 @@ function drawBetaGraphics(w,h,t=0){
    path(color,alpha,()=>points.forEach(([x,y],i)=>i?ctx.lineTo(x*w,y*h):ctx.moveTo(x*w,y*h)));
    ctx.restore();
   };
+  withLandscapePart('frame',0.013,0.011,0.04,()=>{
   // Angular crystal visor edges and separate glass-like floating panels.
   for(const side of [-1,1]){
    const x=n=>.5+side*n;
@@ -4281,6 +4313,8 @@ function drawBetaGraphics(w,h,t=0){
     segment(x(.36),y,x(.36)-side*(.015+.015*(.5+.5*Math.sin(t*1.5+i*.7))),y,a,.3+.28*pulse);
    }
   }
+  withLandscapePart('centre',0.032,0.046,0.2,()=>{
+  });
   // Four large crescent lenses with gaps and subtle counter-rotation.
   for(let i=0;i<8;i++){
    const angle=i*Math.PI/4+phase*.18;
@@ -4292,6 +4326,8 @@ function drawBetaGraphics(w,h,t=0){
   }
   arc(R*.94,phase,phase+.32,a,.82*pulse,5);
   arc(R*.69,-phase*1.2,-phase*1.2+.45,p,.72,3);
+  withLandscapePart('accents',0.025,0.025,0.125,()=>{
+  });
   // Tiny optical calibration facets around the circumference.
   for(let i=0;i<48;i++){
    const angle=i*Math.PI/24,inner=R*(i%4===0?.88:.91),outer=R*.96;
@@ -4300,6 +4336,8 @@ function drawBetaGraphics(w,h,t=0){
     ctx.lineTo(cx+Math.cos(angle)*outer,cy+Math.sin(angle)*outer);
    });
   }
+  withLandscapePart('centre',0.032,0.046,0.2,()=>{
+  });
   // Floating diamond reticle and vertical scanning prism.
   const rr=Math.max(10,u*26);
   path(a,.8,()=>{ctx.moveTo(cx,cy-rr);ctx.lineTo(cx+rr,cy);ctx.lineTo(cx,cy+rr);ctx.lineTo(cx-rr,cy);ctx.closePath()});
@@ -4307,12 +4345,15 @@ function drawBetaGraphics(w,h,t=0){
    segment(.5+side*.027,.5,.5+side*.082,.5,p,.67);
    segment(.5+side*.10,.5,.5+side*.13,.5,a,.33);
   }
+  withLandscapePart('grid',0.008,0.02,0.075,()=>{
+  });
   const scanY=cy-R+(t*.12%1)*R*2;
   segment(.5-R*.7/w,scanY/h,.5+R*.7/w,scanY/h,a,.14);
   for(let i=0;i<26;i++){
    const x=.3+i*.016,amp=.008+.018*(.5+.5*Math.sin(t*2+i*.64));
    segment(x,.942,x,.942-amp,i%4===0?a:p,.32);
   }
+  });
   ctx.restore();
  }else if(theme==='green'){
   // F-16-style combiner HUD. The speed/altitude tapes, readout boxes, and
@@ -4485,7 +4526,8 @@ function drawBetaGraphics(w,h,t=0){
   // response, arc sway and tiny accent motion. Zero is completely static.
   ctx.save();
   const strength=motion?intensity:0,roll=motionRoll,pitch=motionPitch;
-  const yy=.48+pitch*.043,bank=-roll*.12,phase=t*strength*.22;
+  const unified=$('hudlocklayers')?.checked;
+  const yy=.48+(unified?0:pitch*.043),bank=unified?0:-roll*.12,phase=t*strength*.22;
   const cream='#fff2cc',rose='#ff6cae';
   const stroke=(points,c,alpha,width=1.5)=>{
    ctx.save();ctx.lineWidth=Math.max(1,u*width);
@@ -4496,6 +4538,7 @@ function drawBetaGraphics(w,h,t=0){
    ctx.save();ctx.lineWidth=Math.max(1,u*width);
    path(c,alpha,()=>ctx.ellipse(x*w,y*h,rx*w,ry*h,0,start,end));ctx.restore();
   };
+  withLandscapePart('frame',0.013,0.011,0.04,()=>{
   if(top){
    for(const side of [-1,1]){
     const x=.5+side*.445;
@@ -4505,9 +4548,11 @@ function drawBetaGraphics(w,h,t=0){
    stroke([[.335,.15],[.425,.14]],p,.25);
    stroke([[.575,.14],[.665,.15]],p,.25);
   }
+  withLandscapePart('centre',0.032,0.046,0.2,()=>{
+  });
   if(centre){
    // Warm segmented sun arcs, deliberately airy over video footage.
-   const sunY=.405+pitch*.014;
+   const sunY=.405+(unified?0:pitch*.014);
    arc(.5,sunY,.12,.205,Math.PI*1.08,Math.PI*1.39,p,.39,2.4);
    arc(.5,sunY,.12,.205,Math.PI*1.61,Math.PI*1.92,a,.39,2.4);
    arc(.5,sunY,.095,.169,Math.PI*1.11,Math.PI*1.4,rose,.21,1.2);
@@ -4537,6 +4582,8 @@ function drawBetaGraphics(w,h,t=0){
    segment(.5,.464,.5,.479,p,.67);
    segment(.5,.521,.5,.536,p,.67);
   }
+  withLandscapePart('accents',0.025,0.025,0.125,()=>{
+  });
   if(sides){
    // Only slender, free-floating accents: absolutely no IAS/ALT boxes.
    for(const side of [-1,1]){
@@ -4548,6 +4595,8 @@ function drawBetaGraphics(w,h,t=0){
     arc(.5+side*.435,.5,.03,.21,-Math.PI*.36,Math.PI*.36,p,.16,1);
    }
   }
+  withLandscapePart('grid',0.008,0.02,0.075,()=>{
+  });
   if(bottom){
    // Two delicate, broken floating arcs, never a filled panel.
    arc(.5,.835,.30,.066,Math.PI*.08,Math.PI*.43,p,.34,1.7);
@@ -4557,6 +4606,7 @@ function drawBetaGraphics(w,h,t=0){
     segment(.5+side*.32,.83,.5+side*.34,.828,rose,.33);
    }
   }
+  });
   ctx.restore();
  }else if(theme==='sunset'){
   const retro=true,phase=t*.26;
@@ -4564,13 +4614,15 @@ function drawBetaGraphics(w,h,t=0){
   const stick=getSample(tm);
   const roll=motion?clamp((stick[0]||0)/500,-1,1):0,pitch=motion?clamp((stick[1]||0)/500,-1,1):0;
   const ease=v=>Math.sign(v)*(.35*Math.abs(v)+.65*Math.abs(v)**3);
-  const bank=-ease(roll)*(retro?.095:.065),lift=ease(pitch)*(retro?.035:.026);
+  const unified=$('hudlocklayers')?.checked;
+  const bank=unified?0:-ease(roll)*(retro?.095:.065),lift=unified?0:ease(pitch)*(retro?.035:.026);
   const label=(str,x,y,size=12,color=p,alpha=.75,align='left')=>{
    ctx.save();ctx.globalAlpha=opacity*alpha;ctx.fillStyle=color;ctx.font='600 '+Math.max(10,u*size)+'px monospace';ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillText(str,x*w,y*h);ctx.restore();
   };
   // Keep full HUD artwork visible when stick widgets are moved.
   ctx.save();
   if(retro){
+  withLandscapePart('centre',0.032,0.046,0.2,()=>{
    // 80s synthwave: concentric solar disc, segmented sunset, sweeping neon grid.
    for(let j=5;j>=0;j--){
     const radius=r*(1.85+j*.105);
@@ -4580,6 +4632,8 @@ function drawBetaGraphics(w,h,t=0){
     const yy=.255+j*.028;
     segment(.385+j*.007,yy,.615-j*.007,yy,j%3===0?a:p,.14+j*.045);
    }
+  withLandscapePart('grid',0.008,0.02,0.075,()=>{
+  });
    for(let j=0;j<=12;j++){
     const x=.08+j*.07;
     segment(.5,.62,x,.945,p,.12+j%2*.09);
@@ -4588,13 +4642,18 @@ function drawBetaGraphics(w,h,t=0){
     const y=.64+(j/7)**1.65*.29;
     segment(.07,y,.93,y,a,.14+j*.035);
    }
+  withLandscapePart('accents',0.025,0.025,0.125,()=>{
+  });
    for(let j=0;j<15;j++){
     const x=.1+j*.057;
     const yy=.12+.013*Math.sin(phase+j*.65);
     segment(x,yy,x+.014,yy,a,.25);
    }
+  withLandscapePart('frame',0.013,0.011,0.04,()=>{
+  });
    label('SUNSET // 84',.06,.075,13,p,.8);
    label('VECTOR FLIGHT',.94,.075,12,a,.75,'right');
+  });
   }else{
    // Cinematic: restrained horizon sweeps, warm optical edge brackets and fine guides.
    path(p,.33,()=>ctx.ellipse(cx,cy*.96,r*2.25,r*.72,0,Math.PI*.12,Math.PI*.88));
@@ -4613,6 +4672,7 @@ function drawBetaGraphics(w,h,t=0){
    label('HORIZON',.065,.095,12,p,.75);
    label('FLIGHT DATA',.935,.095,12,a,.75,'right');
   }
+  withLandscapePart('grid',0.008,0.02,0.075,()=>{
   // Both horizons bank and pitch with the quad; central aiming reticle stays fixed.
   ctx.save();ctx.translate(cx,cy);ctx.rotate(bank);ctx.translate(-cx,-cy);
   const hy=.5+lift;
@@ -4627,10 +4687,13 @@ function drawBetaGraphics(w,h,t=0){
    segment(.5+.025,y,.5+span,y,a,.28);
   }
   ctx.restore();
+  withLandscapePart('centre',0.032,0.046,0.2,()=>{
+  });
   segment(.484,.5,.495,.5,a,.88);
   segment(.505,.5,.516,.5,a,.88);
   segment(.5,.48,.5,.491,a,.75);
   segment(.5,.509,.5,.52,a,.75);
+  });
   // Synthwave keeps the solar horizon and grid unobstructed; no boxed speed/altitude rails.
   ctx.restore();
  }else if(theme==='violet'){
@@ -4639,7 +4702,9 @@ function drawBetaGraphics(w,h,t=0){
   ctx.save();
   // HUD artwork may pass behind or across sticks; no rectangular exclusion mask.
 
-  const shiftX=motionRoll*.017,shiftY=motionPitch*.014,phase=t*.48;
+  const unified=$('hudlocklayers')?.checked;
+  const shiftX=unified?0:motionRoll*.017,shiftY=unified?0:motionPitch*.014,phase=t*.48;
+  withLandscapePart('frame',0.013,0.011,0.04,()=>{
   for(const side of [-1,1]){
    const x=v=>.5+side*v;
    path(side<0?p:a,.68,()=>{ctx.moveTo(x(.07)*w,.31*h);ctx.lineTo(x(.17)*w,.23*h);ctx.lineTo(x(.34)*w,.23*h)});
@@ -4655,8 +4720,10 @@ function drawBetaGraphics(w,h,t=0){
     segment(x(.23),y,x(.23+(.06-j*.009)),y,side<0?a:p,.28);
    }
   }
+  withLandscapePart('centre',0.032,0.046,0.2,()=>{
+  });
   const tx=.5+shiftX,ty=.5+shiftY;
-  ctx.save();ctx.translate(tx*w,ty*h);ctx.rotate(-motionRoll*.11);
+  ctx.save();ctx.translate(tx*w,ty*h);ctx.rotate(unified?0:-motionRoll*.11);
   for(let k=0;k<3;k++){
    const radius=r*(.52+k*.29);
    path(k%2?a:p,.5-k*.08,()=>ctx.arc(0,0,radius,phase+k*.8,phase+k*.8+Math.PI*.62));
@@ -4670,6 +4737,8 @@ function drawBetaGraphics(w,h,t=0){
   segment(tx+.04,ty,tx+.11,ty,p,.65);
   segment(tx,ty-.085,tx,ty-.025,a,.65);
   segment(tx,ty+.025,tx,ty+.085,a,.65);
+  withLandscapePart('accents',0.025,0.025,0.125,()=>{
+  });
   for(let i=0;i<15;i++){
    const x=.18+i*.046;
    const y=.09+(i%3)*.006;
@@ -4679,6 +4748,7 @@ function drawBetaGraphics(w,h,t=0){
    const x=.20+i*.05;
    segment(x,.91,x+.018,.91,a,i%3===0?.55:.22);
   }
+  });
   ctx.save();ctx.globalAlpha=opacity*.75;ctx.fillStyle=p;ctx.font='600 '+Math.max(10,u*12)+'px monospace';ctx.textAlign='left';ctx.fillText('CYBER // VECTOR',w*.055,h*.105);ctx.textAlign='right';ctx.fillStyle=a;ctx.fillText('FLIGHT SYSTEM',w*.945,h*.105);ctx.restore();
   ctx.restore();
  }
@@ -5192,7 +5262,7 @@ function syncHudTelemetryColours(){
 function syncPortraitGraphicPartsUI(){
  const vertical=['9:16','3:4'].includes($('canvasformat').value);
  const theme=$('betatheme').value;
- const split=vertical&&['cyan','amber','ice','violet','sunset','sunsetcinema'].includes(theme);
+ const split=['cyan','amber','ice','violet','sunset','sunsetcinema'].includes(theme)&&['9:16','3:4','16:9','4:3'].includes($('canvasformat').value);
  const parts=$('portrait-graphic-parts'),legacy=$('legacy-graphic-regions');
  if(parts)parts.hidden=!split;
  if(legacy)legacy.hidden=split;
