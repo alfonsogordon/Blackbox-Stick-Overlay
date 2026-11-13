@@ -2964,6 +2964,12 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
  try{
   const maxBytes=1024*1048576;
   let chunks=[],clipBytes=0,part=1,firstFrame=0;
+  let transparentRunStart=-1,transparentRunLength=0,transparentRunPart=0;
+  const finishTransparentRun=()=>{
+   if(transparentRunStart<0)return;
+   exportDebug('MOV transparency run: part '+transparentRunPart+', frames '+(transparentRunStart+1)+'-'+(transparentRunStart+transparentRunLength)+', '+(transparentRunStart/fps).toFixed(3)+'-'+((transparentRunStart+transparentRunLength)/fps).toFixed(3)+'s ('+transparentRunLength+' frames)','WARN');
+   transparentRunStart=-1;transparentRunLength=0;
+  };
   // Record actual rendered/encoded frame speeds for the next immediate ETA.
   const speedSamples=[];
   const speedWarmup=Math.min(15,Math.floor(frames*.1));
@@ -3000,14 +3006,22 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
     const pixels=check.getImageData(0,0,output.width,output.height).data;
     let visible=false;
     for(let k=3;k<pixels.length;k+=4){if(pixels[k]!==0){visible=true;break}}
-    if(!visible)exportDebug('Fully transparent MOV frame '+(i+1)+'/'+frames+' at output '+(i/fps).toFixed(3)+'s; log '+time.toFixed(3)+'s; target '+target+'; alpha/fade '+$('fadein').value+'/'+$('fadeout').value+'; autoSync '+!!range.autoDji,'WARN');
+    if(!visible){
+     if(transparentRunStart<0){transparentRunStart=i;transparentRunPart=part}
+     transparentRunLength++;
+     exportDebug('Fully transparent MOV frame '+(i+1)+'/'+frames+' (part '+part+') at output '+(i/fps).toFixed(3)+'s; log '+time.toFixed(3)+'s; target '+target+'; alpha/fade '+$('fadein').value+'/'+$('fadeout').value+'; autoSync '+!!range.autoDji,'WARN');
+    }else finishTransparentRun();
    }
    const blob=await encodeMovPngFrame(output);
    if(i>=speedWarmup){
     speedSamples.push(performance.now()-frameStarted);
     if(speedSamples.length>Math.max(120,Math.round(fps*3)))speedSamples.shift();
    }
-   if(chunks.length&&clipBytes+blob.size>maxBytes)await flushClip();
+   if(chunks.length&&clipBytes+blob.size>maxBytes){
+    finishTransparentRun();
+    exportDebug('MOV split boundary: part '+part+' ends at frame '+i+' ('+(i/fps).toFixed(3)+'s), next part starts frame '+(i+1)+'; pending frame '+blob.size+' bytes');
+    await flushClip();
+   }
    if(blob.size>maxBytes)throw Error('Single PNG frame exceeds chunk size limit.');
    chunks.push(blob);clipBytes+=blob.size;
    if((i+1)%Math.max(1,Math.floor(frames/10))===0)exportDebug('Chunked MOV actual '+(i+1)+'/'+frames+' frames encoded; current clip '+(clipBytes/1048576).toFixed(1)+' MiB, current mean '+(clipBytes/chunks.length/1048576).toFixed(2)+' MiB/frame');
@@ -3016,6 +3030,7 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
     await new Promise(r=>setTimeout(r,0));
    }
   }
+  finishTransparentRun();
   await flushClip();
   saveMeasuredSpeed();
   exportProgress(100,'All clips downloaded');
