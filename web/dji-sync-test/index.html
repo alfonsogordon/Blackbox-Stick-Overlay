@@ -5456,6 +5456,15 @@ let windowStickCurve=null,windowQuadCurve=null;
  }
  const backing=document.createElement('div');backing.id='elementmanagerv2backing';backing.hidden=true;
  backing.append(original);
+ // Register Warnings as a real element-manager entry, not an orphaned settings panel.
+ const warningsPanel=$('warnings-panel'),warningsToggle=$('warningsshow');
+ if(warningsPanel&&warningsToggle){
+  const warningRow=document.createElement('div');warningRow.className='element-entry';
+  const warningLabel=document.createElement('label');
+  warningLabel.append(warningsToggle,document.createTextNode(' Warnings'));
+  warningRow.append(warningLabel,warningsPanel);
+  original.append(warningRow);
+ }
  root.append(title,search,filters,count,list,empty,general,backing);
  if(menu){const summary=menu.querySelector(':scope > summary');summary.textContent='Elements';summary.after(root)}
  else $('betaPanel').after(root);
@@ -5489,6 +5498,7 @@ let windowStickCurve=null,windowQuadCurve=null;
   mount('stick',stick,'Sticks','Stick overlay');
   mount('quad',$('quadshow'),'Flight data','Quad visualiser');
   mount('timer',$('flighttimershow'),'Flight status','Armed flight timer');
+  mount('warnings',$('warningsshow'),'Flight status','Warnings');
   mount('pack',$('packgaugeshow'),'Battery & power','Aircraft battery pack');
   for(const kind of aviationGaugeKinds){
    const input=$('av'+kind+'show');
