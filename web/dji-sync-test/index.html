@@ -2993,6 +2993,15 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
   for(let i=0;i<frames;i++){
    const frameStarted=performance.now();
    time=exportFrameTimestamp(range,i/fps);renderExportMappedFrame(time,target,output,range);prepareMovPngFrame(output);
+   // TEST diagnostic: detect unexpected fully transparent MOV frames without changing their pixels.
+   // Sample the actual frame before PNG encoding, not the preview or the assembled MOV.
+   if(i>0&&i<frames-1&&(!range.autoDji||time>=Math.max(0,Number($('lead').value)||0)&&time<=Math.max(0,Number($('lead').value)||0)+duration)){
+    const check=output.getContext('2d',{willReadFrequently:true});
+    const pixels=check.getImageData(0,0,output.width,output.height).data;
+    let visible=false;
+    for(let k=3;k<pixels.length;k+=4){if(pixels[k]!==0){visible=true;break}}
+    if(!visible)exportDebug('Fully transparent MOV frame '+(i+1)+'/'+frames+' at output '+(i/fps).toFixed(3)+'s; log '+time.toFixed(3)+'s; target '+target+'; alpha/fade '+$('fadein').value+'/'+$('fadeout').value+'; autoSync '+!!range.autoDji,'WARN');
+   }
    const blob=await encodeMovPngFrame(output);
    if(i>=speedWarmup){
     speedSamples.push(performance.now()-frameStarted);
