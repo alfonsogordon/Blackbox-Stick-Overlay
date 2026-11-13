@@ -1557,7 +1557,7 @@ function reactiveStickEnabled(){return $('pointershape').value!=='sq'}
 function reactiveBatteryEnabled(){return ['battery','both'].includes($('stickreactions').value)}
 function reactiveSizeEnabled(){return ['stick','both'].includes($('stickreactions').value)}
 function themeStickAppearance(){
- if(!$('stickthemematch').checked||!reactiveStickEnabled())return null;
+ if(!$('stickthemematch').checked||!reactiveStickEnabled()||!betaActive()||$('betatheme').value==='classic')return null;
  const [primary,secondary,accent,extra]=betaPalette();
  const theme=$('betatheme').value;
  const shapes={classic:'ring',cyan:'target',green:'cross',amber:'diamond',ice:'hexagon',sunset:'star',sunsetcinema:'diamond',violet:'hexagon'};
@@ -1590,7 +1590,7 @@ for(const id of ['stickthemematch','stickboxstyle','stickanimation','stickreacti
 // Pure canvas decorations: no log data, presets, pointer assets or export path changed.
 // Draw inside the existing stick frame, so resize, selection, portrait and export match.
 function drawThemedStickBox(cx,cy,r,theme,opacity,t,index){
- if(!$('stickthemematch').checked||$('stickboxstyle').value==='original')return;
+ if(!$('stickthemematch').checked||$('stickboxstyle').value==='original'||!betaActive()||theme==='classic')return;
  const minimal=$('stickboxstyle').value==='minimal';
  const palette=betaPalette();
  const primary=palette[0],secondary=palette[1],accent=palette[2],extra=palette[3]||primary;
