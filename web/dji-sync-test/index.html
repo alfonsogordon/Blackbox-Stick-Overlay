@@ -1560,7 +1560,7 @@ function themeStickAppearance(){
  if(!$('stickthemematch').checked||!reactiveStickEnabled()||!betaActive()||$('betatheme').value==='classic')return null;
  const [primary,secondary,accent,extra]=betaPalette();
  const theme=$('betatheme').value;
- const shapes={classic:'ring',cyan:'target',green:'cross',amber:'diamond',ice:'hexagon',sunset:'star',sunsetcinema:'diamond',violet:'hexagon'};
+ const shapes={classic:'circle',cyan:'energy',green:'tactical',amber:'chevron',ice:'neonhex',sunset:'energy',sunsetcinema:'precision',violet:'neonhex'};
  return {left:primary,right:accent,trail:extra||primary,outline:primary,cross:secondary,
   shape:shapes[theme]||'ring',glow:['cyan','ice','sunset','sunsetcinema','violet'].includes(theme)};
 }
