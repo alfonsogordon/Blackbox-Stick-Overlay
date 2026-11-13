@@ -2609,12 +2609,12 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
  }catch(_){}
  const predictedSeconds=cachedFrameMs*frames/1000;
  const timeEstimate=cachedFrameMs?(predictedSeconds>=3600?(predictedSeconds/3600).toFixed(1)+' hours':predictedSeconds>=60?Math.ceil(predictedSeconds/60)+' minutes':Math.max(1,Math.ceil(predictedSeconds))+' seconds'):'Not calibrated yet (first export with these settings)';
- const confirmation='MOV export\\n\\n'
-  +'Duration: '+formatExportTime(range.duration)+' at '+fps+' FPS ('+frames+' frames)\\n'
-  +'Estimated export time: '+timeEstimate+'\\n'
-  +'Output: lossless-style PNG MOV, automatically split into clips up to 1 GiB each.\\n\\n'
+ const confirmation='MOV export\n\n'
+  +'Duration: '+formatExportTime(range.duration)+' at '+fps+' FPS ('+frames+' frames)\n'
+  +'Estimated export time: '+timeEstimate+'\n'
+  +'Output: lossless-style PNG MOV, automatically split into clips up to 1 GiB each.\n\n'
   +(cachedFrameMs?'Based on measured processing speed from an earlier export. Actual speed may vary.':'No reliable previous speed is available. This export will calibrate future estimates.')
-  +'\\n\\nContinue exporting?';
+  +'\n\nContinue exporting?';
  exportDebug('Immediate pre-export confirmation; time estimate: '+timeEstimate);
  if(!confirm(confirmation)){
   exportDebug('Export cancelled before frame processing','WARN');
