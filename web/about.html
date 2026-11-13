@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>About · Overlay Studio v1.0.2</title>
+<title>About · Overlay Studio v1.0.3</title>
 <style>
 :root{font-family:Inter,system-ui,Segoe UI,sans-serif;color:#e8efff;background:#0a101b}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#172640 0%,#0a101b 55%)}
@@ -13,7 +13,7 @@ code{color:#9de5dc}ul{color:#b6c8dc;line-height:1.9;padding-left:22px}li{margin-
 .note{border-left:3px solid #68bfb7;padding-left:14px;color:#aac0d1;font-size:13px}
 footer{text-align:center;color:#8fa8b8;font-size:12px;margin-top:34px;line-height:1.7}
 </style></head><body><main>
-<header><a class="back" href="./">← Back to Overlay Studio</a><a href="./?tour=1" class="back">Restart quick guide</a><span class="version">ABOUT · v1.0.2</span></header>
+<header><a class="back" href="./">← Back to Overlay Studio</a><a href="./?tour=1" class="back">Restart quick guide</a><span class="version">ABOUT · v1.0.3</span></header>
 <div class="kicker">Betaflight · Blackbox · FPV</div><h1>About Overlay Studio</h1>
 <p class="subtitle">An FPV overlay tool built to turn flight logs into customisable stick displays, flight-data HUDs and precisely synchronised video overlays — directly in your browser.</p>
 <section><h2>How it all started</h2>
@@ -29,6 +29,9 @@ footer{text-align:center;color:#8fa8b8;font-size:12px;margin-top:34px;line-heigh
 <p><strong>3. Match camera motion (optional).</strong> For compatible DJI O4 and GoPro recordings, the Studio reads embedded orientation or gyro metadata and matches it to motion from the Blackbox log. Multiple sections across the flight help estimate both the initial offset and any progressive timing drift. If matching is unreliable, it should not recommend automatic synchronisation.</p>
 <p><strong>4. Export for editing.</strong> The Studio generates an overlay locally. With successful Camera Auto Sync enabled, the overlay is timed to the camera recording so it can be placed at the start of the video in an editor such as DaVinci Resolve, at normal playback speed.</p>
 <p><strong>5. Keep control.</strong> Camera Auto Sync is optional. You can still export normally, use custom time ranges or inspect advanced diagnostics.</p></section>
+<section><h2>What's new?</h2>
+<p>Curious about recent updates? Browse the <a href="./changelog.html"><strong>Overlay Studio changelog</strong></a> for the main new features, improvements and fixes, organised by version.</p>
+<p style="margin-bottom:0"><a href="./changelog.html">View changelog →</a></p></section>
 <section><h2>Privacy and local processing</h2>
 <p>Your flight logs and camera recordings are processed on your device, inside your browser. They are not uploaded to the Overlay Studio website. For motion matching, the Studio reads camera metadata from the selected video file, not the video frames themselves. Your original files are not modified.</p>
 <p>Saved presets use browser-local storage unless you choose to export or share them. Generated videos are downloaded from your browser.</p></section>
