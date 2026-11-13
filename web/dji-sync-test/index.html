@@ -2998,20 +2998,40 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
   };
   for(let i=0;i<frames;i++){
    const frameStarted=performance.now();
-   time=exportFrameTimestamp(range,i/fps);renderExportMappedFrame(time,target,output,range);prepareMovPngFrame(output);
-   // TEST diagnostic: detect unexpected fully transparent MOV frames without changing their pixels.
-   // Sample the actual frame before PNG encoding, not the preview or the assembled MOV.
-   if(i>0&&i<frames-1&&(!range.autoDji||time>=Math.max(0,Number($('lead').value)||0)&&time<=Math.max(0,Number($('lead').value)||0)+duration)){
-    const check=output.getContext('2d',{willReadFrequently:true});
-    const pixels=check.getImageData(0,0,output.width,output.height).data;
-    let visible=false;
-    for(let k=3;k<pixels.length;k+=4){if(pixels[k]!==0){visible=true;break}}
-    if(!visible){
-     if(transparentRunStart<0){transparentRunStart=i;transparentRunPart=part}
-     transparentRunLength++;
-     exportDebug('Fully transparent MOV frame '+(i+1)+'/'+frames+' (part '+part+') at output '+(i/fps).toFixed(3)+'s; log '+time.toFixed(3)+'s; target '+target+'; alpha/fade '+$('fadein').value+'/'+$('fadeout').value+'; autoSync '+!!range.autoDji,'WARN');
-    }else finishTransparentRun();
+   time=exportFrameTimestamp(range,i/fps);
+   // Render validation: a blank frame inside an otherwise visible flight is not
+   // encoded until retries have been exhausted. Never shift the frame timestamp.
+   const leadSeconds=Math.max(0,Number($('lead').value)||0);
+   const totalSeconds=leadSeconds+duration+Math.max(0,Number($('tail').value)||0);
+   const fadeInSeconds=Math.max(0,Number($('fadein').value)||0);
+   const fadeOutSeconds=Math.max(0,Number($('fadeout').value)||0);
+   const expectedVisible=i>0&&i<frames-1&&time>leadSeconds+.001&&time<leadSeconds+duration-.001
+    &&time>fadeInSeconds+.001&&time<totalSeconds-fadeOutSeconds-.001
+    &&Number($('elementopacity')?.value??100)>0;
+   let visible=false,attempts=0;
+   const frameHasAlpha=()=>{
+    const pixels=output.getContext('2d',{willReadFrequently:true}).getImageData(0,0,output.width,output.height).data;
+    for(let k=3;k<pixels.length;k+=4)if(pixels[k]!==0)return true;
+    return false;
+   };
+   do{
+    renderExportMappedFrame(time,target,output,range);
+    // Test the rendered canvas BEFORE lossy colour/alpha quantisation.
+    visible=!expectedVisible||frameHasAlpha();
+    if(visible)break;
+    attempts++;
+    exportDebug('Unexpected blank MOV frame '+(i+1)+'/'+frames+' (part '+part+') at '+(i/fps).toFixed(3)+'s, render retry '+attempts+'/3','WARN');
+    if(attempts<3)await new Promise(r=>setTimeout(r,0));
+   }while(attempts<3);
+   if(!visible){
+    if(transparentRunStart<0){transparentRunStart=i;transparentRunPart=part}
+    transparentRunLength++;
+    finishTransparentRun();
+    throw Error('Stopped export: frame '+(i+1)+' at '+(i/fps).toFixed(3)+'s remained fully transparent after 3 renders. No corrupt MOV was saved; check export debug log.');
    }
+   if(attempts)exportDebug('Recovered MOV frame '+(i+1)+' after '+attempts+' retry/retries.');
+   finishTransparentRun();
+   prepareMovPngFrame(output);
    const blob=await encodeMovPngFrame(output);
    if(i>=speedWarmup){
     speedSamples.push(performance.now()-frameStarted);
