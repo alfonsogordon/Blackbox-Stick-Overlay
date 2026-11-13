@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Overlay Studio · TEST v1.0.9-test</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Overlay Studio · TEST v1.0.10-test</title>
 <style>
 :root{font-family:Inter,system-ui,Segoe UI,sans-serif;color:#e8efff;background:#0a101b}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172640 0%,#0a101b 55%);min-height:100vh}main{max-width:1360px;margin:auto;padding:38px 20px}h1{font-size:32px;margin:8px 0}p{color:#aab9d2}header{margin-bottom:25px}.tag{color:#73e1da;font-size:12px;letter-spacing:2px;font-weight:700}.layout{display:grid;grid-template-columns:minmax(420px,490px) minmax(0,1fr);gap:20px}.panel{background:#111c2cdd;border:1px solid #31435e;border-radius:20px;padding:22px;box-shadow:0 20px 70px #0004}label{display:block;color:#b4c7df;font-size:13px;margin:16px 0 7px}input,select,button{width:100%;border-radius:10px;border:1px solid #3c526c;background:#19293d;color:#f3f8ff;padding:11px;font:inherit}input[type=file]{font-size:12px}input[type=color]{height:43px;padding:4px 6px;cursor:pointer;appearance:none;-webkit-appearance:none}input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-webkit-color-swatch{border:1px solid #72869e;border-radius:6px}input[type=color]::-moz-color-swatch{border:1px solid #72869e;border-radius:6px}button{background:#287d83;border-color:#51c3c4;cursor:pointer;font-weight:650}button:hover{background:#34989a}button:disabled{opacity:.45;cursor:not-allowed}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(min-width:851px){.layout>section.panel:nth-child(2){position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow-y:auto;scrollbar-width:thin}}.preview{background:linear-gradient(135deg,#1b2739,#0d1521);border:1px solid #32425b;border-radius:14px;overflow:hidden;min-height:0;display:block;aspect-ratio:8 / 3}.preview{isolation:isolate;position:relative}
 /* Preview-only arrival reveal: never applied to rendered video/export frames. */
@@ -3467,15 +3467,15 @@ function applyBetaOsdFields(){
  }
 
 }
-const demoFieldNames=['vbat','amperage','gpsNumSat','gpsSpeed','gpsAltitude','homeDistance','homeDirection','rssi','mahDrawn','attitudeRoll','attitudePitch','gpsGroundCourse'];
+const demoFieldNames=['vbat','amperage','gpsNumSat','gpsSpeed','gpsAltitude','homeDistance','homeDirection','rssi','mahDrawn','attitudeRoll','attitudePitch','gpsGroundCourse','flightModeFlags'];
 function demoTelemetryRows(){
  const rows=[];
  for(let t=0;t<=demoDuration+.001;t+=.1)rows.push([t,
-  2350-18*t/demoDuration,140+50*Math.sin(t*.6),12,1700+500*Math.sin(t*.4),
+  2200+150*Math.cos(t*Math.PI/9),140+50*Math.sin(t*.6),12,1700+500*Math.sin(t*.4),
   420+50*Math.cos(t*.3),120+30*Math.sin(t*.5),90+25*Math.sin(t*.2),
   85+8*Math.sin(t*.3),500+t*14,Math.round(demoRcSample(t)[0]*.42),Math.round(demoRcSample(t)[1]*.42),
    // Simulated GPS course in degrees: visible changes, looping with the demo.
-   (210+85*Math.sin(t*Math.PI/18)+25*Math.sin(t*Math.PI/9)+360)%360]);
+   (210+85*Math.sin(t*Math.PI/18)+25*Math.sin(t*Math.PI/9)+360)%360, t%18<6?1:t%18<12?3:129]);
  return rows;
 }
 function startDefaultDemo(){
@@ -3488,9 +3488,10 @@ function startDefaultDemo(){
   }
  }
  // Demo-visible telemetry must match the enabled checkboxes in Elements.
- const visible=new Set(); // Demo starts with sticks only; other fields remain available to enable.
+ const visible=new Set(demoFieldNames); // Demo previews every available telemetry element before a real log is loaded.
  for(const item of telemetryWidgets){item.check.checked=visible.has(item.name);item.check.dispatchEvent(new Event('change'))}
  if($('betapreset').value!=='custom')applyBetaOsdFields();
+ if($('warningsshow'))$('warningsshow').checked=true;
  playing=true;last=performance.now();$('play').textContent='❚❚ Pause';$('video').disabled=true;
  $('demo').textContent='■ Stop demo';
  $('status').textContent='Demo preview · simulated flight data. Load a log to see its available elements.';
