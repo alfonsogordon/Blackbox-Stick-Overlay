@@ -17,7 +17,13 @@ footer{text-align:center;color:#8fa8b8;font-size:12px;margin-top:34px;line-heigh
 <header><a class="back" href="./about.html">← Back to About</a><a class="back" href="./">Open Studio</a><span class="version">CHANGELOG</span></header>
 <div class="kicker">Overlay Studio updates</div><h1>What's new?</h1>
 <p class="subtitle">The main new features, improvements and fixes, with the newest release first. For the small technical changes, see the <a href="https://github.com/alfonsogordon/Blackbox-Stick-Overlay/commits/main/" target="_blank" rel="noopener noreferrer">full GitHub history</a>.</p>
-<section id="v1.0.5"><h2>v1.0.5 <span class="pill">Latest</span></h2><p class="meta">13 November 2026 · Flight-mode accuracy</p><ul>
+<section id="v1.0.6"><h2>v1.0.6 <span class="pill">Latest</span></h2><p class="meta">14 November 2026 · Export reliability and sync workflow</p><ul>
+<li>Added a custom export filename field with a reset-to-default option and automatic numbered MOV part names.</li>
+<li>Added detection and up to three rendering attempts for unexpectedly fully transparent MOV frames when overlay content should be visible, while allowing intentional transparent lead-in and post-flight frames.</li>
+<li>Successful GoPro or DJI motion matching now automatically enables Auto Sync.</li>
+<li>Lead-in and lead-out controls are disabled and greyed out while automatic sync is enabled; previous manual values are restored when it is turned off.</li>
+</ul></section>
+<section id="v1.0.5"><h2>v1.0.5</h2><p class="meta">13 November 2026 · Flight-mode accuracy</p><ul>
 <li>Corrected Flight Modes using Betaflight 4.5 Blackbox switch flags: ARM no longer incorrectly appears as ANGLE.</li>
 <li>ACRO, ANGLE, HORIZON and GPS RESCUE are now distinguished correctly. AIR appears when its switch flag is recorded.</li>
 <li>Kept export timing, arm/disarm detection, and all other telemetry unchanged.</li>
