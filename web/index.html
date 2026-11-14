@@ -162,7 +162,16 @@ body.studio-tour-open{overflow:hidden}
 <div class="row"><button type="button" id="copybbl">Copy Betaflight CLI</button></div>
 <pre id="bblcli" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#0a1422;border:1px solid #34465f;border-radius:10px;padding:12px;font-size:11px;line-height:1.55;color:#d4e5f5"></pre>
 <div class="small" style="margin-top:10px"><strong>Optional sensor-dependent commands (verify with <code>get blackbox</code> before using):</strong></div><pre id="bfoptional" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#0a1422;border:1px solid #34465f;border-radius:10px;padding:12px;font-size:11px;color:#d4e5f5"></pre>
-</details><details class="advanced" id="timingdetails"><summary>Export duration &amp; sync details</summary><div id="timinginfo" class="helppanel" style="margin-top:12px" aria-live="polite">Load a log to see the export timing breakdown.</div></details><div class="note">Privacy: imported CSV data stays in your browser. No uploads. Video export depends on browser codec support; transparency is not guaranteed in every browser.</div></section><section class="panel"><div class="preview-heading"><strong>Live preview</strong><button id="expandpreview" type="button" aria-pressed="false">⛶ Expand preview</button></div><div class="preview" id="previewframe" style="margin-top:16px;position:relative"><img id="previewphoto" alt="Optional footage preview background" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;display:none"><canvas id="view" width="800" height="300" style="position:relative;z-index:1"></canvas><div id="previewguides" aria-hidden="true" style="display:none;position:absolute;inset:0;z-index:2;pointer-events:none"></div><div id="elementselection" aria-hidden="true" style="display:none;position:absolute;pointer-events:none;z-index:5;border:1px solid rgba(151,219,225,.55);box-shadow:0 0 0 1px rgba(8,21,34,.32);border-radius:5px"><div style="position:absolute;right:-4px;bottom:-4px;width:8px;height:8px;background:#86c7ce;border:1px solid #203b49;border-radius:2px"></div><span id="elementselectionlabel" style="position:absolute;left:0;top:-22px;background:#0c2037cc;color:#bad8df;font:500 10px system-ui;padding:2px 5px;border-radius:4px;white-space:nowrap"></span></div></div><div class="row" style="margin-top:10px"><button id="demo" type="button">▶ Preview demo (no log)</button></div><details class="advanced"><summary>Preview footage background</summary><label>Upload a screenshot from your GoPro footage</label><input id="previewupload" type="file" accept="image/png,image/jpeg,image/webp,image/avif"><label><input type="checkbox" id="previewvisible" checked style="width:auto;margin-right:8px"> Show background in preview</label><label>Background fit</label><select id="previewfit"><option value="cover">Fill preview (crop if needed)</option><option value="contain">Fit entire image</option></select><div class="row"><button id="previewclear" type="button">Remove preview image</button></div><div class="small">Preview-only background. Lower footage brightness to improve overlay contrast; exports stay transparent.</div></details><div class="controls"><button id="play">▶ Play</button><div id="timelinearmwrap" class="timeline-arm-wrap"><input id="scrub" type="range" min="0" max="1000" value="0"><div id="timelinearmmarkers" class="timeline-arm-markers" aria-label="Recorded arming events" hidden></div></div><span id="clock" class="small">0:00.0</span></div><div id="timelinearmstatus" class="small" style="margin-top:7px;text-align:center;color:#b4dfd5" hidden></div><div class="row"><button id="png">Save PNG frame</button><button id="video" disabled>Export video</button></div><div class="small" style="margin-top:7px;color:#dfbd87"><strong>Export note:</strong> Saving over an existing file may fail. Choose a new filename rather than replacing the old one.</div><div id="exportstickswrap"><label>Export sticks</label><select id="exportsticks"><option value="both">Both sticks (one video)</option><option value="left">Left stick only</option><option value="right">Right stick only</option><option value="separate">Separate left + right videos</option></select></div><div class="two"><div><label>Video format</label><select id="videoformat"><option value="mov">MOV (transparent PNG codec, experimental)</option><option value="mp4">MP4 (solid black background)</option><option value="webm">WebM (alpha experimental)</option></select><div class="small">Transparent MOV downloads normally through your browser. Large exports are split into numbered clips (up to 1 GiB each); your browser may ask to allow multiple downloads.</div></div><div id="mp4backgroundwrap"><label>MP4 background</label><select id="bgcolor"><option value="#000000">Black</option><option value="#00ff00">Green screen</option></select></div></div><details class="element-custom" id="exportrangesettings" style="margin-top:10px"><summary>Export time range</summary>
+</details><details class="advanced" id="timingdetails"><summary>Export duration &amp; sync details</summary><div id="timinginfo" class="helppanel" style="margin-top:12px" aria-live="polite">Load a log to see the export timing breakdown.</div></details><div class="note">Privacy: imported CSV data stays in your browser. No uploads. Video export depends on browser codec support; transparency is not guaranteed in every browser.</div></section><section class="panel"><div class="preview-heading"><strong>Live preview</strong><button id="expandpreview" type="button" aria-pressed="false">⛶ Expand preview</button></div><div class="preview" id="previewframe" style="margin-top:16px;position:relative"><img id="previewphoto" alt="Optional footage preview background" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;display:none"><canvas id="view" width="800" height="300" style="position:relative;z-index:1"></canvas><div id="previewguides" aria-hidden="true" style="display:none;position:absolute;inset:0;z-index:2;pointer-events:none"></div><div id="elementselection" aria-hidden="true" style="display:none;position:absolute;pointer-events:none;z-index:5;border:1px solid rgba(151,219,225,.55);box-shadow:0 0 0 1px rgba(8,21,34,.32);border-radius:5px"><div style="position:absolute;right:-4px;bottom:-4px;width:8px;height:8px;background:#86c7ce;border:1px solid #203b49;border-radius:2px"></div><span id="elementselectionlabel" style="position:absolute;left:0;top:-22px;background:#0c2037cc;color:#bad8df;font:500 10px system-ui;padding:2px 5px;border-radius:4px;white-space:nowrap"></span></div></div><div class="row" style="margin-top:10px"><button id="demo" type="button">▶ Preview demo (no log)</button></div><details class="advanced"><summary>Preview footage background</summary><label>Upload a screenshot from your GoPro footage</label><input id="previewupload" type="file" accept="image/png,image/jpeg,image/webp,image/avif"><label><input type="checkbox" id="previewvisible" checked style="width:auto;margin-right:8px"> Show background in preview</label><label>Background fit</label><select id="previewfit"><option value="cover">Fill preview (crop if needed)</option><option value="contain">Fit entire image</option></select><div class="row"><button id="previewclear" type="button">Remove preview image</button></div><div class="small">Preview-only background. Lower footage brightness to improve overlay contrast; exports stay transparent.</div></details><div class="controls"><button id="play">▶ Play</button><div id="timelinearmwrap" class="timeline-arm-wrap"><input id="scrub" type="range" min="0" max="1000" value="0"><div id="timelinearmmarkers" class="timeline-arm-markers" aria-label="Recorded arming events" hidden></div></div><span id="clock" class="small">0:00.0</span></div><div id="timelinearmstatus" class="small" style="margin-top:7px;text-align:center;color:#b4dfd5" hidden></div><div class="row"><button id="png">Save PNG frame</button><button id="video" disabled>Export video</button></div><div class="small" style="margin-top:7px;color:#dfbd87"><strong>Export note:</strong> Saving over an existing file may fail. Choose a new filename rather than replacing the old one.</div><div id="exportstickswrap"><label>Export sticks</label><select id="exportsticks"><option value="both">Both sticks (one video)</option><option value="left">Left stick only</option><option value="right">Right stick only</option><option value="separate">Separate left + right videos</option></select></div><div class="two"><div><label>Video format</label><select id="videoformat"><option value="mov">MOV (transparent PNG codec, experimental)</option><option value="mp4">MP4 (solid black background)</option><option value="webm">WebM (alpha experimental)</option></select><div class="small">Transparent MOV downloads normally through your browser. Large exports are split into numbered clips (up to 1 GiB each); your browser may ask to allow multiple downloads.</div></div><div id="mp4backgroundwrap"><label>MP4 background</label><select id="bgcolor"><option value="#000000">Black</option><option value="#00ff00">Green screen</option></select></div></div><div id="exportfilenamewrap" style="margin-top:12px">
+<label for="exportfilename" style="margin:0 0 6px">Export filename</label>
+<div class="row" style="align-items:center;gap:8px">
+<input id="exportfilename" type="text" aria-describedby="exportfilenamehint exportfilenamepreview" spellcheck="false" autocomplete="off" style="min-width:0;flex:1" placeholder="blackbox-sticks-both-alpha-...">
+<button id="resetexportfilename" type="button" style="width:auto;flex:none;white-space:nowrap">Default</button>
+</div>
+<div id="exportfilenamehint" class="small" style="margin-top:5px">Edit the name before exporting. No extension needed. Separate sticks get unique names; large MOV exports add -part-001, -part-002, etc.</div>
+<div id="exportfilenamepreview" class="small" aria-live="polite" style="margin-top:5px;color:#93d9d3;overflow-wrap:anywhere"></div>
+</div>
+<details class="element-custom" id="exportrangesettings" style="margin-top:10px"><summary>Export time range</summary>
 <div style="margin-top:9px"><label style="margin:0 0 7px">Export section</label><select id="exportrangemode"><option value="full">Full Blackbox log</option><option value="armed" selected>Armed → Disarmed (automatic)</option><option value="custom">Custom In / Out time</option></select></div>
 <div class="two" id="exportrangeinputs" hidden><div><label for="exportin">In (start)</label><input id="exportin" type="text" inputmode="decimal" value="00:00.000" placeholder="MM:SS.mmm"></div><div><label for="exportout">Out (end)</label><input id="exportout" type="text" inputmode="decimal" value="00:00.000" placeholder="MM:SS.mmm"></div></div>
 <div class="small" id="exportrangestatus" style="margin-top:8px">Full log may include pre-arm and post-disarm time. Armed → Disarmed uses recorded flags when available.</div></details><details class="workflow-section" id="cameraautosync">
@@ -1835,6 +1844,20 @@ $('importpresetfile').addEventListener('change',async e=>{
  finally{e.target.value=''}
 });
 refreshUserPresets();
+function syncLocksLeadTiming(){
+ return !!($('goproautoexport')?.checked||$('djiautoexport')?.checked);
+}
+function updateSyncLeadTiming(){
+ const locked=syncLocksLeadTiming();
+ for(const id of ['lead','tail']){
+  const input=$(id);
+  if(locked){if(!input.disabled){input.dataset.beforeSync=input.value;}input.value='0';}
+  else if(input.disabled&&input.dataset.beforeSync!==undefined){input.value=input.dataset.beforeSync;delete input.dataset.beforeSync;}
+  input.disabled=locked;
+  input.closest('div')?.style.setProperty('opacity',locked?'0.45':'1');
+  input.title=locked?'Disabled while GoPro/DJI Auto Sync is applied. Timing comes from the sync match.':'';
+ }
+}
 function totalTime(){return (+$('lead').value||0)+duration+(+$('tail').value||0)}
 function updateTimingInfo(){const lead=Math.max(0,+$('lead').value||0),tail=Math.max(0,+$('tail').value||0),fi=Math.max(0,+$('fadein').value||0),fo=Math.max(0,+$('fadeout').value||0),total=lead+duration+tail;const fmt=x=>x.toFixed(1)+'s';$('timinginfo').innerHTML='<strong>Export duration: '+fmt(total)+'</strong><div style="margin-top:5px">Lead-in '+fmt(lead)+' + flight log '+fmt(duration)+' + lead-out '+fmt(tail)+'</div><div style="margin-top:5px">First logged movement starts at <strong>'+fmt(lead)+'</strong> in the exported video. Fade-in '+fmt(fi)+' / fade-out '+fmt(fo)+' change opacity only.</div><div style="margin-top:7px">Sync tip: align the start of your Blackbox recording with <strong>'+fmt(lead)+'</strong> on the exported overlay timeline (then adjust against your flight footage if needed).</div>';
  if(telemetryNames?.length&&!demoMode){
@@ -1901,7 +1924,7 @@ function refreshTimelineArmMarkers(){
   status.textContent=exact?'⚑ ARMED  ·  ⚐ DISARMED  — recorded events (click flag to seek)':'⚑ LOG START — exact arming moment not recorded (click flag to seek)';
  }
 }
-function update(){if($('djisynctest')?.open)renderDjiSync();time=clamp(time,0,totalTime());updateTimingInfo();refreshTimelineArmMarkers();draw(time);updatePreviewGuides();refreshHudMotionStatus()}
+function update(){updateSyncLeadTiming();if($('djisynctest')?.open)renderDjiSync();time=clamp(time,0,totalTime());updateTimingInfo();refreshTimelineArmMarkers();draw(time);updatePreviewGuides();refreshHudMotionStatus()}
 // Preview imported flights after the lead-in and fade-in, so a paused log
 // never looks empty at timestamp zero. Exports still begin at zero with fades.
 function initialLogPreviewTime(){
@@ -1951,6 +1974,61 @@ $('arthelp').addEventListener('click',()=>{const panel=$('arthelptext'),open=pan
 for(const [id,key] of [['pointerimage','pointer'],['trailimage','trail'],['backgroundimage','background'],['crossimage','cross']])$(id).addEventListener('change',async e=>{const file=e.target.files[0];if(!file){artwork[key]=null;update();return}if(file.size>5*1024*1024){$('status').textContent='Image must be under 5 MB';return}try{const image=await createImageBitmap(file);artwork[key]=image;if(key==='pointer')$('pointershape').value='custom';if(key==='trail')$('trailstyle').value='custom';if(key==='cross')$('crossstyle').value='custom';$('status').textContent='Loaded custom '+key+' artwork: '+file.name;update()}catch(err){$('status').textContent='Cannot open image: '+err.message}});
 function renderExportFrame(t,target,out){exportTarget=target;draw(t);const w=canvas.width,h=canvas.height;if(target==='both'){if(out.width!==w||out.height!==h){out.width=w;out.height=h}out.getContext('2d').clearRect(0,0,w,h);out.getContext('2d').drawImage(canvas,0,0)}else{if(out.width!==Math.round(w/2)||out.height!==h){out.width=Math.round(w/2);out.height=h}const c=out.getContext('2d');c.clearRect(0,0,out.width,h);c.drawImage(canvas,target==='left'?0:w/2,0,w/2,h,0,0,out.width,h)}exportTarget='both'}
 $('png').onclick=()=>{draw(time);canvas.toBlob(blob=>{if(!blob)return;download(blob,'blackbox-sticks.png')},'image/png')};
+let customExportFilename=false;
+let exportFilenameStamp='';
+function exportNameStamp(){
+ return new Date().toISOString().replace(/[-:]/g,'').replace('T','-').slice(0,15);
+}
+function exportFilenameTarget(){
+ return $('exportsticks').value==='separate'?'{target}':$('exportsticks').value;
+}
+function defaultExportFilename(format=$('videoformat').value,range=null){
+ const target=exportFilenameTarget();
+ if(format!=='mov')return 'blackbox-sticks-'+target;
+ const sync=range?.autoGoPro?'-GOPRO-AUTO-SYNC':range?.autoDji?'-DJI-AUTO-SYNC':'';
+ return 'blackbox-sticks-'+target+sync+'-alpha-'+exportFilenameStamp;
+}
+function safeExportName(input){
+ return String(input||'').trim().replace(/\.(mov|mp4|webm)$/i,'')
+  .replace(/[<>:"/\\|?*\x00-\x1f]/g,'-')
+  .replace(/^[\s.]+|[\s.]+$/g,'').slice(0,140);
+}
+function resolvedExportName(target,range=null){
+ const choice=$('exportsticks').value;
+ const typed=safeExportName($('exportfilename').value);
+ const fallback=defaultExportFilename($('videoformat').value,range);
+ let base=customExportFilename?(typed||fallback):defaultExportFilename($('videoformat').value,range);
+ if(base.includes('{target}'))base=base.replace(/\{target\}/g,target);
+ else if(choice==='separate')base+='-'+target;
+ return safeExportName(base)||'blackbox-sticks-'+target;
+}
+function exportFilenamePreview(range=null){
+ const format=$('videoformat').value;
+ const choices=$('exportsticks').value==='separate'?['left','right']:[$('exportsticks').value];
+ const names=choices.map(target=>{
+  const base=resolvedExportName(target,range);
+  return base+(format==='mov'?'-part-001.mov':'.'+format);
+ });
+ $('exportfilenamepreview').textContent='Downloads as: '+names.join('  /  ');
+}
+function resetExportFilename(range=null){
+ customExportFilename=false;
+ exportFilenameStamp=exportNameStamp();
+ $('exportfilename').value=defaultExportFilename($('videoformat').value,range);
+ exportFilenamePreview(range);
+}
+$('exportfilename').addEventListener('input',()=>{
+ customExportFilename=true;
+ exportFilenamePreview();
+});
+$('resetexportfilename').addEventListener('click',()=>resetExportFilename());
+for(const id of ['exportsticks','videoformat']){
+ $(id).addEventListener('change',()=>{
+  if(!customExportFilename)resetExportFilename();
+  else exportFilenamePreview();
+ });
+}
+resetExportFilename();
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),15000)}
 const exportDebugLines=[];let exportDebugLastProgress=-1;
 function exportDebug(message,level='INFO'){
@@ -2275,6 +2353,7 @@ function refreshCameraSync(){
  if(!valid)$('cameraautoapply').checked=false;
  $('djiautoexport').checked=valid&&$('cameraautoapply').checked&&cameraSyncType==='dji';
  $('goproautoexport').checked=valid&&$('cameraautoapply').checked&&cameraSyncType==='gopro';
+ updateSyncLeadTiming();
  $('cameraautoapplystatus').textContent=valid?
    (active.matchedWindows+'/'+active.totalWindows+' motion sections matched · '+active.speed.toFixed(3)+'% equivalent. '+($('cameraautoapply').checked?'Ready to export a synced MOV.':'Tick to apply offset and drift automatically to export.')):
    'Once motion matches reliably, enable Auto Sync, export a MOV and place it at 00:00 and 100% speed in Resolve.';
@@ -2311,9 +2390,10 @@ $('cameraautorun').addEventListener('click',async()=>{
   $('cameraautores').textContent=result.status==='estimate'?
    ('Motion matched · '+result.matchedWindows+'/'+result.totalWindows+' sections\nConfidence: '+result.confidence+'\nCalculated equivalent speed: '+result.speed.toFixed(3)+'%\nTiming residual: '+(result.residual*1000).toFixed(1)+' ms'):
    ('No reliable match: '+result.reason);
-  $('cameraautostatus').textContent=result.status==='estimate'?'Motion sync ready. Tick Apply Auto Sync and export.':'Sync was inconclusive.';
+  if(result.status==='estimate')$('cameraautoapply').checked=true;
+  $('cameraautostatus').textContent=result.status==='estimate'?'Motion sync ready. Auto Sync enabled.':'Sync was inconclusive.';
  }catch(err){if(seq===cameraSyncSerial)$('cameraautostatus').textContent='Auto Sync failed: '+err.message}
- finally{cameraSyncBusy=false;refreshCameraSync()}
+ finally{cameraSyncBusy=false;refreshCameraSync();updateSyncLeadTiming()}
 });
 function clearCameraAutoSync(){
  cameraSyncSerial++;cameraSyncFile=null;cameraSyncType=null;cameraSyncBusy=false;
@@ -2341,7 +2421,7 @@ $('goprovideo').addEventListener('change',e=>{
 });
 $('goproautoexport').addEventListener('change',()=>{
  if($('goproautoexport').checked)$('djiautoexport').checked=false;
- refreshGoProSync();renderDjiSync();
+ refreshGoProSync();renderDjiSync();updateSyncLeadTiming();
 });
 $('gopromatchrun').addEventListener('click',async()=>{
  const f=goproFile;if(!f||!binaryMode||goproRunning)return;
@@ -2355,9 +2435,10 @@ $('gopromatchrun').addEventListener('click',async()=>{
   $('gopromatchresult').textContent=result.status==='estimate'?
     'Suggested overlay speed: '+fmt(result.speed)+'%\nGoPro recording: '+fmt(result.videoDuration)+'s\nCamera/BBL offset: '+fmt(result.offset)+'s (positive means video begins before BBL)\nMatched sections: '+result.matchedWindows+' / '+result.totalWindows+'\nConfidence: '+result.confidence+'\nResidual: '+fmt(result.residual*1000)+' ms\nGPMF gyro samples: '+result.gyroSamples+'\nScores: '+result.scores.map(fmt).join(' / ')+'\nExperimental. Verify against the video before using full-length exported overlays.':
     'No safe automatic GoPro sync: '+result.reason+'\nMatched sections: '+result.matchedWindows+' / '+result.totalWindows+'\nScores: '+result.scores.map(fmt).join(' / ');
-  status.textContent=result.status==='estimate'?'GoPro motion match ready.':'GoPro motion matching inconclusive.';
+  if(result.status==='estimate'){$('goproautoexport').checked=true;$('djiautoexport').checked=false;}
+  status.textContent=result.status==='estimate'?'GoPro motion match ready. Auto Sync enabled.':'GoPro motion matching inconclusive.';
  }catch(e){status.textContent='GoPro matcher v0.15.1: '+e.message;$('gopromatchresult').textContent='';}
- finally{goproRunning=false;refreshGoProSync()}
+ finally{goproRunning=false;refreshGoProSync();updateSyncLeadTiming()}
 });
 
 function renderDjiSync(){
@@ -2419,15 +2500,16 @@ $('djimotionrun').addEventListener('click',async()=>{
   const fmt=x=>Number.isFinite(x)?x.toFixed(3):'N/A';
   if(result.status==='estimate'){
    $('djimotionresult').textContent='Suggested Resolve overlay speed: '+fmt(result.speed)+'%\nMotion sections matched: '+result.matchedWindows+' / '+result.totalWindows+' (outliers excluded)\nConfidence: '+result.confidence+'\nMotion match scores: '+result.scores.map(fmt).join(' / ')+'\nMaximum accepted timing residual: '+fmt(result.residual*1000)+' ms\nCamera quaternions sampled: '+result.quaternions+'\nExperimental estimate. Verify at beginning and end before relying on auto-synced exports.';
-   status.textContent='Motion matching complete; inspect the recommendation.';
+   $('djiautoexport').checked=true;$('goproautoexport').checked=false;
+   status.textContent='Motion matching complete. Auto Sync enabled.';
   }else{
    $('djimotionresult').textContent='No reliable automatic estimate. '+result.reason+'\nSections passing initial correlation: '+result.matchedWindows+' / '+result.totalWindows+'\nWindow scores: '+result.scores.map(fmt).join(' / ')+'\nDo not use an unverified automatic percentage.';
    status.textContent='Match insufficiently reliable.';
   }
  }catch(err){status.textContent='Automatic matching unavailable: '+err.message;$('djimotionresult').textContent='';}
- finally{djiMatchRunning=false;renderDjiSync()}
+ finally{djiMatchRunning=false;renderDjiSync();updateSyncLeadTiming()}
 });
-$('djiautoexport').addEventListener('change',()=>{if($('djiautoexport').checked)$('goproautoexport').checked=false;renderDjiSync();refreshGoProSync()});
+$('djiautoexport').addEventListener('change',()=>{if($('djiautoexport').checked)$('goproautoexport').checked=false;renderDjiSync();refreshGoProSync();updateSyncLeadTiming()});
 $('djiframeoffset').addEventListener('input',renderDjiSync);
 $('djitimelinefps').addEventListener('change',renderDjiSync);
 $('djicurrentspeed').addEventListener('input',renderDjiSync);
@@ -2612,6 +2694,7 @@ function prepareMovPngFrame(canvas){
 }
 async function exportVideo(target){if((!samples.length&&!binaryMode)||recording){exportDebug('Export skipped: no flight log or export already running','WARN');return;}
  let range;try{range=exportSelectedRange()}catch(e){exportDebugError('Invalid export range',e);$('status').textContent=e.message;$('exportrangesettings').open=true;return}
+ if(!customExportFilename)resetExportFilename(range);
  exportDebug('Settings: format='+$('videoformat').value+', target='+target+', resolution='+$('size').value+', FPS='+$('fps').value+', range='+range.start.toFixed(3)+'-'+range.end.toFixed(3)+'s, compression='+$('movcompression').value+', input='+(binaryMode?'BBL/BFL':'CSV'))
  if(range.autoDji)exportDebug((range.autoGoPro?'GoPro':'DJI')+' Auto Sync ON: MP4 duration='+range.duration.toFixed(6)+'s; time mapping camera=('+range.intercept.toFixed(6)+')+('+range.scale.toFixed(8)+')*BBL; clip speed equivalent='+range.speed.toFixed(4)+'%. Place the MOV at 00:00, 100% speed.');
  const output=document.createElement('canvas');if($('videoformat').value==='mov'){
@@ -2619,9 +2702,7 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
  // Chunked fallback uses a 1 GiB encoded-data cap, not a fixed duration.
  if(!frames||!Number.isFinite(frames)||fps<=0){$('status').textContent='Invalid export duration or FPS';return}
  // Use ordinary browser downloads; never ask for persistent folder/file access.
- const suggestedBase='blackbox-sticks-'+target+(range.autoGoPro?'-GOPRO-AUTO-SYNC':range.autoDji?'-DJI-AUTO-SYNC':'')+'-alpha';
- const stamp=new Date().toISOString().replace(/[-:]/g,'').replace('T','-').slice(0,15);
- const exportBase=suggestedBase+'-'+stamp;
+ const exportBase=resolvedExportName(target,range);
  // Show the confirmation immediately, before any expensive PNG sampling.
  // Learn a per-configuration speed estimate from real completed exports.
  // Without calibrated history, avoid inventing a misleading ETA.
@@ -2691,7 +2772,41 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
   };
   for(let i=0;i<frames;i++){
    const frameStarted=performance.now();
-   time=exportFrameTimestamp(range,i/fps);renderExportMappedFrame(time,target,output,range);prepareMovPngFrame(output);
+   time=exportFrameTimestamp(range,i/fps);
+   // Render validation: a blank frame inside an otherwise visible flight is not
+   // encoded until retries have been exhausted. Never shift the frame timestamp.
+   const leadSeconds=Math.max(0,Number($('lead').value)||0);
+   const totalSeconds=leadSeconds+duration+Math.max(0,Number($('tail').value)||0);
+   const fadeInSeconds=Math.max(0,Number($('fadein').value)||0);
+   const fadeOutSeconds=Math.max(0,Number($('fadeout').value)||0);
+   const expectedVisible=i>0&&i<frames-1&&time>leadSeconds+.001&&time<leadSeconds+duration-.001
+    &&time>fadeInSeconds+.001&&time<totalSeconds-fadeOutSeconds-.001
+    &&Number($('elementopacity')?.value??100)>0;
+   let visible=false,attempts=0;
+   const frameHasAlpha=()=>{
+    const pixels=output.getContext('2d',{willReadFrequently:true}).getImageData(0,0,output.width,output.height).data;
+    for(let k=3;k<pixels.length;k+=4)if(pixels[k]!==0)return true;
+    return false;
+   };
+   do{
+    renderExportMappedFrame(time,target,output,range);
+    // Test the rendered canvas BEFORE lossy colour/alpha quantisation.
+    visible=!expectedVisible||frameHasAlpha();
+    if(visible)break;
+    attempts++;
+    exportDebug('Unexpected blank MOV frame '+(i+1)+'/'+frames+' (part '+part+') at '+(i/fps).toFixed(3)+'s, render retry '+attempts+'/3','WARN');
+    if(attempts<3)await new Promise(r=>setTimeout(r,0));
+   }while(attempts<3);
+   if(!visible){
+    if(transparentRunStart<0){transparentRunStart=i;transparentRunPart=part}
+    transparentRunLength++;
+    finishTransparentRun();
+    throw Error('Stopped export: frame '+(i+1)+' at '+(i/fps).toFixed(3)+'s remained fully transparent after 3 renders. No corrupt MOV was saved; check export debug log.');
+   }
+   if(attempts)exportDebug('Recovered MOV frame '+(i+1)+' after '+attempts+' retry/retries.');
+   finishTransparentRun();
+   prepareMovPngFrame(output);
+
    const blob=await encodeMovPngFrame(output);
    if(i>=speedWarmup){
     speedSamples.push(performance.now()-frameStarted);
@@ -2713,7 +2828,7 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
  }catch(e){exportDebugError('Chunked MOV export failed',e);$('status').textContent='MOV export failed: '+e.message;exportProgress(0,'Export failed')}
  finally{recording=false;$('video').disabled=false;update()}
  return
- }if((!samples.length&&!binaryMode)||recording)return;if(!canvas.captureStream||!window.MediaRecorder){exportDebug('Browser does not support MediaRecorder','ERROR');$('status').textContent='This browser does not support canvas video recording';return}const fps=+$('fps').value;renderExportMappedFrame(exportFrameTimestamp(range,0),target,output,range);const stream=output.captureStream(0),track=stream.getVideoTracks()[0],format=$('videoformat').value,mime=(format==='mp4'?['video/mp4;codecs=avc1.42E01E','video/mp4']:['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']).find(x=>MediaRecorder.isTypeSupported(x));if(!mime){$('status').textContent=format.toUpperCase()+' recording is unsupported in this browser. Select the other format.';return}const chunks=[];let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:4000000})}catch(e){$('status').textContent=e.message;return}recording=true;playing=false;$('video').disabled=true;const finished=new Promise(resolve=>{rec.onstop=()=>{exportDebug('MediaRecorder stopped; captured '+chunks.length+' chunks');recording=false;$('video').disabled=false;download(new Blob(chunks,{type:mime}),'blackbox-sticks-'+target+'.'+format);$('status').textContent=format==='mp4'?'MP4 exported with solid background. Use compositing in Resolve.':'WebM exported. Verify alpha transparency in Resolve before relying on it.';update();resolve()}});rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};rec.onerror=e=>{exportDebugError('MediaRecorder error',e.error||e);$('status').textContent='Recording error: '+(e.error?.message||'unknown')};rec.start();const total=range.duration,frames=Math.ceil(total*fps);$('status').textContent='Recording '+frames+' frames in real time…';for(let i=0;i<frames;i++){time=exportFrameTimestamp(range,i/fps);renderExportMappedFrame(time,target,output,range);if(track.requestFrame)track.requestFrame();await new Promise(resolve=>setTimeout(resolve,1000/fps));if(i%fps===0)$('status').textContent='Recording '+Math.round(i/frames*100)+'%'}rec.stop();await finished};
+ }if((!samples.length&&!binaryMode)||recording)return;if(!canvas.captureStream||!window.MediaRecorder){exportDebug('Browser does not support MediaRecorder','ERROR');$('status').textContent='This browser does not support canvas video recording';return}const fps=+$('fps').value;renderExportMappedFrame(exportFrameTimestamp(range,0),target,output,range);const stream=output.captureStream(0),track=stream.getVideoTracks()[0],format=$('videoformat').value,mime=(format==='mp4'?['video/mp4;codecs=avc1.42E01E','video/mp4']:['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']).find(x=>MediaRecorder.isTypeSupported(x));if(!mime){$('status').textContent=format.toUpperCase()+' recording is unsupported in this browser. Select the other format.';return}const chunks=[];let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:4000000})}catch(e){$('status').textContent=e.message;return}recording=true;playing=false;$('video').disabled=true;const finished=new Promise(resolve=>{rec.onstop=()=>{exportDebug('MediaRecorder stopped; captured '+chunks.length+' chunks');recording=false;$('video').disabled=false;download(new Blob(chunks,{type:mime}),resolvedExportName(target,range)+'.'+format);$('status').textContent=format==='mp4'?'MP4 exported with solid background. Use compositing in Resolve.':'WebM exported. Verify alpha transparency in Resolve before relying on it.';update();resolve()}});rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};rec.onerror=e=>{exportDebugError('MediaRecorder error',e.error||e);$('status').textContent='Recording error: '+(e.error?.message||'unknown')};rec.start();const total=range.duration,frames=Math.ceil(total*fps);$('status').textContent='Recording '+frames+' frames in real time…';for(let i=0;i<frames;i++){time=exportFrameTimestamp(range,i/fps);renderExportMappedFrame(time,target,output,range);if(track.requestFrame)track.requestFrame();await new Promise(resolve=>setTimeout(resolve,1000/fps));if(i%fps===0)$('status').textContent='Recording '+Math.round(i/frames*100)+'%'}rec.stop();await finished};
 $('video').onclick=async()=>{const choice=$('exportsticks').value;exportDebugLastProgress=-1;exportDebug('Export clicked; browser='+navigator.userAgent);try{if(choice==='separate'){await exportVideo('left');if($('videoformat').value!=='mov'){await new Promise(r=>setTimeout(r,250))}await exportVideo('right')}else await exportVideo(choice)}catch(e){exportDebugError('Unhandled export failure',e);recording=false;$('video').disabled=false;$('status').textContent='Export failed: '+(e.message||e);exportProgress(0,'Export failed')}};
 
 // Contextual help for every settings heading; native browser tooltip on hover/focus.
