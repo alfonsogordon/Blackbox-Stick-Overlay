@@ -2081,6 +2081,20 @@ $('importpresetfile').addEventListener('change',async e=>{
  finally{e.target.value=''}
 });
 refreshUserPresets();
+function syncLocksLeadTiming(){
+ return !!($('goproautoexport')?.checked||$('djiautoexport')?.checked);
+}
+function updateSyncLeadTiming(){
+ const locked=syncLocksLeadTiming();
+ for(const id of ['lead','tail']){
+  const input=$(id);
+  if(locked){if(!input.disabled){input.dataset.beforeSync=input.value;}input.value='0';}
+  else if(input.disabled&&input.dataset.beforeSync!==undefined){input.value=input.dataset.beforeSync;delete input.dataset.beforeSync;}
+  input.disabled=locked;
+  input.closest('div')?.style.setProperty('opacity',locked?'0.45':'1');
+  input.title=locked?'Disabled while GoPro/DJI Auto Sync is applied. Timing comes from the sync match.':'';
+ }
+}
 function totalTime(){return (+$('lead').value||0)+duration+(+$('tail').value||0)}
 function updateTimingInfo(){const lead=Math.max(0,+$('lead').value||0),tail=Math.max(0,+$('tail').value||0),fi=Math.max(0,+$('fadein').value||0),fo=Math.max(0,+$('fadeout').value||0),total=lead+duration+tail;const fmt=x=>x.toFixed(1)+'s';$('timinginfo').innerHTML='<strong>Export duration: '+fmt(total)+'</strong><div style="margin-top:5px">Lead-in '+fmt(lead)+' + flight log '+fmt(duration)+' + lead-out '+fmt(tail)+'</div><div style="margin-top:5px">First logged movement starts at <strong>'+fmt(lead)+'</strong> in the exported video. Fade-in '+fmt(fi)+' / fade-out '+fmt(fo)+' change opacity only.</div><div style="margin-top:7px">Sync tip: align the start of your Blackbox recording with <strong>'+fmt(lead)+'</strong> on the exported overlay timeline (then adjust against your flight footage if needed).</div>';
  if(telemetryNames?.length&&!demoMode){
@@ -2147,7 +2161,7 @@ function refreshTimelineArmMarkers(){
   status.textContent=exact?'⚑ ARMED  ·  ⚐ DISARMED  — recorded events (click flag to seek)':'⚑ LOG START — exact arming moment not recorded (click flag to seek)';
  }
 }
-function update(){if($('djisynctest')?.open)renderDjiSync();time=clamp(time,0,totalTime());updateTimingInfo();refreshTimelineArmMarkers();draw(time);updatePreviewGuides();refreshHudMotionStatus()}
+function update(){updateSyncLeadTiming();if($('djisynctest')?.open)renderDjiSync();time=clamp(time,0,totalTime());updateTimingInfo();refreshTimelineArmMarkers();draw(time);updatePreviewGuides();refreshHudMotionStatus()}
 // Preview imported flights after the lead-in and fade-in, so a paused log
 // never looks empty at timestamp zero. Exports still begin at zero with fades.
 function initialLogPreviewTime(){
@@ -2643,7 +2657,7 @@ $('goprovideo').addEventListener('change',e=>{
 });
 $('goproautoexport').addEventListener('change',()=>{
  if($('goproautoexport').checked)$('djiautoexport').checked=false;
- refreshGoProSync();renderDjiSync();
+ refreshGoProSync();renderDjiSync();updateSyncLeadTiming();
 });
 $('gopromatchrun').addEventListener('click',async()=>{
  const f=goproFile;if(!f||!binaryMode||goproRunning)return;
@@ -2729,7 +2743,7 @@ $('djimotionrun').addEventListener('click',async()=>{
  }catch(err){status.textContent='Automatic matching unavailable: '+err.message;$('djimotionresult').textContent='';}
  finally{djiMatchRunning=false;renderDjiSync()}
 });
-$('djiautoexport').addEventListener('change',()=>{if($('djiautoexport').checked)$('goproautoexport').checked=false;renderDjiSync();refreshGoProSync()});
+$('djiautoexport').addEventListener('change',()=>{if($('djiautoexport').checked)$('goproautoexport').checked=false;renderDjiSync();refreshGoProSync();updateSyncLeadTiming()});
 $('djiframeoffset').addEventListener('input',renderDjiSync);
 $('djitimelinefps').addEventListener('change',renderDjiSync);
 $('djicurrentspeed').addEventListener('input',renderDjiSync);
