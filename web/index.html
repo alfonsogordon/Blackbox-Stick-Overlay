@@ -5590,6 +5590,7 @@ function setupWorkflowLayout(){
  append([
    rightNodes.find(node=>node===retainedRight.exportsticks||node.contains(retainedRight.exportsticks)),
    rightNodes.find(node=>node===retainedRight.videoformat||node.contains(retainedRight.videoformat)),
+   rightNodes.find(node=>node.id==='exportfilenamewrap'),
    rightNodes.find(node=>node.id==='exportrangesettings'),
    rightNodes.find(node=>node.id==='movcompresssettings')
  ],exportSettings);
