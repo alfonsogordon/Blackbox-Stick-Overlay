@@ -2744,6 +2744,12 @@ async function exportVideo(target){if((!samples.length&&!binaryMode)||recording)
  try{
   const maxBytes=1024*1048576;
   let chunks=[],clipBytes=0,part=1,firstFrame=0;
+  let transparentRunStart=-1,transparentRunLength=0,transparentRunPart=0;
+  const finishTransparentRun=()=>{
+   if(transparentRunStart<0)return;
+   exportDebug('MOV transparency run: part '+transparentRunPart+', frames '+(transparentRunStart+1)+'-'+(transparentRunStart+transparentRunLength)+', '+(transparentRunStart/fps).toFixed(3)+'-'+((transparentRunStart+transparentRunLength)/fps).toFixed(3)+'s ('+transparentRunLength+' frames)','WARN');
+   transparentRunStart=-1;transparentRunLength=0;
+  };
   // Record actual rendered/encoded frame speeds for the next immediate ETA.
   const speedSamples=[];
   const speedWarmup=Math.min(15,Math.floor(frames*.1));
