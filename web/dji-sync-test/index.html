@@ -2591,6 +2591,7 @@ function refreshCameraSync(){
  if(!valid)$('cameraautoapply').checked=false;
  $('djiautoexport').checked=valid&&$('cameraautoapply').checked&&cameraSyncType==='dji';
  $('goproautoexport').checked=valid&&$('cameraautoapply').checked&&cameraSyncType==='gopro';
+ updateSyncLeadTiming();
  $('cameraautoapplystatus').textContent=valid?
    (active.matchedWindows+'/'+active.totalWindows+' motion sections matched · '+active.speed.toFixed(3)+'% equivalent. '+($('cameraautoapply').checked?'Ready to export a synced MOV.':'Tick to apply offset and drift automatically to export.')):
    'Once motion matches reliably, enable Auto Sync, export a MOV and place it at 00:00 and 100% speed in Resolve.';
@@ -2627,9 +2628,10 @@ $('cameraautorun').addEventListener('click',async()=>{
   $('cameraautores').textContent=result.status==='estimate'?
    ('Motion matched · '+result.matchedWindows+'/'+result.totalWindows+' sections\nConfidence: '+result.confidence+'\nCalculated equivalent speed: '+result.speed.toFixed(3)+'%\nTiming residual: '+(result.residual*1000).toFixed(1)+' ms'):
    ('No reliable match: '+result.reason);
-  $('cameraautostatus').textContent=result.status==='estimate'?'Motion sync ready. Tick Apply Auto Sync and export.':'Sync was inconclusive.';
+  if(result.status==='estimate')$('cameraautoapply').checked=true;
+  $('cameraautostatus').textContent=result.status==='estimate'?'Motion sync ready. Auto Sync enabled.':'Sync was inconclusive.';
  }catch(err){if(seq===cameraSyncSerial)$('cameraautostatus').textContent='Auto Sync failed: '+err.message}
- finally{cameraSyncBusy=false;refreshCameraSync()}
+ finally{cameraSyncBusy=false;refreshCameraSync();updateSyncLeadTiming()}
 });
 function clearCameraAutoSync(){
  cameraSyncSerial++;cameraSyncFile=null;cameraSyncType=null;cameraSyncBusy=false;
@@ -2671,9 +2673,10 @@ $('gopromatchrun').addEventListener('click',async()=>{
   $('gopromatchresult').textContent=result.status==='estimate'?
     'Suggested overlay speed: '+fmt(result.speed)+'%\nGoPro recording: '+fmt(result.videoDuration)+'s\nCamera/BBL offset: '+fmt(result.offset)+'s (positive means video begins before BBL)\nMatched sections: '+result.matchedWindows+' / '+result.totalWindows+'\nConfidence: '+result.confidence+'\nResidual: '+fmt(result.residual*1000)+' ms\nGPMF gyro samples: '+result.gyroSamples+'\nScores: '+result.scores.map(fmt).join(' / ')+'\nExperimental. Verify against the video before using full-length exported overlays.':
     'No safe automatic GoPro sync: '+result.reason+'\nMatched sections: '+result.matchedWindows+' / '+result.totalWindows+'\nScores: '+result.scores.map(fmt).join(' / ');
-  status.textContent=result.status==='estimate'?'GoPro motion match ready.':'GoPro motion matching inconclusive.';
+  if(result.status==='estimate'){$('goproautoexport').checked=true;$('djiautoexport').checked=false;}
+  status.textContent=result.status==='estimate'?'GoPro motion match ready. Auto Sync enabled.':'GoPro motion matching inconclusive.';
  }catch(e){status.textContent='GoPro matcher v0.15.1: '+e.message;$('gopromatchresult').textContent='';}
- finally{goproRunning=false;refreshGoProSync()}
+ finally{goproRunning=false;refreshGoProSync();updateSyncLeadTiming()}
 });
 
 function renderDjiSync(){
@@ -2735,13 +2738,14 @@ $('djimotionrun').addEventListener('click',async()=>{
   const fmt=x=>Number.isFinite(x)?x.toFixed(3):'N/A';
   if(result.status==='estimate'){
    $('djimotionresult').textContent='Suggested Resolve overlay speed: '+fmt(result.speed)+'%\nMotion sections matched: '+result.matchedWindows+' / '+result.totalWindows+' (outliers excluded)\nConfidence: '+result.confidence+'\nMotion match scores: '+result.scores.map(fmt).join(' / ')+'\nMaximum accepted timing residual: '+fmt(result.residual*1000)+' ms\nCamera quaternions sampled: '+result.quaternions+'\nExperimental estimate. Verify at beginning and end before relying on auto-synced exports.';
-   status.textContent='Motion matching complete; inspect the recommendation.';
+   $('djiautoexport').checked=true;$('goproautoexport').checked=false;
+   status.textContent='Motion matching complete. Auto Sync enabled.';
   }else{
    $('djimotionresult').textContent='No reliable automatic estimate. '+result.reason+'\nSections passing initial correlation: '+result.matchedWindows+' / '+result.totalWindows+'\nWindow scores: '+result.scores.map(fmt).join(' / ')+'\nDo not use an unverified automatic percentage.';
    status.textContent='Match insufficiently reliable.';
   }
  }catch(err){status.textContent='Automatic matching unavailable: '+err.message;$('djimotionresult').textContent='';}
- finally{djiMatchRunning=false;renderDjiSync()}
+ finally{djiMatchRunning=false;renderDjiSync();updateSyncLeadTiming()}
 });
 $('djiautoexport').addEventListener('change',()=>{if($('djiautoexport').checked)$('goproautoexport').checked=false;renderDjiSync();refreshGoProSync();updateSyncLeadTiming()});
 $('djiframeoffset').addEventListener('input',renderDjiSync);
