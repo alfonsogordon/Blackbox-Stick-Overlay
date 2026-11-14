@@ -1801,28 +1801,16 @@ function sqReactionState(t,lead,active){
  return {shocked:(shockAt>=0&&now-shockAt<.65)||spinOn,angle};
 }
 function point(x,y,rad,shape,color,a,shocked=false,rotation=0,karenLevel=0){ctx.save();if(shape==='karen'){
- // A fixed canvas-sized footprint follows the existing pointer size slider.
- // Blend neighbouring expressions instead of abruptly swapping images.
- const level=clamp(karenLevel,0,4),low=Math.floor(level),high=Math.min(4,low+1),mix=level-low;
- const scale=rad*3;
- const drawFace=(index,alpha)=>{
-  const face=karenFaces[index];
-  if(!face?.complete||!face.naturalWidth||alpha<=0)return false;
+ // Draw one fully opaque face per frame. Alpha-blending two faces made the
+ // eyes/mouth ghost and visibly flicker as telemetry fluctuated.
+ const face=karenFaces[Math.max(0,Math.min(4,Math.round(karenLevel)))]||
+  karenFaces.find(img=>img.complete&&img.naturalWidth);
+ if(face?.complete&&face.naturalWidth){
   const bounds=face.karenBounds||{x:0,y:0,w:face.naturalWidth,h:face.naturalHeight};
-  const fit=Math.max(bounds.w,bounds.h);
-  ctx.globalAlpha=a*alpha;
-  // Same square for every expression: the face never changes apparent size.
-  ctx.drawImage(face,bounds.x,bounds.y,bounds.w,bounds.h,
-   x-scale*bounds.w/fit/2,y-scale*bounds.h/fit/2,
-   scale*bounds.w/fit,scale*bounds.h/fit);
-  return true;
- };
- const readyLow=karenFaces[low]?.complete&&karenFaces[low]?.naturalWidth;
- const readyHigh=karenFaces[high]?.complete&&karenFaces[high]?.naturalWidth;
- if(readyLow&&readyHigh){drawFace(low,1-mix);if(high!==low)drawFace(high,mix)}
- else if(!drawFace(low,1))if(!drawFace(high,1)){
-  const fallback=karenFaces.findIndex(img=>img.complete&&img.naturalWidth);
-  if(fallback>=0)drawFace(fallback,1);
+  const scale=rad*3,fit=Math.max(bounds.w,bounds.h);
+  const dw=scale*bounds.w/fit,dh=scale*bounds.h/fit;
+  ctx.globalAlpha*=a;
+  ctx.drawImage(face,bounds.x,bounds.y,bounds.w,bounds.h,x-dw/2,y-dh/2,dw,dh);
  }
  ctx.restore();return}
 if(shape==='sq'){const face=shocked?sqFaces.shocked:sqFaces.happy;if(face.complete&&face.naturalWidth){ctx.globalAlpha*=a;ctx.translate(x,y);ctx.rotate(rotation);ctx.drawImage(face,-rad*1.5,-rad*1.5,rad*3,rad*3)}ctx.restore();return}if(shape==='custom'&&artwork.pointer){ctx.globalAlpha*=a;ctx.drawImage(artwork.pointer,x-rad*1.5,y-rad*1.5,rad*3,rad*3);ctx.restore();return}ctx.globalAlpha*=a;ctx.fillStyle=color;ctx.strokeStyle=color;ctx.lineWidth=Math.max(1.5,w/420);ctx.beginPath();if(['tactical','radar','chevron','energy','neonhex','precision','finecross'].includes(shape)){
@@ -1841,10 +1829,15 @@ boxPath();ctx.fillStyle='rgba('+background.join(',')+','+bgAlpha+')';ctx.fill();
 drawThemedStickBox(cx,cy,r,$('betatheme').value,opacity*outlineOpacity,t,i);
 // Easter egg only: left SQ face swells from 100% to 150% with actual throttle, independent of the reverse-axis display setting.
 const sqThrottleScale=shape==='sq'&&i===0?1+.5*clamp(throttle>=1000?(throttle-1000)/1000:throttle/1000,0,1):1;
+const karenIntensity=shape==='karen'?karenRage(throttle,roll,pitch,yaw)/4:0;
+// Full stick/throttle gives 85% more size; the existing pointer size slider
+// remains the base size. Continuous scaling, no sudden jumps.
+const karenScale=shape==='karen'?1+.85*karenIntensity:1;
+const karenLevel=shape==='karen'?Math.min(4,Math.floor(karenIntensity*5)):0;
 const appearance=themeStickAppearance();
 const reactiveScale=reactiveStickEnabled()?stickReactiveScale(x,y,t):1;
 const visualShape=appearance&&shape==='circle'?appearance.shape:shape;
-const travel=r*.74,px=cx+x*travel,py=cy-y*travel,rad=side*.06*pointSize*(stickLayout[i].pointerScale??1)*sqThrottleScale*reactiveScale,color=appearance?(i===0?appearance.left:appearance.right):$(i===0?'leftcolor':'rightcolor').value;
+const travel=r*.74,px=cx+x*travel,py=cy-y*travel,rad=side*.06*pointSize*(stickLayout[i].pointerScale??1)*sqThrottleScale*karenScale*(shape==='karen'?1:reactiveScale),color=appearance?(i===0?appearance.left:appearance.right):$(i===0?'leftcolor':'rightcolor').value;
 if(active&&trail!=='off'){
  ctx.save();
  // Trails live behind the live pointer and inside their own stick square.
@@ -1941,7 +1934,7 @@ if(active&&trail!=='off'){
 }
 ctx.save();if(appearance?.glow){ctx.shadowColor=color;ctx.shadowBlur=rad*1.6;}
 if(visualShape!=='cross'&&visualShape!=='plus'&&visualShape!=='custom'&&visualShape!=='sq'&&visualShape!=='karen'){ctx.beginPath();ctx.arc(px,py,rad*1.8,0,Math.PI*2);ctx.fillStyle='rgba('+rgb(color).join(',')+',.14)';ctx.fill()}
-point(px,py,rad,visualShape,color,1,shape==='sq'?sqState.shocked:false,sqState?.angle||0,karenRage(throttle,roll,pitch,yaw));ctx.restore();ctx.restore()});
+point(px,py,rad,visualShape,color,1,shape==='sq'?sqState.shocked:false,sqState?.angle||0,karenLevel);ctx.restore();ctx.restore()});
  // Presets set initial visibility, never suppress manually enabled elements.
  const selectiveCurve=betaActive()&&(Number($('betacurve').value)>0||Number($('betaperspective').value)>0);
  // Isolate sticks before drawing the HUD. Otherwise their dark rectangles are
