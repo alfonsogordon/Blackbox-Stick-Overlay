@@ -271,7 +271,7 @@ const karenFaces=karenFaceData.map(data=>{
 function karenRage(throttle,roll,pitch,yaw){
  const throttleLevel=clamp(throttle>=1000?(throttle-1000)/1000:throttle/1000,0,1);
  const deflection=Math.max(Math.abs(roll),Math.abs(pitch),Math.abs(yaw))/500;
- return Math.min(4,Math.floor(clamp(Math.max(throttleLevel,deflection),0,1)*5));
+ return clamp(Math.max(throttleLevel,deflection),0,1)*4;
 }
 const quadLayout={x:.5,y:.5,scale:.75};
 const clamp=(x,a=-1,b=1)=>Math.max(a,Math.min(b,x));
@@ -1801,19 +1801,31 @@ function sqReactionState(t,lead,active){
  return {shocked:(shockAt>=0&&now-shockAt<.65)||spinOn,angle};
 }
 function point(x,y,rad,shape,color,a,shocked=false,rotation=0,karenLevel=0){ctx.save();if(shape==='karen'){
- const face=karenFaces[karenLevel]?.complete&&karenFaces[karenLevel]?.naturalWidth?karenFaces[karenLevel]:karenFaces.find(img=>img.complete&&img.naturalWidth);
- if(face){
-  ctx.globalAlpha*=a;
-  const scale=rad*3,fw=face.naturalWidth,fh=face.naturalHeight;
-  const bounds=face.karenBounds||{x:0,y:0,w:fw,h:fh};
+ // A fixed canvas-sized footprint follows the existing pointer size slider.
+ // Blend neighbouring expressions instead of abruptly swapping images.
+ const level=clamp(karenLevel,0,4),low=Math.floor(level),high=Math.min(4,low+1),mix=level-low;
+ const scale=rad*3;
+ const drawFace=(index,alpha)=>{
+  const face=karenFaces[index];
+  if(!face?.complete||!face.naturalWidth||alpha<=0)return false;
+  const bounds=face.karenBounds||{x:0,y:0,w:face.naturalWidth,h:face.naturalHeight};
   const fit=Math.max(bounds.w,bounds.h);
-  const dw=scale*bounds.w/fit,dh=scale*bounds.h/fit;
-  ctx.drawImage(face,bounds.x,bounds.y,bounds.w,bounds.h,x-dw/2,y-dh/2,dw,dh);
- }else{
-  ctx.globalAlpha*=a;ctx.strokeStyle=color;ctx.lineWidth=Math.max(1.5,rad*.15);
-  ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.stroke();
+  ctx.globalAlpha=a*alpha;
+  // Same square for every expression: the face never changes apparent size.
+  ctx.drawImage(face,bounds.x,bounds.y,bounds.w,bounds.h,
+   x-scale*bounds.w/fit/2,y-scale*bounds.h/fit/2,
+   scale*bounds.w/fit,scale*bounds.h/fit);
+  return true;
+ };
+ const readyLow=karenFaces[low]?.complete&&karenFaces[low]?.naturalWidth;
+ const readyHigh=karenFaces[high]?.complete&&karenFaces[high]?.naturalWidth;
+ if(readyLow&&readyHigh){drawFace(low,1-mix);if(high!==low)drawFace(high,mix)}
+ else if(!drawFace(low,1))if(!drawFace(high,1)){
+  const fallback=karenFaces.findIndex(img=>img.complete&&img.naturalWidth);
+  if(fallback>=0)drawFace(fallback,1);
  }
- ctx.restore();return}if(shape==='sq'){const face=shocked?sqFaces.shocked:sqFaces.happy;if(face.complete&&face.naturalWidth){ctx.globalAlpha*=a;ctx.translate(x,y);ctx.rotate(rotation);ctx.drawImage(face,-rad*1.5,-rad*1.5,rad*3,rad*3)}ctx.restore();return}if(shape==='custom'&&artwork.pointer){ctx.globalAlpha*=a;ctx.drawImage(artwork.pointer,x-rad*1.5,y-rad*1.5,rad*3,rad*3);ctx.restore();return}ctx.globalAlpha*=a;ctx.fillStyle=color;ctx.strokeStyle=color;ctx.lineWidth=Math.max(1.5,w/420);ctx.beginPath();if(['tactical','radar','chevron','energy','neonhex','precision','finecross'].includes(shape)){
+ ctx.restore();return}
+if(shape==='sq'){const face=shocked?sqFaces.shocked:sqFaces.happy;if(face.complete&&face.naturalWidth){ctx.globalAlpha*=a;ctx.translate(x,y);ctx.rotate(rotation);ctx.drawImage(face,-rad*1.5,-rad*1.5,rad*3,rad*3)}ctx.restore();return}if(shape==='custom'&&artwork.pointer){ctx.globalAlpha*=a;ctx.drawImage(artwork.pointer,x-rad*1.5,y-rad*1.5,rad*3,rad*3);ctx.restore();return}ctx.globalAlpha*=a;ctx.fillStyle=color;ctx.strokeStyle=color;ctx.lineWidth=Math.max(1.5,w/420);ctx.beginPath();if(['tactical','radar','chevron','energy','neonhex','precision','finecross'].includes(shape)){
  ctx.translate(x,y);ctx.lineCap='round';ctx.lineJoin='round';const R=rad*1.3;ctx.lineWidth=Math.max(1.4,rad*.14);
  if(shape==='tactical'){ctx.rotate(Math.PI/4);ctx.strokeRect(-R*.7,-R*.7,R*1.4,R*1.4);ctx.rotate(-Math.PI/4);ctx.beginPath();ctx.arc(0,0,rad*.2,0,Math.PI*2);ctx.fill()}
  else if(shape==='radar'){ctx.beginPath();ctx.arc(0,0,R,Math.PI*.2,Math.PI*1.8);ctx.moveTo(0,0);ctx.lineTo(R*.9,-R*.5);ctx.stroke();ctx.beginPath();ctx.arc(0,0,rad*.2,0,Math.PI*2);ctx.fill()}
