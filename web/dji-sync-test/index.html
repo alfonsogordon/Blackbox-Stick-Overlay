@@ -1859,94 +1859,7 @@ if(shape==='sq'){const face=shocked?sqFaces.shocked:sqFaces.happy;if(face.comple
  else {ctx.lineWidth=Math.max(1,rad*.1);ctx.beginPath();ctx.moveTo(-R,0);ctx.lineTo(-rad*.35,0);ctx.moveTo(rad*.35,0);ctx.lineTo(R,0);ctx.moveTo(0,-R);ctx.lineTo(0,-rad*.35);ctx.moveTo(0,rad*.35);ctx.lineTo(0,R);ctx.stroke()}
  ctx.restore();return;
 }if(shape==='square'){ctx.rect(x-rad,y-rad,rad*2,rad*2)}else if(shape==='diamond'){ctx.moveTo(x,y-rad*1.3);ctx.lineTo(x+rad*1.3,y);ctx.lineTo(x,y+rad*1.3);ctx.lineTo(x-rad*1.3,y);ctx.closePath()}else if(shape==='triangle'||shape==='star'||shape==='hexagon'){const n=shape==='triangle'?3:shape==='star'?10:6;for(let j=0;j<n;j++){const a=-Math.PI/2+j*2*Math.PI/n,rr=shape==='star'&&j%2?rad*.52:rad*1.3;const xx=x+Math.cos(a)*rr,yy=y+Math.sin(a)*rr;if(j===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy)}ctx.closePath()}else if(shape==='target'){ctx.arc(x,y,rad,0,Math.PI*2);ctx.moveTo(x+rad*.35,y);ctx.arc(x,y,rad*.35,0,Math.PI*2)}else if(shape==='plus'){const q=rad*.4,R=rad*1.4;ctx.moveTo(x-q,y-R);ctx.lineTo(x+q,y-R);ctx.lineTo(x+q,y-q);ctx.lineTo(x+R,y-q);ctx.lineTo(x+R,y+q);ctx.lineTo(x+q,y+q);ctx.lineTo(x+q,y+R);ctx.lineTo(x-q,y+R);ctx.lineTo(x-q,y+q);ctx.lineTo(x-R,y+q);ctx.lineTo(x-R,y-q);ctx.lineTo(x-q,y-q);ctx.closePath()}else if(shape==='cross'){ctx.moveTo(x-rad*1.5,y);ctx.lineTo(x+rad*1.5,y);ctx.moveTo(x,y-rad*1.5);ctx.lineTo(x,y+rad*1.5)}else ctx.arc(x,y,rad,0,Math.PI*2);if(shape==='ring'||shape==='cross'||shape==='target')ctx.stroke();else ctx.fill();ctx.restore()}
-// TEST only: V12 radio is a single transparent overlay, driven by the same Mode 2 stick positions.
-if($('radiomode')?.value!=='boxes'){
- if(exportTarget==='both'||exportTarget==='left'||exportTarget==='right'){
-  const model=radioModels[$('radiomode').value]||radioModels.v12,radio=model.image;
-  if(radio.complete&&radio.naturalWidth){
-   ctx.save();
-   applyElementMotion(t,w,h);
-   const bounds=radioBounds(w,h),rw=bounds.w,rh=bounds.h,rx=bounds.x,ry=bounds.y;
-   ctx.globalAlpha*=opacity;
-   ctx.drawImage(radio,rx,ry,rw,rh);
-   // Stationary outer bezel, but a vertically travelling horizontal gimbal
-   // crossbar inside the aperture. Repaint the inner opening so the original
-   // fixed bar in the photograph cannot show through behind the moving one.
-   for(let i=0;i<2;i++){
-    if(!stickLayout[i].visible)continue;
-    const [sx,sy]=positions[i],gx=rx+rw*model.centers[i][0],gy=ry+rh*model.centers[i][1];
-    const apertureW=rw*.112,apertureH=rh*.122;
-    const travelY=Math.min(apertureH*.29,rw*model.travel*.72);
-    const barY=gy-sy*travelY;
-    ctx.save();
-    ctx.beginPath();
-    ctx.roundRect(gx-apertureW/2,gy-apertureH/2,apertureW,apertureH,apertureW*.10);
-    ctx.clip();
-    const recess=ctx.createLinearGradient(0,gy-apertureH/2,0,gy+apertureH/2);
-    recess.addColorStop(0,'#24112e');recess.addColorStop(.16,'#080610');
-    recess.addColorStop(.83,'#090610');recess.addColorStop(1,'#361541');
-    ctx.fillStyle=recess;ctx.fillRect(gx-apertureW/2,gy-apertureH/2,apertureW,apertureH);
-    // Horizontal crossbar travels up and down with throttle/pitch.
-    const barH=apertureH*.42;
-    const bar=ctx.createLinearGradient(0,barY-barH/2,0,barY+barH/2);
-    bar.addColorStop(0,'#6e347e');bar.addColorStop(.12,'#b04cce');
-    bar.addColorStop(.28,'#3d234c');bar.addColorStop(.7,'#170f24');
-    bar.addColorStop(.9,'#60236f');bar.addColorStop(1,'#b34cc9');
-    ctx.fillStyle=bar;
-    ctx.fillRect(gx-apertureW*.49,barY-barH/2,apertureW*.98,barH);
-    ctx.strokeStyle='rgba(238,139,255,.6)';ctx.lineWidth=Math.max(.7,rw*.001);
-    ctx.beginPath();ctx.moveTo(gx-apertureW*.46,barY-barH*.40);
-    ctx.lineTo(gx+apertureW*.46,barY-barH*.40);ctx.stroke();
-    // Horizontal slide in the moving crossbar follows yaw/roll.
-    const slotW=apertureW*.74,slotH=barH*.54,slotX=gx-slotW/2;
-    ctx.fillStyle='#090710';ctx.fillRect(slotX,barY-slotH/2,slotW,slotH);
-    const mountX=gx+sx*slotW*.34;
-    const mount=ctx.createRadialGradient(mountX-rw*.006,barY-rw*.006,1,mountX,barY,rw*.019);
-    mount.addColorStop(0,'#ddd6e5');mount.addColorStop(.42,'#79717f');
-    mount.addColorStop(.73,'#24212d');mount.addColorStop(1,'#09070d');
-    ctx.fillStyle=mount;ctx.beginPath();ctx.arc(mountX,barY,rw*.018,0,Math.PI*2);ctx.fill();
-    ctx.restore();
-   }
-   // Draw a perspective stick shaft, moving shadow and metallic cap
-   // above the moving gimbal carriage.
-   for(let i=0;i<2;i++){
-    if(!stickLayout[i].visible||exportTarget==='left'&&i!==0||exportTarget==='right'&&i!==1)continue;
-    const [sx,sy]=positions[i],gx=rx+rw*model.centers[i][0],gy=ry+rh*model.centers[i][1];
-    const travel=rw*model.travel,px=gx+sx*travel,py=gy-sy*travel;
-    const rad=rw*.018;
-    ctx.save();
-    ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=rad*1.6;ctx.lineCap='round';
-    ctx.beginPath();ctx.moveTo(gx+rad*.35,gy+rad*.45);ctx.lineTo(px+rad*.65,py+rad*.9);ctx.stroke();
-    const shaft=ctx.createLinearGradient(gx,gy,px,py);
-    shaft.addColorStop(0,'#191b24');shaft.addColorStop(.5,'#c5b7d6');shaft.addColorStop(1,'#5c586a');
-    ctx.strokeStyle=shaft;ctx.lineWidth=rad*.78;ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(px,py);ctx.stroke();
-    ctx.restore();
-    const metal=ctx.createRadialGradient(px-rad*.35,py-rad*.45,rad*.12,px,py,rad);
-    metal.addColorStop(0,'#ffffff');metal.addColorStop(.4,'#b7bbc5');metal.addColorStop(.78,'#565b68');metal.addColorStop(1,'#171b25');
-    ctx.save();ctx.shadowColor='#000';ctx.shadowBlur=rad*.6;ctx.shadowOffsetY=rad*.3;
-    ctx.fillStyle='#14151e';ctx.beginPath();ctx.arc(px,py,rad*1.2,0,Math.PI*2);ctx.fill();
-    ctx.shadowBlur=0;ctx.fillStyle=metal;ctx.beginPath();ctx.arc(px,py,rad,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='#f3e9ff';ctx.lineWidth=Math.max(.7,rad*.09);ctx.stroke();
-    ctx.fillStyle='#26232d';ctx.beginPath();ctx.arc(px,py,rad*.26,0,Math.PI*2);ctx.fill();ctx.restore();
-   }
-   ctx.restore();
-  }
- }
-}else
-positions.forEach(([x,y],i)=>{if(!stickLayout[i].visible||exportTarget!=='both'&&exportTarget!==(i===0?'left':'right'))return;ctx.save();applyElementMotion(t,w,h);applyShadow(stickShadow,w);const side=baseSide*stickLayout[i].scale,r=side/2,cx=clamp(stickLayout[i].x*w,r+2,w-r-2),cy=clamp(stickLayout[i].y*h,r+2,h-r-2),corner=side*.09;function boxPath(){ctx.beginPath();if(outlineShape==='circle'){ctx.arc(cx,cy,r,0,Math.PI*2)}else if(outlineShape==='hexagon'){for(let k=0;k<6;k++){const a=Math.PI/6+k*Math.PI/3,xx=cx+r*Math.cos(a),yy=cy+r*Math.sin(a);if(k===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy)}ctx.closePath()}else ctx.roundRect(cx-r,cy-r,side,side,outlineShape==='square'?0:corner)}
-boxPath();ctx.fillStyle='rgba('+background.join(',')+','+bgAlpha+')';ctx.fill();if(artwork.background){ctx.save();boxPath();ctx.clip();ctx.globalAlpha*=bgAlpha;ctx.drawImage(artwork.background,cx-r,cy-r,side,side);ctx.restore()}ctx.lineWidth=Math.max(1,w/550)*outlineWidth;ctx.strokeStyle='rgba('+rgb(outlineColor).join(',')+','+(opacity*outlineOpacity)+')';ctx.stroke();ctx.save();boxPath();ctx.clip();ctx.strokeStyle='rgba('+rgb(crossColor).join(',')+','+crossOpacity+')';ctx.lineWidth=Math.max(1,w/800)*crossWidth;ctx.setLineDash(crossStyle==='dashed'?[w*.005,w*.007]:crossStyle==='dotted'?[w*.001,w*.006]:[]);ctx.beginPath();ctx.moveTo(cx,cy-r*.78);ctx.lineTo(cx,cy+r*.78);ctx.moveTo(cx-r*.78,cy);ctx.lineTo(cx+r*.78,cy);if(crossStyle!=='off'&&crossStyle!=='custom')ctx.stroke();if(crossStyle==='custom'&&artwork.cross){ctx.globalAlpha*=crossOpacity;ctx.drawImage(artwork.cross,cx-r*.78,cy-r*.78,r*1.56,r*1.56)}ctx.setLineDash([]);ctx.restore();
-drawThemedStickBox(cx,cy,r,$('betatheme').value,opacity*outlineOpacity,t,i);
-// Easter egg only: left SQ face swells from 100% to 150% with actual throttle, independent of the reverse-axis display setting.
-const sqThrottleScale=shape==='sq'&&i===0?1+.5*clamp(throttle>=1000?(throttle-1000)/1000:throttle/1000,0,1):1;
-const karenIntensity=shape==='karen'?karenRage(throttle,roll,pitch,yaw)/4:0;
-// Full stick/throttle gives 85% more size; the existing pointer size slider
-// remains the base size. Continuous scaling, no sudden jumps.
-const karenScale=shape==='karen'?1+.85*karenIntensity:1;
-const karenLevel=shape==='karen'?Math.min(4,Math.floor(karenIntensity*5)):0;
-const appearance=themeStickAppearance();
-const reactiveScale=reactiveStickEnabled()?stickReactiveScale(x,y,t):1;
-const visualShape=appearance&&shape==='circle'?appearance.shape:shape;
-const travel=r*.74,px=cx+x*travel,py=cy-y*travel,rad=side*.06*pointSize*(stickLayout[i].pointerScale??1)*sqThrottleScale*karenScale*(shape==='karen'?1:reactiveScale),color=appearance?(i===0?appearance.left:appearance.right):$(i===0?'leftcolor':'rightcolor').value;
+function drawStickTrail(i,cx,cy,r,travel,rad,shape,visualShape){
 if(active&&trail!=='off'){
  ctx.save();
  // Trails live behind the live pointer and inside their own stick square.
@@ -2041,6 +1954,109 @@ if(active&&trail!=='off'){
  }
  ctx.restore();
 }
+}
+// TEST only: V12 radio is a single transparent overlay, driven by the same Mode 2 stick positions.
+if($('radiomode')?.value!=='boxes'){
+ if(exportTarget==='both'||exportTarget==='left'||exportTarget==='right'){
+  const model=radioModels[$('radiomode').value]||radioModels.v12,radio=model.image;
+  if(radio.complete&&radio.naturalWidth){
+   ctx.save();
+   applyElementMotion(t,w,h);
+   const bounds=radioBounds(w,h),rw=bounds.w,rh=bounds.h,rx=bounds.x,ry=bounds.y;
+   ctx.globalAlpha*=opacity;
+   ctx.drawImage(radio,rx,ry,rw,rh);
+   // Stationary outer bezel, but a vertically travelling horizontal gimbal
+   // crossbar inside the aperture. Repaint the inner opening so the original
+   // fixed bar in the photograph cannot show through behind the moving one.
+   for(let i=0;i<2;i++){
+    if(!stickLayout[i].visible)continue;
+    const [sx,sy]=positions[i],gx=rx+rw*model.centers[i][0],gy=ry+rh*model.centers[i][1];
+    const apertureW=rw*.112,apertureH=rh*.122;
+    const travelY=Math.min(apertureH*.29,rw*model.travel*.72);
+    const barY=gy-sy*travelY;
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(gx-apertureW/2,gy-apertureH/2,apertureW,apertureH,apertureW*.10);
+    ctx.clip();
+    const recess=ctx.createLinearGradient(0,gy-apertureH/2,0,gy+apertureH/2);
+    recess.addColorStop(0,'#24112e');recess.addColorStop(.16,'#080610');
+    recess.addColorStop(.83,'#090610');recess.addColorStop(1,'#361541');
+    ctx.fillStyle=recess;ctx.fillRect(gx-apertureW/2,gy-apertureH/2,apertureW,apertureH);
+    // Horizontal crossbar travels up and down with throttle/pitch.
+    const barH=apertureH*.42;
+    const bar=ctx.createLinearGradient(0,barY-barH/2,0,barY+barH/2);
+    bar.addColorStop(0,'#6e347e');bar.addColorStop(.12,'#b04cce');
+    bar.addColorStop(.28,'#3d234c');bar.addColorStop(.7,'#170f24');
+    bar.addColorStop(.9,'#60236f');bar.addColorStop(1,'#b34cc9');
+    ctx.fillStyle=bar;
+    ctx.fillRect(gx-apertureW*.49,barY-barH/2,apertureW*.98,barH);
+    ctx.strokeStyle='rgba(238,139,255,.6)';ctx.lineWidth=Math.max(.7,rw*.001);
+    ctx.beginPath();ctx.moveTo(gx-apertureW*.46,barY-barH*.40);
+    ctx.lineTo(gx+apertureW*.46,barY-barH*.40);ctx.stroke();
+    // Horizontal slide in the moving crossbar follows yaw/roll.
+    const slotW=apertureW*.74,slotH=barH*.54,slotX=gx-slotW/2;
+    ctx.fillStyle='#090710';ctx.fillRect(slotX,barY-slotH/2,slotW,slotH);
+    const mountX=gx+sx*slotW*.34;
+    const mount=ctx.createRadialGradient(mountX-rw*.006,barY-rw*.006,1,mountX,barY,rw*.019);
+    mount.addColorStop(0,'#ddd6e5');mount.addColorStop(.42,'#79717f');
+    mount.addColorStop(.73,'#24212d');mount.addColorStop(1,'#09070d');
+    ctx.fillStyle=mount;ctx.beginPath();ctx.arc(mountX,barY,rw*.018,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+   }
+   // The radio sticks share the existing trail settings and sampling logic.
+   // Draw trails in each gimbal aperture, behind the live metallic tips.
+   if(active&&trail!=='off'){
+    for(let i=0;i<2;i++){
+     if(!stickLayout[i].visible||exportTarget==='left'&&i!==0||exportTarget==='right'&&i!==1)continue;
+     const gx=rx+rw*model.centers[i][0],gy=ry+rh*model.centers[i][1];
+     const travel=rw*model.travel,rad=rw*.018;
+     ctx.save();
+     ctx.beginPath();ctx.ellipse(gx,gy,rw*.057,rh*.068,0,0,Math.PI*2);ctx.clip();
+     drawStickTrail(i,gx,gy,Math.max(rw*.057,rh*.068),travel,rad,shape,shape);
+     ctx.restore();
+    }
+   }
+   // Draw a perspective stick shaft, moving shadow and metallic cap
+   // above the moving gimbal carriage.
+   for(let i=0;i<2;i++){
+    if(!stickLayout[i].visible||exportTarget==='left'&&i!==0||exportTarget==='right'&&i!==1)continue;
+    const [sx,sy]=positions[i],gx=rx+rw*model.centers[i][0],gy=ry+rh*model.centers[i][1];
+    const travel=rw*model.travel,px=gx+sx*travel,py=gy-sy*travel;
+    const rad=rw*.018;
+    ctx.save();
+    ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=rad*1.6;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(gx+rad*.35,gy+rad*.45);ctx.lineTo(px+rad*.65,py+rad*.9);ctx.stroke();
+    const shaft=ctx.createLinearGradient(gx,gy,px,py);
+    shaft.addColorStop(0,'#191b24');shaft.addColorStop(.5,'#c5b7d6');shaft.addColorStop(1,'#5c586a');
+    ctx.strokeStyle=shaft;ctx.lineWidth=rad*.78;ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(px,py);ctx.stroke();
+    ctx.restore();
+    const metal=ctx.createRadialGradient(px-rad*.35,py-rad*.45,rad*.12,px,py,rad);
+    metal.addColorStop(0,'#ffffff');metal.addColorStop(.4,'#b7bbc5');metal.addColorStop(.78,'#565b68');metal.addColorStop(1,'#171b25');
+    ctx.save();ctx.shadowColor='#000';ctx.shadowBlur=rad*.6;ctx.shadowOffsetY=rad*.3;
+    ctx.fillStyle='#14151e';ctx.beginPath();ctx.arc(px,py,rad*1.2,0,Math.PI*2);ctx.fill();
+    ctx.shadowBlur=0;ctx.fillStyle=metal;ctx.beginPath();ctx.arc(px,py,rad,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#f3e9ff';ctx.lineWidth=Math.max(.7,rad*.09);ctx.stroke();
+    ctx.fillStyle='#26232d';ctx.beginPath();ctx.arc(px,py,rad*.26,0,Math.PI*2);ctx.fill();ctx.restore();
+   }
+   ctx.restore();
+  }
+ }
+}else
+positions.forEach(([x,y],i)=>{if(!stickLayout[i].visible||exportTarget!=='both'&&exportTarget!==(i===0?'left':'right'))return;ctx.save();applyElementMotion(t,w,h);applyShadow(stickShadow,w);const side=baseSide*stickLayout[i].scale,r=side/2,cx=clamp(stickLayout[i].x*w,r+2,w-r-2),cy=clamp(stickLayout[i].y*h,r+2,h-r-2),corner=side*.09;function boxPath(){ctx.beginPath();if(outlineShape==='circle'){ctx.arc(cx,cy,r,0,Math.PI*2)}else if(outlineShape==='hexagon'){for(let k=0;k<6;k++){const a=Math.PI/6+k*Math.PI/3,xx=cx+r*Math.cos(a),yy=cy+r*Math.sin(a);if(k===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy)}ctx.closePath()}else ctx.roundRect(cx-r,cy-r,side,side,outlineShape==='square'?0:corner)}
+boxPath();ctx.fillStyle='rgba('+background.join(',')+','+bgAlpha+')';ctx.fill();if(artwork.background){ctx.save();boxPath();ctx.clip();ctx.globalAlpha*=bgAlpha;ctx.drawImage(artwork.background,cx-r,cy-r,side,side);ctx.restore()}ctx.lineWidth=Math.max(1,w/550)*outlineWidth;ctx.strokeStyle='rgba('+rgb(outlineColor).join(',')+','+(opacity*outlineOpacity)+')';ctx.stroke();ctx.save();boxPath();ctx.clip();ctx.strokeStyle='rgba('+rgb(crossColor).join(',')+','+crossOpacity+')';ctx.lineWidth=Math.max(1,w/800)*crossWidth;ctx.setLineDash(crossStyle==='dashed'?[w*.005,w*.007]:crossStyle==='dotted'?[w*.001,w*.006]:[]);ctx.beginPath();ctx.moveTo(cx,cy-r*.78);ctx.lineTo(cx,cy+r*.78);ctx.moveTo(cx-r*.78,cy);ctx.lineTo(cx+r*.78,cy);if(crossStyle!=='off'&&crossStyle!=='custom')ctx.stroke();if(crossStyle==='custom'&&artwork.cross){ctx.globalAlpha*=crossOpacity;ctx.drawImage(artwork.cross,cx-r*.78,cy-r*.78,r*1.56,r*1.56)}ctx.setLineDash([]);ctx.restore();
+drawThemedStickBox(cx,cy,r,$('betatheme').value,opacity*outlineOpacity,t,i);
+// Easter egg only: left SQ face swells from 100% to 150% with actual throttle, independent of the reverse-axis display setting.
+const sqThrottleScale=shape==='sq'&&i===0?1+.5*clamp(throttle>=1000?(throttle-1000)/1000:throttle/1000,0,1):1;
+const karenIntensity=shape==='karen'?karenRage(throttle,roll,pitch,yaw)/4:0;
+// Full stick/throttle gives 85% more size; the existing pointer size slider
+// remains the base size. Continuous scaling, no sudden jumps.
+const karenScale=shape==='karen'?1+.85*karenIntensity:1;
+const karenLevel=shape==='karen'?Math.min(4,Math.floor(karenIntensity*5)):0;
+const appearance=themeStickAppearance();
+const reactiveScale=reactiveStickEnabled()?stickReactiveScale(x,y,t):1;
+const visualShape=appearance&&shape==='circle'?appearance.shape:shape;
+const travel=r*.74,px=cx+x*travel,py=cy-y*travel,rad=side*.06*pointSize*(stickLayout[i].pointerScale??1)*sqThrottleScale*karenScale*(shape==='karen'?1:reactiveScale),color=appearance?(i===0?appearance.left:appearance.right):$(i===0?'leftcolor':'rightcolor').value;
+drawStickTrail(i,cx,cy,r,travel,rad,shape,visualShape);
 ctx.save();if(appearance?.glow){ctx.shadowColor=color;ctx.shadowBlur=rad*1.6;}
 if(visualShape!=='cross'&&visualShape!=='plus'&&visualShape!=='custom'&&visualShape!=='sq'&&visualShape!=='karen'){ctx.beginPath();ctx.arc(px,py,rad*1.8,0,Math.PI*2);ctx.fillStyle='rgba('+rgb(color).join(',')+',.14)';ctx.fill()}
 point(px,py,rad,visualShape,color,1,shape==='sq'?sqState.shocked:false,sqState?.angle||0,karenLevel);ctx.restore();ctx.restore()});
