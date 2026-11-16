@@ -2003,6 +2003,20 @@ if($('radiomode')?.value!=='boxes'){
     ctx.fillStyle=mount;ctx.beginPath();ctx.arc(mountX,barY,rw*.018,0,Math.PI*2);ctx.fill();
     ctx.restore();
    }
+   // Shafts sit above the radio artwork but below the motion trails.
+   for(let i=0;i<2;i++){
+    if(!stickLayout[i].visible||exportTarget==='left'&&i!==0||exportTarget==='right'&&i!==1)continue;
+    const [sx,sy]=positions[i],gx=rx+rw*model.centers[i][0],gy=ry+rh*model.centers[i][1];
+    const travel=rw*model.travel,px=gx+sx*travel,py=gy-sy*travel;
+    const rad=rw*.018;
+    ctx.save();
+    ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=rad*1.6;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(gx+rad*.35,gy+rad*.45);ctx.lineTo(px+rad*.65,py+rad*.9);ctx.stroke();
+    const shaft=ctx.createLinearGradient(gx,gy,px,py);
+    shaft.addColorStop(0,'#191b24');shaft.addColorStop(.5,'#c5b7d6');shaft.addColorStop(1,'#5c586a');
+    ctx.strokeStyle=shaft;ctx.lineWidth=rad*.78;ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(px,py);ctx.stroke();
+    ctx.restore();
+   }
    // The radio sticks share the existing trail settings and sampling logic.
    // Draw trails in each gimbal aperture, behind the live metallic tips.
    if(active&&trail!=='off'){
@@ -2016,20 +2030,12 @@ if($('radiomode')?.value!=='boxes'){
      ctx.restore();
     }
    }
-   // Draw a perspective stick shaft, moving shadow and metallic cap
-   // above the moving gimbal carriage.
+   // Only the metallic stick caps sit above the motion trails.
    for(let i=0;i<2;i++){
     if(!stickLayout[i].visible||exportTarget==='left'&&i!==0||exportTarget==='right'&&i!==1)continue;
     const [sx,sy]=positions[i],gx=rx+rw*model.centers[i][0],gy=ry+rh*model.centers[i][1];
     const travel=rw*model.travel,px=gx+sx*travel,py=gy-sy*travel;
     const rad=rw*.018;
-    ctx.save();
-    ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=rad*1.6;ctx.lineCap='round';
-    ctx.beginPath();ctx.moveTo(gx+rad*.35,gy+rad*.45);ctx.lineTo(px+rad*.65,py+rad*.9);ctx.stroke();
-    const shaft=ctx.createLinearGradient(gx,gy,px,py);
-    shaft.addColorStop(0,'#191b24');shaft.addColorStop(.5,'#c5b7d6');shaft.addColorStop(1,'#5c586a');
-    ctx.strokeStyle=shaft;ctx.lineWidth=rad*.78;ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(px,py);ctx.stroke();
-    ctx.restore();
     const metal=ctx.createRadialGradient(px-rad*.35,py-rad*.45,rad*.12,px,py,rad);
     metal.addColorStop(0,'#ffffff');metal.addColorStop(.4,'#b7bbc5');metal.addColorStop(.78,'#565b68');metal.addColorStop(1,'#171b25');
     ctx.save();ctx.shadowColor='#000';ctx.shadowBlur=rad*.6;ctx.shadowOffsetY=rad*.3;
