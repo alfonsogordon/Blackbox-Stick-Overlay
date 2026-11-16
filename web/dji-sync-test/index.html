@@ -1838,13 +1838,32 @@ if($('radiomode')?.value==='v12'){
    const rx=(w-rw)/2,ry=h-rh-h*.025;
    ctx.globalAlpha*=opacity;
    ctx.drawImage(radio,rx,ry,rw,rh);
-   // The centre hardware is part of the image. Draw a moving metallic stick cap
-   // above each gimbal, retaining the original purple gimbal housing.
+   // TEST: animate the purple inner gimbal carriage using a clipped copy of
+   // the original artwork. The radio shell and outer gimbal bezels stay fixed.
+   for(let i=0;i<2;i++){
+    if(!stickLayout[i].visible)continue;
+    const [sx,sy]=positions[i],gx=rx+rw*(i===0?.232:.773),gy=ry+rh*.408;
+    const carriageW=rw*.112,carriageH=rh*.093;
+    const shiftX=sx*rw*.010,shiftY=-sy*rh*.010;
+    ctx.save();
+    ctx.beginPath();ctx.roundRect(gx-carriageW*.5,gy-carriageH*.5,carriageW,carriageH,carriageH*.23);ctx.clip();
+    ctx.drawImage(radio,rx+shiftX,ry+shiftY,rw,rh);
+    ctx.restore();
+   }
+   // Draw a perspective stick shaft, moving shadow and metallic cap
+   // above the moving gimbal carriage.
    for(let i=0;i<2;i++){
     if(!stickLayout[i].visible||exportTarget==='left'&&i!==0||exportTarget==='right'&&i!==1)continue;
     const [sx,sy]=positions[i],gx=rx+rw*(i===0?.232:.773),gy=ry+rh*.408;
     const travel=rw*.045,px=gx+sx*travel,py=gy-sy*travel;
     const rad=rw*.018;
+    ctx.save();
+    ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=rad*1.6;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(gx+rad*.35,gy+rad*.45);ctx.lineTo(px+rad*.65,py+rad*.9);ctx.stroke();
+    const shaft=ctx.createLinearGradient(gx,gy,px,py);
+    shaft.addColorStop(0,'#191b24');shaft.addColorStop(.5,'#c5b7d6');shaft.addColorStop(1,'#5c586a');
+    ctx.strokeStyle=shaft;ctx.lineWidth=rad*.78;ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(px,py);ctx.stroke();
+    ctx.restore();
     const metal=ctx.createRadialGradient(px-rad*.35,py-rad*.45,rad*.12,px,py,rad);
     metal.addColorStop(0,'#ffffff');metal.addColorStop(.4,'#b7bbc5');metal.addColorStop(.78,'#565b68');metal.addColorStop(1,'#171b25');
     ctx.save();ctx.shadowColor='#000';ctx.shadowBlur=rad*.6;ctx.shadowOffsetY=rad*.3;
