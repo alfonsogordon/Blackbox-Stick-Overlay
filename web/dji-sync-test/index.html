@@ -1865,27 +1865,42 @@ if($('radiomode')?.value!=='boxes'){
    const bounds=radioBounds(w,h),rw=bounds.w,rh=bounds.h,rx=bounds.x,ry=bounds.y;
    ctx.globalAlpha*=opacity;
    ctx.drawImage(radio,rx,ry,rw,rh);
-   // Keep the photographed purple bezel fixed: shifting a clipped copy of the
-   // whole image caused obvious seams, double edges and unnatural gimbal motion.
-   // Rebuild only the small recessed centre rail as a shaded moving mechanism.
+   // Stationary outer bezel, but a vertically travelling horizontal gimbal
+   // crossbar inside the aperture. Repaint the inner opening so the original
+   // fixed bar in the photograph cannot show through behind the moving one.
    for(let i=0;i<2;i++){
     if(!stickLayout[i].visible)continue;
     const [sx,sy]=positions[i],gx=rx+rw*model.centers[i][0],gy=ry+rh*model.centers[i][1];
-    const railW=rw*.105,railH=rh*.039,railX=gx-railW/2,railY=gy-railH/2;
+    const apertureW=rw*.112,apertureH=rh*.122;
+    const travelY=Math.min(apertureH*.29,rw*model.travel*.72);
+    const barY=gy-sy*travelY;
     ctx.save();
-    // Soft-edged recess hides the stationary stick mount in the source image.
-    const recess=ctx.createLinearGradient(0,railY,0,railY+railH);
-    recess.addColorStop(0,'#291338');recess.addColorStop(.17,'#100b19');
-    recess.addColorStop(.72,'#08070e');recess.addColorStop(1,'#462059');
-    ctx.fillStyle=recess;ctx.beginPath();
-    ctx.roundRect(railX,railY,railW,railH,railH*.24);ctx.fill();
-    ctx.strokeStyle='rgba(182,76,218,.5)';ctx.lineWidth=Math.max(.8,rw*.0012);ctx.stroke();
-    // A small carriage follows both axes; no duplicate bitmap edges.
-    const cx=gx+sx*rw*model.travel*.58,cy=gy-sy*rw*model.travel*.58;
-    const carriageR=rw*.023;
-    const carriage=ctx.createRadialGradient(cx-carriageR*.3,cy-carriageR*.4,1,cx,cy,carriageR);
-    carriage.addColorStop(0,'#44314f');carriage.addColorStop(.55,'#1c1528');carriage.addColorStop(1,'#09070e');
-    ctx.fillStyle=carriage;ctx.beginPath();ctx.ellipse(cx,cy,carriageR*1.3,carriageR*.72,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();
+    ctx.roundRect(gx-apertureW/2,gy-apertureH/2,apertureW,apertureH,apertureW*.10);
+    ctx.clip();
+    const recess=ctx.createLinearGradient(0,gy-apertureH/2,0,gy+apertureH/2);
+    recess.addColorStop(0,'#24112e');recess.addColorStop(.16,'#080610');
+    recess.addColorStop(.83,'#090610');recess.addColorStop(1,'#361541');
+    ctx.fillStyle=recess;ctx.fillRect(gx-apertureW/2,gy-apertureH/2,apertureW,apertureH);
+    // Horizontal crossbar travels up and down with throttle/pitch.
+    const barH=apertureH*.42;
+    const bar=ctx.createLinearGradient(0,barY-barH/2,0,barY+barH/2);
+    bar.addColorStop(0,'#6e347e');bar.addColorStop(.12,'#b04cce');
+    bar.addColorStop(.28,'#3d234c');bar.addColorStop(.7,'#170f24');
+    bar.addColorStop(.9,'#60236f');bar.addColorStop(1,'#b34cc9');
+    ctx.fillStyle=bar;
+    ctx.fillRect(gx-apertureW*.49,barY-barH/2,apertureW*.98,barH);
+    ctx.strokeStyle='rgba(238,139,255,.6)';ctx.lineWidth=Math.max(.7,rw*.001);
+    ctx.beginPath();ctx.moveTo(gx-apertureW*.46,barY-barH*.40);
+    ctx.lineTo(gx+apertureW*.46,barY-barH*.40);ctx.stroke();
+    // Horizontal slide in the moving crossbar follows yaw/roll.
+    const slotW=apertureW*.74,slotH=barH*.54,slotX=gx-slotW/2;
+    ctx.fillStyle='#090710';ctx.fillRect(slotX,barY-slotH/2,slotW,slotH);
+    const mountX=gx+sx*slotW*.34;
+    const mount=ctx.createRadialGradient(mountX-rw*.006,barY-rw*.006,1,mountX,barY,rw*.019);
+    mount.addColorStop(0,'#ddd6e5');mount.addColorStop(.42,'#79717f');
+    mount.addColorStop(.73,'#24212d');mount.addColorStop(1,'#09070d');
+    ctx.fillStyle=mount;ctx.beginPath();ctx.arc(mountX,barY,rw*.018,0,Math.PI*2);ctx.fill();
     ctx.restore();
    }
    // Draw a perspective stick shaft, moving shadow and metallic cap
