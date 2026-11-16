@@ -1678,7 +1678,7 @@ function batteryReactiveInk(item,raw){
  const critical=clamp(Number($('reactivecritical').value)||3.4,2.5,4.4);
  return perCell<=Math.min(low,critical)?'#ff5368':perCell<=Math.max(low,critical)?'#ffbe55':null;
 }
-$('radiomode').addEventListener('change',update);
+$('radiomode').addEventListener('change',()=>{radioLayout.x=.5;radioLayout.y=.5;radioLayout.scale=1;selectedOverlay=null;update();drawEditingOutline()});
 for(const id of ['stickthemematch','stickboxstyle','stickanimation','stickreactions','reactivelow','reactivecritical'])$(id).addEventListener('input',update);
 // TEST: deterministic theme-specific stick widget frames.
 // Pure canvas decorations: no log data, presets, pointer assets or export path changed.
@@ -1783,10 +1783,14 @@ function drawThemedStickBox(cx,cy,r,theme,opacity,t,index){
 }
 const radioModels={v12:{file:'v12.png',centers:[[.232,.408],[.773,.408]],travel:.045},x18rs:{file:'X18.png',centers:[[.255,.568],[.753,.546]],travel:.042},gx10:{file:'Gx10.png',centers:[[.208,.526],[.794,.526]],travel:.043},v15:{file:'V15.png',centers:[[.302,.412],[.704,.412]],travel:.042},oxbot:{file:'Oxbot.png',centers:[[.204,.439],[.802,.439]],travel:.045},t15duo:{file:'T15duo.png',centers:[[.25,.43],[.75,.43]],travel:.043},t15pro:{file:'T15pro.png',centers:[[.25,.43],[.75,.43]],travel:.043}};
 for(const [key,model] of Object.entries(radioModels)){model.image=new Image();model.image.src=model.file;model.image.onload=()=>{if($('radiomode')?.value===key)update()};}
-const radioLayout={x:.5,y:.68,scale:1};
+const radioLayout={x:.5,y:.5,scale:1};
 function radioBounds(w,h){
  const model=radioModels[$('radiomode')?.value]||radioModels.v12,im=model.image;
- const rw=Math.min(w*.8,h*1.28)*radioLayout.scale,rh=rw*(im.naturalWidth?im.naturalHeight/im.naturalWidth:1);
+ const aspect=im.naturalWidth&&im.naturalHeight?im.naturalWidth/im.naturalHeight:1;
+ // Fit the ENTIRE source artwork inside the canvas, not just its width.
+ // This keeps tall radio images fully visible in landscape and portrait.
+ const baseW=Math.min(w*.86,h*.86*aspect);
+ const rw=baseW*radioLayout.scale,rh=rw/aspect;
  return {x:radioLayout.x*w-rw/2,y:radioLayout.y*h-rh/2,w:rw,h:rh};
 }
 
