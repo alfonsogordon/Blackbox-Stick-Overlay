@@ -1856,7 +1856,7 @@ if(shape==='sq'){const face=shocked?sqFaces.shocked:sqFaces.happy;if(face.comple
  ctx.restore();return;
 }if(shape==='square'){ctx.rect(x-rad,y-rad,rad*2,rad*2)}else if(shape==='diamond'){ctx.moveTo(x,y-rad*1.3);ctx.lineTo(x+rad*1.3,y);ctx.lineTo(x,y+rad*1.3);ctx.lineTo(x-rad*1.3,y);ctx.closePath()}else if(shape==='triangle'||shape==='star'||shape==='hexagon'){const n=shape==='triangle'?3:shape==='star'?10:6;for(let j=0;j<n;j++){const a=-Math.PI/2+j*2*Math.PI/n,rr=shape==='star'&&j%2?rad*.52:rad*1.3;const xx=x+Math.cos(a)*rr,yy=y+Math.sin(a)*rr;if(j===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy)}ctx.closePath()}else if(shape==='target'){ctx.arc(x,y,rad,0,Math.PI*2);ctx.moveTo(x+rad*.35,y);ctx.arc(x,y,rad*.35,0,Math.PI*2)}else if(shape==='plus'){const q=rad*.4,R=rad*1.4;ctx.moveTo(x-q,y-R);ctx.lineTo(x+q,y-R);ctx.lineTo(x+q,y-q);ctx.lineTo(x+R,y-q);ctx.lineTo(x+R,y+q);ctx.lineTo(x+q,y+q);ctx.lineTo(x+q,y+R);ctx.lineTo(x-q,y+R);ctx.lineTo(x-q,y+q);ctx.lineTo(x-R,y+q);ctx.lineTo(x-R,y-q);ctx.lineTo(x-q,y-q);ctx.closePath()}else if(shape==='cross'){ctx.moveTo(x-rad*1.5,y);ctx.lineTo(x+rad*1.5,y);ctx.moveTo(x,y-rad*1.5);ctx.lineTo(x,y+rad*1.5)}else ctx.arc(x,y,rad,0,Math.PI*2);if(shape==='ring'||shape==='cross'||shape==='target')ctx.stroke();else ctx.fill();ctx.restore()}
 // TEST only: V12 radio is a single transparent overlay, driven by the same Mode 2 stick positions.
-if($('radiomode')?.value==='v12'){
+if($('radiomode')?.value!=='boxes'){
  if(exportTarget==='both'||exportTarget==='left'||exportTarget==='right'){
   const model=radioModels[$('radiomode').value]||radioModels.v12,radio=model.image;
   if(radio.complete&&radio.naturalWidth){
