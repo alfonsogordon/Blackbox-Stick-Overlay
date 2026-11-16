@@ -1021,6 +1021,7 @@ function editingBounds(kind,index,item){
  if(kind==='flighttimer')return flightTimerBounds(w,h);
  if(kind==='packgauge')return packGaugeBounds(w,h);
  if(kind?.startsWith('av'))return aviationGaugeBounds(kind.slice(2),w,h);
+ if(kind==='radio')return radioBounds(w,h);
  if(kind==='stick'){
   const base=$('canvasformat').value==='sticks'?Math.min(h*.82,w*.38):Math.min(h*.28,w*.22);
   const side=base*item.scale;
@@ -1065,7 +1066,8 @@ function drawEditingOutline(){
 function locateEditable(x,y){
  const w=canvas.width,h=canvas.height;
  const choices=[];
- for(let i=0;i<2;i++)if(stickLayout[i].visible)choices.push({kind:'stick',index:i,item:stickLayout[i],label:(i===0?'Left':'Right')+' stick'});
+ if($('radiomode')?.value!=='boxes')choices.push({kind:'radio',label:'Radio overlay'});
+ else for(let i=0;i<2;i++)if(stickLayout[i].visible)choices.push({kind:'stick',index:i,item:stickLayout[i],label:(i===0?'Left':'Right')+' stick'});
  if($('quadshow').checked)choices.push({kind:'quad',item:quadLayout,label:'Quad visualiser'});
  for(const item of telemetryWidgets)if(item.check.checked)choices.push({kind:'telemetry',item,label:item.rename?.value||friendlyTelemetryName(item.name)});
  if($('flighttimershow')?.checked)choices.push({kind:'flighttimer',label:'Armed flight timer'});
@@ -1247,7 +1249,25 @@ canvas.addEventListener('pointerleave',()=>{if(!draggedQuad&&draggedStick===null
 })();
 window.addEventListener('resize',drawEditingOutline);
 let draggedQuad=false,quadDX=0,quadDY=0;canvas.addEventListener('pointerdown',e=>{if(recording||!$('quadshow').checked)return;const [x,y]=elementPointerCoordinates(e);const [w,h]=$('size').value.split('x').map(Number);const rad=Math.min(w,h)*.19*quadLayout.scale;if(Math.hypot((x-quadLayout.x)*w,(y-quadLayout.y)*h)<rad){draggedQuad=true;quadDX=x-quadLayout.x;quadDY=y-quadLayout.y;canvas.setPointerCapture(e.pointerId);e.preventDefault()}});canvas.addEventListener('pointermove',e=>{if(!draggedQuad)return;const [x,y]=elementPointerCoordinates(e);[quadLayout.x,quadLayout.y]=snapPosition(clamp(x-quadDX,0,1),clamp(y-quadDY,0,1));draw(time)});for(const type of ['pointerup','pointercancel'])canvas.addEventListener(type,()=>{draggedQuad=false});for(const id of ['quadshow','quadscale','quadmodel','quadarm','quadfront','quadrear','quadbody','quadopacity','quadline','quadmotors','quadnose'])$(id).addEventListener('input',()=>{quadLayout.scale=Number($('quadscale').value)/100;draw(time)});
-let draggedStick=null,resizeStick=false,stickDragX=0,stickDragY=0;canvas.addEventListener('pointerdown',e=>{if(recording||draggedQuad)return;const [x,y]=elementPointerCoordinates(e);const [w,h]=$('size').value.split('x').map(Number);const side=($('canvasformat').value==='sticks'?Math.min(h*.68,w*.31):Math.min(h*.28,w*.22));for(let i=1;i>=0;i--){const item=stickLayout[i];if(!item.visible)continue;const half=side*item.scale/2;const dx=(x-item.x)*w,dy=(y-item.y)*h;if(Math.abs(dx)<=half&&Math.abs(dy)<=half){draggedStick=i;resizeStick=dx>half*.67&&dy>half*.67;stickDragX=x-item.x;stickDragY=y-item.y;canvas.setPointerCapture(e.pointerId);e.preventDefault();break}}});canvas.addEventListener('pointermove',e=>{if(draggedStick===null)return;const [x,y]=elementPointerCoordinates(e);const item=stickLayout[draggedStick];if(resizeStick){const [w,h]=$('size').value.split('x').map(Number),base=$('canvasformat').value==='sticks'?Math.min(h*.82,w*.38):Math.min(h*.28,w*.22);item.scale=clamp(Math.max(Math.abs(x-item.x)*w,Math.abs(y-item.y)*h)*2/base,.2,2.5)}else{[item.x,item.y]=snapPosition(clamp(x-stickDragX,0,1),clamp(y-stickDragY,0,1));if($('mirrorsticks').checked){const other=stickLayout[1-draggedStick];other.x=1-item.x;other.y=item.y}}draw(time)});for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eventName,()=>{draggedStick=null;resizeStick=false});
+let radioDrag=null;
+canvas.addEventListener('pointerdown',e=>{
+ if(recording||$('radiomode')?.value==='boxes')return;
+ const [nx,ny]=elementPointerCoordinates(e),px=nx*canvas.width,py=ny*canvas.height,b=radioBounds(canvas.width,canvas.height);
+ if(px<b.x||px>b.x+b.w||py<b.y||py>b.y+b.h)return;
+ const edge=Math.max(18,Math.min(b.w,b.h)*.11);
+ radioDrag={resize:px>b.x+b.w-edge&&py>b.y+b.h-edge,startX:px,startY:py,x:radioLayout.x,y:radioLayout.y,scale:radioLayout.scale};
+ selectedOverlay={kind:'radio',label:'Radio overlay'};
+ canvas.setPointerCapture(e.pointerId);e.preventDefault();e.stopImmediatePropagation();drawEditingOutline();
+},true);
+canvas.addEventListener('pointermove',e=>{
+ if(!radioDrag)return;
+ const [nx,ny]=elementPointerCoordinates(e),px=nx*canvas.width,py=ny*canvas.height;
+ if(radioDrag.resize){radioLayout.scale=clamp(radioDrag.scale+Math.max((px-radioDrag.startX)/canvas.width,(py-radioDrag.startY)/canvas.height)*2,.2,2.5);}
+ else {radioLayout.x=clamp(radioDrag.x+(px-radioDrag.startX)/canvas.width,0,1);radioLayout.y=clamp(radioDrag.y+(py-radioDrag.startY)/canvas.height,0,1);}
+ draw(time);drawEditingOutline();e.preventDefault();e.stopImmediatePropagation();
+},true);
+for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eventName,e=>{if(!radioDrag)return;radioDrag=null;drawEditingOutline();e.stopImmediatePropagation()},true);
+let draggedStick=null,resizeStick=false,stickDragX=0,stickDragY=0;canvas.addEventListener('pointerdown',e=>{if(recording||draggedQuad||$('radiomode')?.value!=='boxes')return;const [x,y]=elementPointerCoordinates(e);const [w,h]=$('size').value.split('x').map(Number);const side=($('canvasformat').value==='sticks'?Math.min(h*.68,w*.31):Math.min(h*.28,w*.22));for(let i=1;i>=0;i--){const item=stickLayout[i];if(!item.visible)continue;const half=side*item.scale/2;const dx=(x-item.x)*w,dy=(y-item.y)*h;if(Math.abs(dx)<=half&&Math.abs(dy)<=half){draggedStick=i;resizeStick=dx>half*.67&&dy>half*.67;stickDragX=x-item.x;stickDragY=y-item.y;canvas.setPointerCapture(e.pointerId);e.preventDefault();break}}});canvas.addEventListener('pointermove',e=>{if(draggedStick===null)return;const [x,y]=elementPointerCoordinates(e);const item=stickLayout[draggedStick];if(resizeStick){const [w,h]=$('size').value.split('x').map(Number),base=$('canvasformat').value==='sticks'?Math.min(h*.82,w*.38):Math.min(h*.28,w*.22);item.scale=clamp(Math.max(Math.abs(x-item.x)*w,Math.abs(y-item.y)*h)*2/base,.2,2.5)}else{[item.x,item.y]=snapPosition(clamp(x-stickDragX,0,1),clamp(y-stickDragY,0,1));if($('mirrorsticks').checked){const other=stickLayout[1-draggedStick];other.x=1-item.x;other.y=item.y}}draw(time)});for(const eventName of ['pointerup','pointercancel'])canvas.addEventListener(eventName,()=>{draggedStick=null;resizeStick=false});
 let draggedTelemetry=null,resizeTelemetry=false,dragOffsetX=0,dragOffsetY=0;
 canvas.addEventListener('pointerdown',e=>{
  if(recording||draggedStick!==null||draggedQuad)return;
