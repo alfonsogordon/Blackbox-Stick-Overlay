@@ -1781,7 +1781,7 @@ function drawThemedStickBox(cx,cy,r,theme,opacity,t,index){
  }
  ctx.restore();
 }
-const radioModels={v12:{file:'v12.png',centers:[[.232,.408],[.773,.408]],travel:.045},x18rs:{file:'X18.png',centers:[[.255,.568],[.753,.546]],travel:.042},gx10:{file:'Gx10.png',centers:[[.208,.526],[.794,.526]],travel:.043},v15:{file:'V15.png',centers:[[.302,.412],[.704,.412]],travel:.042},oxbot:{file:'Oxbot.png',centers:[[.204,.439],[.802,.439]],travel:.045},t15duo:{file:'T15duo.png',centers:[[.25,.43],[.75,.43]],travel:.043},t15pro:{file:'T15pro.png',centers:[[.25,.43],[.75,.43]],travel:.043}};
+const radioModels={v12:{file:'v12.png',centers:[[.232,.408],[.773,.408]],travel:0.0540},x18rs:{file:'X18.png',centers:[[.255,.568],[.753,.546]],travel:0.0504},gx10:{file:'Gx10.png',centers:[[.208,.526],[.794,.526]],travel:0.0516},v15:{file:'V15.png',centers:[[.302,.412],[.704,.412]],travel:0.0504},oxbot:{file:'Oxbot.png',centers:[[.204,.439],[.802,.439]],travel:0.0540},t15duo:{file:'T15duo.png',centers:[[.25,.43],[.75,.43]],travel:0.0516},t15pro:{file:'T15pro.png',centers:[[.25,.43],[.75,.43]],travel:0.0516}};
 for(const [key,model] of Object.entries(radioModels)){model.image=new Image();model.image.src=model.file;model.image.onload=()=>{if($('radiomode')?.value===key)update()};}
 const radioLayout={x:.5,y:.5,scale:1};
 function radioBounds(w,h){
